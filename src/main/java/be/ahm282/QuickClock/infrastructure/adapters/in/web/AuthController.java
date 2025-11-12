@@ -13,7 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 record LoginRequestDTO(String username, String password) {}
 record RegisterRequestDTO(String username, String password) {}
-record JwtResponseDTO(String token) {}
+record RefreshRequestDTO(String refreshToken) {}
+record TokenResponseDTO(String accessToken, String refreshToken) {}
+record ErrorResponseDTO(String errorMessage, int status) {}
 
 @RestController
 @RequestMapping("/api/auth")
@@ -29,19 +31,54 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody RegisterRequestDTO request) {
-        userService.createUser(request.username(), passwordEncoder.encode(request.password()));
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request) {
+        try {
+            userService.createUser(request.username(), passwordEncoder.encode(request.password()));
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponseDTO("Username already exists", 409));
+        }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponseDTO> login(@RequestBody LoginRequestDTO request) {
-        UserEntity user = userService.findByUsername(request.username());
-        if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
+        try {
+            UserEntity user = userService.findByUsername(request.username());
 
-        String token = jwtTokenService.generateToken(user);
-        return ResponseEntity.ok(new JwtResponseDTO(token));
+            if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponseDTO("Invalid credentials", 401));
+            }
+
+            String accessToken = jwtTokenService.generateAccessToken(user);
+            String refreshToken = jwtTokenService.generateRefreshToken(user);
+
+            return ResponseEntity.ok(new TokenResponseDTO(accessToken, refreshToken));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponseDTO("Invalid credentials", 401));
+        }
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refresh(@RequestBody RefreshRequestDTO request) {
+        try {
+            if (!jwtTokenService.isRefreshToken(request.refreshToken())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponseDTO("Invalid refresh token", 401));
+            }
+
+            String username = jwtTokenService.extractUsername(request.refreshToken());
+            UserEntity user = userService.findByUsername(username);
+
+            String newAccessToken = jwtTokenService.generateAccessToken(user);
+            String newRefreshToken = jwtTokenService.generateRefreshToken(user);
+
+            return ResponseEntity.ok(new TokenResponseDTO(newAccessToken, request.refreshToken()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponseDTO("Invalid or expired refresh token", 401));
+        }
     }
 }
