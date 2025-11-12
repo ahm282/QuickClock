@@ -27,6 +27,7 @@ public class AuthController {
     private final UserService userService;
     private final JwtTokenService jwtTokenService;
     private final PasswordEncoder passwordEncoder;
+    private final static int REFRESH_TOKEN_MAX_AGE = 30 * 24 * 60 * 60; // 30 days
 
     public AuthController(UserService userService, JwtTokenService jwtTokenService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
@@ -51,26 +52,18 @@ public class AuthController {
             UserEntity user = userService.findByUsername(request.username());
 
             if (!passwordEncoder.matches(request.password(), user.getPasswordHash())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ErrorResponseDTO("Invalid credentials", 401));
+                return unauthorized("Invalid credentials");
             }
 
             String accessToken = jwtTokenService.generateAccessToken(user);
             String refreshToken = jwtTokenService.generateRefreshToken(user);
 
             // Store refresh token in HTTP-only cookie
-            Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-            refreshTokenCookie.setHttpOnly(true);  // Cannot be accessed by JavaScript
-            refreshTokenCookie.setSecure(true);     // Only sent over HTTPS
-            refreshTokenCookie.setPath("/api/auth/refresh");  // Only sent to refresh endpoint
-            refreshTokenCookie.setMaxAge(30 * 24 * 60 * 60);  // 30 days
-            refreshTokenCookie.setAttribute("SameSite", "Strict");  // CSRF protection
-            response.addCookie(refreshTokenCookie);
+            addRefreshTokenCookie(response, refreshToken);
 
             return ResponseEntity.ok(new AccessTokenResponseDTO(accessToken));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponseDTO("Invalid credentials", 401));
+            return unauthorized("Invalid credentials");
         }
     }
 
@@ -99,31 +92,54 @@ public class AuthController {
             String newRefreshToken = jwtTokenService.generateRefreshToken(user);
 
             // Store refresh token in HTTP-only cookie
-            Cookie refreshTokenCookie = new Cookie("refreshToken", newRefreshToken);
-            refreshTokenCookie.setHttpOnly(true);  // Cannot be accessed by JavaScript
-            refreshTokenCookie.setSecure(false);     // Enable in Production
-            refreshTokenCookie.setPath("/api/auth/refresh");  // Only sent to refresh endpoint
-            refreshTokenCookie.setMaxAge(30 * 24 * 60 * 60);  // 30 days
-            refreshTokenCookie.setAttribute("SameSite", "Strict");  // CSRF protection
-            response.addCookie(refreshTokenCookie);
+            addRefreshTokenCookie(response, newRefreshToken);
 
             return ResponseEntity.ok(new AccessTokenResponseDTO(newAccessToken));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponseDTO("Invalid or expired refresh token", 401));
+            return unauthorized("Invalid or expired refresh token");
         }
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {  // <-- Add this parameter
-        // Clear refresh token cookie
+        clearRefreshTokenCookie(response);
+        return ResponseEntity.ok().build();
+    }
+
+    // --- Helpers ---
+    private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false); // set to false for local dev
+        cookie.setPath("/api/auth/refresh");
+        cookie.setMaxAge(REFRESH_TOKEN_MAX_AGE);
+        cookie.setAttribute("SameSite", "Strict");
+        response.addCookie(cookie);
+    }
+
+    private void clearRefreshTokenCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);  // Set to false for local development
+        cookie.setSecure(true);
         cookie.setPath("/api/auth/refresh");
-        cookie.setMaxAge(0);  // Delete cookie immediately
+        cookie.setMaxAge(0);
+        cookie.setAttribute("SameSite", "Strict");
         response.addCookie(cookie);
+    }
 
-        return ResponseEntity.ok().build();
+    private String extractRefreshTokenFromCookies(HttpServletRequest request) {
+        if (request.getCookies() == null) {
+            return null;
+        }
+
+        for (Cookie cookie : request.getCookies()) {
+            if ("refreshToken".equals(cookie.getName())) return cookie.getValue();
+        }
+        return null;
+    }
+
+    private ResponseEntity<ErrorResponseDTO> unauthorized(String message) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponseDTO(message, 401));
     }
 }
