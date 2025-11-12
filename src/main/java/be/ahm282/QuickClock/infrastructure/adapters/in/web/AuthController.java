@@ -3,6 +3,9 @@ package be.ahm282.QuickClock.infrastructure.adapters.in.web;
 import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.UserService;
 import be.ahm282.QuickClock.infrastructure.entity.UserEntity;
 import be.ahm282.QuickClock.infrastructure.security.JwtTokenService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +18,7 @@ record LoginRequestDTO(String username, String password) {}
 record RegisterRequestDTO(String username, String password) {}
 record RefreshRequestDTO(String refreshToken) {}
 record TokenResponseDTO(String accessToken, String refreshToken) {}
+record AccessTokenResponseDTO(String accessToken) {}
 record ErrorResponseDTO(String errorMessage, int status) {}
 
 @RestController
@@ -42,7 +46,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request, HttpServletResponse response) {
         try {
             UserEntity user = userService.findByUsername(request.username());
 
@@ -54,7 +58,16 @@ public class AuthController {
             String accessToken = jwtTokenService.generateAccessToken(user);
             String refreshToken = jwtTokenService.generateRefreshToken(user);
 
-            return ResponseEntity.ok(new TokenResponseDTO(accessToken, refreshToken));
+            // Store refresh token in HTTP-only cookie
+            Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+            refreshTokenCookie.setHttpOnly(true);  // Cannot be accessed by JavaScript
+            refreshTokenCookie.setSecure(true);     // Only sent over HTTPS
+            refreshTokenCookie.setPath("/api/auth/refresh");  // Only sent to refresh endpoint
+            refreshTokenCookie.setMaxAge(30 * 24 * 60 * 60);  // 30 days
+            refreshTokenCookie.setAttribute("SameSite", "Strict");  // CSRF protection
+            response.addCookie(refreshTokenCookie);
+
+            return ResponseEntity.ok(new AccessTokenResponseDTO(accessToken));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponseDTO("Invalid credentials", 401));
@@ -62,23 +75,55 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestBody RefreshRequestDTO request) {
+    public ResponseEntity<?> refresh(HttpServletRequest request, HttpServletResponse response) {
         try {
-            if (!jwtTokenService.isRefreshToken(request.refreshToken())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ErrorResponseDTO("Invalid refresh token", 401));
-            }
+           String refreshToken = null;
+           if (request.getCookies() != null) {
+               for (Cookie cookie : request.getCookies()) {
+                   if ("refreshToken".equals(cookie.getName())) {
+                       refreshToken = cookie.getValue();
+                       break;
+                   }
+               }
+           }
 
-            String username = jwtTokenService.extractUsername(request.refreshToken());
+           if (refreshToken == null || !jwtTokenService.isRefreshToken(refreshToken)) {
+               return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                       .body(new ErrorResponseDTO("Invalid refresh token", 401));
+           }
+
+            String username = jwtTokenService.extractUsername(refreshToken);
             UserEntity user = userService.findByUsername(username);
 
             String newAccessToken = jwtTokenService.generateAccessToken(user);
             String newRefreshToken = jwtTokenService.generateRefreshToken(user);
 
-            return ResponseEntity.ok(new TokenResponseDTO(newAccessToken, newRefreshToken));
+            // Store refresh token in HTTP-only cookie
+            Cookie refreshTokenCookie = new Cookie("refreshToken", newRefreshToken);
+            refreshTokenCookie.setHttpOnly(true);  // Cannot be accessed by JavaScript
+            refreshTokenCookie.setSecure(false);     // Enable in Production
+            refreshTokenCookie.setPath("/api/auth/refresh");  // Only sent to refresh endpoint
+            refreshTokenCookie.setMaxAge(30 * 24 * 60 * 60);  // 30 days
+            refreshTokenCookie.setAttribute("SameSite", "Strict");  // CSRF protection
+            response.addCookie(refreshTokenCookie);
+
+            return ResponseEntity.ok(new AccessTokenResponseDTO(newAccessToken));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponseDTO("Invalid or expired refresh token", 401));
         }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {  // <-- Add this parameter
+        // Clear refresh token cookie
+        Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);  // Set to false for local development
+        cookie.setPath("/api/auth/refresh");
+        cookie.setMaxAge(0);  // Delete cookie immediately
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok().build();
     }
 }
