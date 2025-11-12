@@ -1,5 +1,6 @@
 package be.ahm282.QuickClock.infrastructure.adapters.out.persistence;
 
+import be.ahm282.QuickClock.domain.exception.DomainException;
 import be.ahm282.QuickClock.domain.exception.NotFoundException;
 import be.ahm282.QuickClock.infrastructure.entity.UserEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,20 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public UserEntity findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+    }
+
+    public UserEntity getUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+    }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
     /**
      * Get the secret for a user. Throws if user not found.
      */
@@ -26,20 +41,16 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
-    public UserEntity getUserEntity(Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
-    }
-
     /**
      * Create a new user with a generated HMAC secret.
      */
-    public UserEntity createUser(Long userId, String username) {
-        if (userRepository.existsById(userId)) {
+    public UserEntity createUser(String username, String passwordHash) {
+        if (userRepository.existsByUsername(username)) {
             throw new IllegalArgumentException("User already exists");
         }
+
         String secret = generateSecret();
-        UserEntity user = new UserEntity(userId, username, secret);
+        UserEntity user = new UserEntity(username, passwordHash, secret);
         return userRepository.save(user);
     }
 

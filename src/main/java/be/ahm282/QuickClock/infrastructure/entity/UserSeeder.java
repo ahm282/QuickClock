@@ -16,13 +16,13 @@ public class UserSeeder {
     @PostConstruct
     public void seed() {
         // Example: seed two users
-        seedUser(1L, "alice");
-        seedUser(2L, "bob");
+        seedUser(1L, "alice", "$2a$10$cMvvFY1gy6ilpjxZg7CyIuchDr/Z7QKXPOsDzUhefU5nMeZ.cGAUu");
+        seedUser(2L, "bob", "$2a$10$cMvvFY1gy6ilpjxZg7CyIuchDr/Z7QKXPOsDzUhefU5nMeZ.cGAUu");
     }
 
-    private void seedUser(Long id, String username) {
+    private void seedUser(Long id, String username, String passwordHash) {
         try {
-            userService.createUser(id, username);
+            userService.createUser(username, passwordHash);
         } catch (IllegalArgumentException e) {
             // User already exists, skip
         }
