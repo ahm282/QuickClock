@@ -75,7 +75,7 @@ public class AuthController {
             String newAccessToken = jwtTokenService.generateAccessToken(user);
             String newRefreshToken = jwtTokenService.generateRefreshToken(user);
 
-            return ResponseEntity.ok(new TokenResponseDTO(newAccessToken, request.refreshToken()));
+            return ResponseEntity.ok(new TokenResponseDTO(newAccessToken, newRefreshToken));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponseDTO("Invalid or expired refresh token", 401));
