@@ -1,6 +1,5 @@
 package be.ahm282.QuickClock.infrastructure.adapters.out.persistence;
 
-import be.ahm282.QuickClock.domain.exception.DomainException;
 import be.ahm282.QuickClock.domain.exception.NotFoundException;
 import be.ahm282.QuickClock.infrastructure.entity.UserEntity;
 import org.springframework.stereotype.Service;
@@ -11,10 +10,10 @@ import java.util.Base64;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final JpaUserRepository userRepository;
     private final SecureRandom secureRandom = new SecureRandom();
 
-    public UserService(UserRepository userRepository) {
+    public UserService(JpaUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

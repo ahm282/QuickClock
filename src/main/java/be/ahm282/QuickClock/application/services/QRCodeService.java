@@ -4,7 +4,7 @@ import be.ahm282.QuickClock.application.ports.in.dto.ClockQRCodeResponseDTO;
 import be.ahm282.QuickClock.domain.exception.NotFoundException;
 import be.ahm282.QuickClock.domain.model.User;
 import be.ahm282.QuickClock.infrastructure.adapters.in.qr.QRCodeGenerator;
-import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.UserRepository;
+import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.JpaUserRepository;
 import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 public class QRCodeService {
     private final QRCodeGenerator qrCodeGenerator;
     private final String frontendBaseUrl;
-    private final UserRepository userRepository;
+    private final JpaUserRepository userRepository;
 
-    public QRCodeService(QRCodeGenerator qrCodeGenerator, @Value("${app.frontend.base-url}") String frontendBaseUrl, UserRepository userRepository) {
+    public QRCodeService(QRCodeGenerator qrCodeGenerator, @Value("${app.frontend.base-url}") String frontendBaseUrl, JpaUserRepository userRepository) {
         this.qrCodeGenerator = qrCodeGenerator;
         this.frontendBaseUrl = frontendBaseUrl;
         this.userRepository = userRepository;
