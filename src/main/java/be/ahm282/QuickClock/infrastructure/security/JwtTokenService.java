@@ -1,60 +1,83 @@
 package be.ahm282.QuickClock.infrastructure.security;
 
-import be.ahm282.QuickClock.infrastructure.entity.UserEntity;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
+import be.ahm282.QuickClock.domain.model.User;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.UUID;
+
+import static io.jsonwebtoken.Jwts.SIG.HS512;
 
 @Service
 public class JwtTokenService {
     private static final long ACCESS_TOKEN_EXPIRATION = 1_800_000; // 30 minutes
-    private static final long REFRESH_TOKEN_EXPIRATION = 2_592_000_000L; // 7 days
+    private static final long REFRESH_TOKEN_EXPIRATION = 604_800_000L; // 7 days
     private final SecretKey signingKey;
+    private final String issuer;
+    private final String audience;
+    private final JwtParser jwtParser;
 
-    public JwtTokenService(@Value("${app.jwt.secret}") String base64Secret) {
+    public JwtTokenService(
+            @Value("${app.jwt.secret}") String base64Secret,
+            @Value("${app.jwt.issuer}") String issuer,
+            @Value("${app.jwt.audience}") String audience
+    ) {
         byte[] keyBytes = Decoders.BASE64.decode(base64Secret);
+
+        if (keyBytes.length < 64) { // <<< ADDED: Enforce key length for HS512
+            throw new IllegalArgumentException("JWT secret key must be at least 64 bytes (512 bits) for HS512.");
+        }
+
         this.signingKey = Keys.hmacShaKeyFor(keyBytes);
+        this.issuer = issuer;
+        this.audience = audience;
+
+        this.jwtParser = Jwts.parser()
+                .verifyWith(signingKey)
+                .requireIssuer(issuer)
+                .requireAudience(audience)
+                .build();
     }
 
-    public String generateToken(UserEntity user) {
-        return generateAccessToken(user);
+    public String generateAccessToken(String username, Long userId) {
+        return buildToken(username, userId, ACCESS_TOKEN_EXPIRATION, "access");
     }
 
-    public String generateAccessToken(UserEntity user) {
-        return buildToken(user, ACCESS_TOKEN_EXPIRATION, "access");
+    public String generateRefreshToken(String username, Long userId) {
+        return buildToken(username, userId, REFRESH_TOKEN_EXPIRATION, "refresh");
     }
 
-    public String generateRefreshToken(UserEntity user) {
-        return buildToken(user, REFRESH_TOKEN_EXPIRATION, "refresh");
-    }
-
-    public String buildToken(UserEntity user, long expiration, String type) {
+    public String buildToken(String username, Long userId, long expiration, String type) {
         return Jwts.builder()
-                .subject(user.getUsername())
-                .claim("userId", user.getId())
+                .subject(username)
+                .issuer(issuer)
+                .audience().add(audience).and()
+                .claim("userId", userId)
                 .claim("type", type)
+                .id(UUID.randomUUID().toString())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(signingKey)
+                .signWith(signingKey, HS512)
                 .compact();
     }
 
     public Claims parseToken(String token) {
-        return Jwts.parser()
-                .verifyWith(signingKey)
-                .build()
-                .parseSignedClaims(token)
+        return jwtParser.parseSignedClaims(token)
                 .getPayload();
     }
 
     public boolean isRefreshToken(String token) {
-        return "refresh".equals(parseToken(token).get("type", String.class));
+        try {
+            return "refresh".equals(parseToken(token).get("type", String.class));
+        } catch (JwtException e) {
+            return false;
+        }
     }
 
     public String extractUsername(String token) {

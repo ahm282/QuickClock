@@ -55,8 +55,8 @@ public class AuthController {
                 return unauthorized("Invalid credentials");
             }
 
-            String accessToken = jwtTokenService.generateAccessToken(user);
-            String refreshToken = jwtTokenService.generateRefreshToken(user);
+            String accessToken = jwtTokenService.generateAccessToken(user.getUsername(), user.getId());
+            String refreshToken = jwtTokenService.generateRefreshToken(user.getUsername(), user.getId());
 
             // Store refresh token in HTTP-only cookie
             addRefreshTokenCookie(response, refreshToken);
@@ -88,8 +88,8 @@ public class AuthController {
             String username = jwtTokenService.extractUsername(refreshToken);
             UserEntity user = userService.findByUsername(username);
 
-            String newAccessToken = jwtTokenService.generateAccessToken(user);
-            String newRefreshToken = jwtTokenService.generateRefreshToken(user);
+            String newAccessToken = jwtTokenService.generateAccessToken(user.getUsername(), user.getId());
+            String newRefreshToken = jwtTokenService.generateRefreshToken(user.getUsername(), user.getId());
 
             // Store refresh token in HTTP-only cookie
             addRefreshTokenCookie(response, newRefreshToken);
