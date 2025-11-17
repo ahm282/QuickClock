@@ -7,6 +7,7 @@ import be.ahm282.QuickClock.infrastructure.entity.ClockRecordEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -33,5 +34,11 @@ public class JpaClockRecordAdapter implements ClockRecordRepositoryPort {
                 .map(mapper::toDomain)
                 .sorted((cr1, cr2) -> cr2.getTimestamp().compareTo(cr1.getTimestamp()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<ClockRecord> findLatestByUserId(Long userId) {
+        return repository.findTopByUserIdOrderByTimestampDesc(userId)
+                .map(mapper::toDomain);
     }
 }
