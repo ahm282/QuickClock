@@ -7,7 +7,7 @@ import be.ahm282.QuickClock.application.ports.in.dto.ClockResponseDTO;
 import be.ahm282.QuickClock.application.services.ClockService;
 import be.ahm282.QuickClock.application.services.QRCodeService;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
-import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper.ClockRecordMapper;
+import be.ahm282.QuickClock.infrastructure.adapters.in.web.mapper.ClockResponseDTOMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +20,11 @@ public class ClockController {
 
     private final ClockService clockService;
     private final QRCodeService qrCodeService;
-    private final ClockRecordMapper.ClockResponseMapper responseMapper;
+    private final ClockResponseDTOMapper responseMapper;
 
     public ClockController(ClockService clockService,
                            QRCodeService qrCodeService,
-                           ClockRecordMapper.ClockResponseMapper responseMapper) {
+                           ClockResponseDTOMapper responseMapper) {
         this.clockService = clockService;
         this.qrCodeService = qrCodeService;
         this.responseMapper = responseMapper;

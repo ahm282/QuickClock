@@ -2,7 +2,7 @@ package be.ahm282.QuickClock.infrastructure.adapters.out.persistence;
 
 import be.ahm282.QuickClock.application.ports.out.ClockRecordRepositoryPort;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
-import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper.ClockRecordMapper;
+import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper.ClockRecordEntityMapper;
 import be.ahm282.QuickClock.infrastructure.entity.ClockRecordEntity;
 import org.springframework.stereotype.Component;
 
@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 @Component
 public class JpaClockRecordAdapter implements ClockRecordRepositoryPort {
     private final JpaClockRecordRepositoryAdapter repository;
-    private final ClockRecordMapper mapper;
+    private final ClockRecordEntityMapper mapper;
 
-    public JpaClockRecordAdapter(JpaClockRecordRepositoryAdapter repository, ClockRecordMapper mapper) {
+    public JpaClockRecordAdapter(JpaClockRecordRepositoryAdapter repository, ClockRecordEntityMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
