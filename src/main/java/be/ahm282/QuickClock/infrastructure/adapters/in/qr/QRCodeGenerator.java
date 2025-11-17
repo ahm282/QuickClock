@@ -1,11 +1,11 @@
 package be.ahm282.QuickClock.infrastructure.adapters.in.qr;
 
+import org.springframework.stereotype.Component;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-
-import org.springframework.stereotype.Component;
 
 @Component
 public class QRCodeGenerator {

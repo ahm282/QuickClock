@@ -3,9 +3,10 @@ package be.ahm282.QuickClock.infrastructure.entity;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.model.User;
 import jakarta.annotation.PostConstruct;
+import org.springframework.stereotype.Component;
+
 import java.security.SecureRandom;
 import java.util.Base64;
-import org.springframework.stereotype.Component;
 
 @Component
 public class UserSeeder {

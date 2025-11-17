@@ -1,6 +1,7 @@
 package be.ahm282.QuickClock.application.ports.out;
 
 import be.ahm282.QuickClock.domain.model.User;
+
 import java.util.Optional;
 
 public interface UserRepositoryPort {

@@ -3,10 +3,8 @@ package be.ahm282.QuickClock.application.services;
 import be.ahm282.QuickClock.application.ports.in.ClockUseCase;
 import be.ahm282.QuickClock.application.ports.out.ClockRecordRepositoryPort;
 import be.ahm282.QuickClock.application.ports.out.QRTokenPort;
-import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.exception.BusinessRuleException;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
-import be.ahm282.QuickClock.domain.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

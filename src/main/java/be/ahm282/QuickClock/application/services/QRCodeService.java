@@ -1,8 +1,8 @@
 package be.ahm282.QuickClock.application.services;
 
+import be.ahm282.QuickClock.application.ports.in.dto.ClockQRCodeResponseDTO;
 import be.ahm282.QuickClock.application.ports.out.QRTokenPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
-import be.ahm282.QuickClock.application.ports.in.dto.ClockQRCodeResponseDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

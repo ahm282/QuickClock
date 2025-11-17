@@ -3,12 +3,7 @@ package be.ahm282.QuickClock.infrastructure.adapters.out.persistence;
 import be.ahm282.QuickClock.application.ports.out.InvalidatedTokenRepositoryPort;
 import be.ahm282.QuickClock.domain.model.InvalidatedToken;
 import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper.InvalidatedTokenMapper;
-import be.ahm282.QuickClock.infrastructure.entity.InvalidatedTokenEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.Optional;

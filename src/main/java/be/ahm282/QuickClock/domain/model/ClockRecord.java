@@ -1,6 +1,7 @@
 package be.ahm282.QuickClock.domain.model;
 
 import be.ahm282.QuickClock.domain.exception.ValidationException;
+
 import java.time.LocalDateTime;
 
 /**

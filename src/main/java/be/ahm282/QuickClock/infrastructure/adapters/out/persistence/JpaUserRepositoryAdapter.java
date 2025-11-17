@@ -5,7 +5,6 @@ import be.ahm282.QuickClock.domain.model.User;
 import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper.UserMapper;
 import be.ahm282.QuickClock.infrastructure.entity.UserEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
