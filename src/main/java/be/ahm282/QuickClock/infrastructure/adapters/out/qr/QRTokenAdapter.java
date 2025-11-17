@@ -3,17 +3,17 @@ package be.ahm282.QuickClock.infrastructure.adapters.out.qr;
 import be.ahm282.QuickClock.application.ports.out.QRTokenPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.exception.BusinessRuleException;
-import be.ahm282.QuickClock.infrastructure.adapters.in.qr.QRCodeGenerator;
+import be.ahm282.QuickClock.infrastructure.security.SecureTokenService;
 import org.springframework.stereotype.Component;
 
 @Component
 public class QRTokenAdapter implements QRTokenPort {
 
-    private final QRCodeGenerator generator;
+    private final SecureTokenService secureTokenService;
     private final UserRepositoryPort userRepositoryPort;
 
-    public QRTokenAdapter(QRCodeGenerator generator, UserRepositoryPort userRepositoryPort) {
-        this.generator = generator;
+    public QRTokenAdapter(SecureTokenService secureTokenService, UserRepositoryPort userRepositoryPort) {
+        this.secureTokenService = secureTokenService;
         this.userRepositoryPort = userRepositoryPort;
     }
 
@@ -22,17 +22,28 @@ public class QRTokenAdapter implements QRTokenPort {
         String secret = userRepositoryPort.findById(userId)
                 .orElseThrow(() -> new BusinessRuleException("User not found"))
                 .getSecret();
-        return generator.generateToken(userId, secret);
+
+        return secureTokenService.generateToken(userId, secret);
     }
 
     @Override
     public Long validateAndExtractUserId(String token) {
-        // Retrieve secret for user
-        Long userIdFromToken = Long.parseLong(new String(java.util.Base64.getUrlDecoder().decode(token), java.nio.charset.StandardCharsets.UTF_8).split(":")[0]);
-        String secret = userRepositoryPort.findById(userIdFromToken)
+        Long userId;
+
+        try {
+            userId = secureTokenService.extractUserIdUnsafe(token);
+        } catch (IllegalArgumentException e) {
+            throw new BusinessRuleException("Invalid QR Token Format");
+        }
+
+        String secret = userRepositoryPort.findById(userId)
                 .orElseThrow(() -> new BusinessRuleException("User not found"))
                 .getSecret();
 
-        return generator.validateAndExtractUserId(token, secret);
+        if (!secureTokenService.isValid(token, secret)) {
+            throw new BusinessRuleException("QR Token is expired or invalid");
+        }
+
+        return userId;
     }
 }
