@@ -5,20 +5,23 @@ import jakarta.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "invalidates_tokens")
+@Table(name = "invalidated_tokens", indexes = {
+        @Index(name = "idx_invalidated_jti", columnList = "jti"),
+        @Index(name = "idx_invalidated_user", columnList = "user_id")
+})
 public class InvalidatedTokenEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "jti", nullable = false, unique = true)
+    @Column(name = "jti", nullable = false, unique = true, length = 100)
     private String jti;
 
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Column(name = "expiry_time", nullable = false)
-    private Instant expiryTime; // Token's original expiry
+    private Instant expiryTime;
 
     public InvalidatedTokenEntity() {}
 
@@ -28,15 +31,9 @@ public class InvalidatedTokenEntity {
         this.expiryTime = expiryTime;
     }
 
-    public String getJti() {
-        return jti;
-    }
+    public String getJti() { return jti; }
 
-    public Long getUserId() {
-        return userId;
-    }
+    public Long getUserId() { return userId; }
 
-    public Instant getExpiryTime() {
-        return expiryTime;
-    }
+    public Instant getExpiryTime() { return expiryTime; }
 }

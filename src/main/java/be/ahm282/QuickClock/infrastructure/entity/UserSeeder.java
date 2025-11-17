@@ -1,30 +1,42 @@
 package be.ahm282.QuickClock.infrastructure.entity;
 
-import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.UserService;
+import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
+import be.ahm282.QuickClock.domain.model.User;
 import jakarta.annotation.PostConstruct;
+import java.security.SecureRandom;
+import java.util.Base64;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserSeeder {
+    private final UserRepositoryPort userRepositoryPort;
+    private final SecureRandom secureRandom;
 
-    private final UserService userService;
-
-    public UserSeeder(UserService userService) {
-        this.userService = userService;
+    public UserSeeder(UserRepositoryPort userRepositoryPort) throws Exception {
+        this.userRepositoryPort = userRepositoryPort;
+        this.secureRandom = SecureRandom.getInstanceStrong();
     }
 
     @PostConstruct
     public void seed() {
         // Example: seed two users
-        seedUser(1L, "alice", "$2a$10$cMvvFY1gy6ilpjxZg7CyIuchDr/Z7QKXPOsDzUhefU5nMeZ.cGAUu");
-        seedUser(2L, "bob", "$2a$10$cMvvFY1gy6ilpjxZg7CyIuchDr/Z7QKXPOsDzUhefU5nMeZ.cGAUu");
+        seedUser("alice");
+        seedUser("bob");
     }
 
-    private void seedUser(Long id, String username, String passwordHash) {
-        try {
-            userService.createUser(username, passwordHash);
-        } catch (IllegalArgumentException e) {
-            // User already exists, skip
+    private void seedUser(String username) {
+        if (userRepositoryPort.findByUsername(username).isPresent()) {
+            return;
         }
+
+        String secret = generateSecret();
+        User user = new User(null, username, "$2a$10$cMvvFY1gy6ilpjxZg7CyIuchDr/Z7QKXPOsDzUhefU5nMeZ.cGAUu", secret);
+        userRepositoryPort.save(user);
+    }
+
+    private String generateSecret() {
+        byte[] bytes = new byte[64];
+        secureRandom.nextBytes(bytes);
+        return Base64.getEncoder().encodeToString(bytes);
     }
 }

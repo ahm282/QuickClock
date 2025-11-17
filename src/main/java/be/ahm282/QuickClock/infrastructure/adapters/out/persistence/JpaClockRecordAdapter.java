@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 
 @Component
 public class JpaClockRecordAdapter implements ClockRecordRepositoryPort {
-    private final JpaClockRecordRepository repository;
+    private final JpaClockRecordRepositoryAdapter repository;
     private final ClockRecordMapper mapper;
 
-    public JpaClockRecordAdapter(JpaClockRecordRepository repository, ClockRecordMapper mapper) {
+    public JpaClockRecordAdapter(JpaClockRecordRepositoryAdapter repository, ClockRecordMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
     }
@@ -31,6 +31,7 @@ public class JpaClockRecordAdapter implements ClockRecordRepositoryPort {
         return repository.findAllByUserIdOrderByTimestampDesc(userId)
                 .stream()
                 .map(mapper::toDomain)
+                .sorted((cr1, cr2) -> cr2.getTimestamp().compareTo(cr1.getTimestamp()))
                 .collect(Collectors.toList());
     }
 }

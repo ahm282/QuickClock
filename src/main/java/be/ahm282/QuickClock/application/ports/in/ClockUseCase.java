@@ -7,5 +7,7 @@ import java.util.List;
 public interface ClockUseCase {
     ClockRecord clockIn(Long userId);
     ClockRecord clockOut(Long userId);
+    ClockRecord clockInWithQR(String token);
+    ClockRecord clockOutWithQR(String token);
     List<ClockRecord> getHistory(Long userId);
 }

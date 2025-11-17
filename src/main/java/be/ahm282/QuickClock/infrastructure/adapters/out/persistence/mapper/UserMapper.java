@@ -2,24 +2,34 @@ package be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper;
 
 import be.ahm282.QuickClock.domain.model.User;
 import be.ahm282.QuickClock.infrastructure.entity.UserEntity;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserMapper {
 
-    public static User toDomain(UserEntity entity) {
+    public User toDomain(UserEntity entity) {
         if (entity == null) {
             return null;
         }
 
-        return new User(entity.getId(), entity.getUsername(), entity.getSecret());
+        return new User(
+                entity.getId(),
+                entity.getUsername(),
+                entity.getPasswordHash(),
+                entity.getSecret()
+        );
     }
 
-    public static UserEntity toEntity(User domain, String passwordHash) {
-        if (domain == null) {
+    public UserEntity toEntity(User user) {
+        if (user == null) {
             return null;
         }
 
-        UserEntity entity = new UserEntity(domain.getUsername(), passwordHash, domain.getSecret());
-        entity.setId(domain.getId());
+        UserEntity entity = new UserEntity();
+        entity.setId(user.getId());
+        entity.setUsername(user.getUsername());
+        entity.setPasswordHash(user.getPasswordHash());
+        entity.setSecret(user.getSecret());
         return entity;
     }
 }
