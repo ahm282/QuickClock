@@ -1,5 +1,6 @@
 package be.ahm282.QuickClock.infrastructure.adapters.in.web;
 
+import be.ahm282.QuickClock.application.dto.TokenMetadata;
 import be.ahm282.QuickClock.application.dto.TokenPair;
 import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
 import be.ahm282.QuickClock.application.ports.in.RefreshTokenUseCase;
@@ -9,6 +10,7 @@ import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.AccessTokenRespon
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.ErrorResponseDTO;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.LoginRequestDTO;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.RegisterRequestDTO;
+import be.ahm282.QuickClock.infrastructure.security.service.RequestMetadataExtractorService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,15 +29,21 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     private static final int REFRESH_COOKIE_MAX_AGE = 2_592_000; // 30 days
+    private static final boolean cookieSecure = false;
 
     private final AuthUseCase authUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
     private final TokenProviderPort tokenProviderPort;
+    private final RequestMetadataExtractorService metadataExtractor;
 
-    public AuthController(AuthUseCase authUseCase, RefreshTokenUseCase refreshTokenUseCase, TokenProviderPort tokenProviderPort) {
+    public AuthController(AuthUseCase authUseCase,
+                          RefreshTokenUseCase refreshTokenUseCase,
+                          TokenProviderPort tokenProviderPort,
+                          RequestMetadataExtractorService metadataExtractor) {
         this.authUseCase = authUseCase;
         this.refreshTokenUseCase = refreshTokenUseCase;
         this.tokenProviderPort = tokenProviderPort;
+        this.metadataExtractor = metadataExtractor;
     }
 
     @PostMapping("/register")
@@ -52,18 +60,24 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request, HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request, HttpServletRequest httpRequest, HttpServletResponse response) {
         try {
-            TokenPair pair = authUseCase.login(request.username(), request.password());
+            TokenMetadata metadata = metadataExtractor.extract(httpRequest);
+
+            TokenPair pair = authUseCase.login(request.username(), request.password(), metadata);
+
+            Cookie deviceIdCookie = metadataExtractor.createDeviceIdCookie(metadata.deviceId(), cookieSecure);
+            response.addCookie(deviceIdCookie);
+
             addRefreshTokenCookie(response, pair.refreshToken());
             return ResponseEntity.ok(new AccessTokenResponseDTO(pair.accessToken()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponseDTO("Invalid credentials", 401));
+                    .body(new ErrorResponseDTO("Authentication failed. Please log in again.", 401));
         } catch (Exception e) {
             log.error("Login failed", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponseDTO("Internal server error", 500));
+                    .body(new ErrorResponseDTO("Internal server error. Authentication failed. Please log in again.", 500));
         }
     }
 
@@ -77,7 +91,9 @@ public class AuthController {
                         .body(new ErrorResponseDTO("Invalid refresh token", 401));
             }
 
-            TokenPair pair = refreshTokenUseCase.rotateRefreshTokenByToken(refreshToken);
+            TokenMetadata metadata = metadataExtractor.extract(request);
+
+            TokenPair pair = refreshTokenUseCase.rotateRefreshTokenByToken(refreshToken, metadata);
             addRefreshTokenCookie(response, pair.refreshToken());
 
             return ResponseEntity.ok(new AccessTokenResponseDTO(pair.accessToken()));
@@ -119,9 +135,9 @@ public class AuthController {
     // --- Cookie Helpers ---
     private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
         Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setDomain("localhost:8081");
+        cookie.setDomain("localhost");
         cookie.setHttpOnly(true);
-        cookie.setSecure(false); // set to false for local dev
+        cookie.setSecure(cookieSecure); // set to false for local dev
         cookie.setPath("/");
         cookie.setMaxAge(REFRESH_COOKIE_MAX_AGE);
         cookie.setAttribute("SameSite", "Strict");
@@ -132,7 +148,7 @@ public class AuthController {
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setDomain(null);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(cookieSecure);
         cookie.setPath("/");
         cookie.setMaxAge(0);
         cookie.setValue(null);

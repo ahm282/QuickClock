@@ -3,7 +3,7 @@ package be.ahm282.QuickClock.infrastructure.adapters.out.qr;
 import be.ahm282.QuickClock.application.ports.out.QRTokenPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.exception.BusinessRuleException;
-import be.ahm282.QuickClock.infrastructure.security.SecureTokenService;
+import be.ahm282.QuickClock.infrastructure.security.service.SecureTokenService;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,4 +1,4 @@
-package be.ahm282.QuickClock.infrastructure.security;
+package be.ahm282.QuickClock.infrastructure.security.service;
 
 import org.springframework.stereotype.Service;
 

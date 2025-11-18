@@ -1,5 +1,6 @@
 package be.ahm282.QuickClock.infrastructure.security;
 
+import be.ahm282.QuickClock.infrastructure.security.service.JwtTokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

@@ -1,5 +1,6 @@
 package be.ahm282.QuickClock.application.services;
 
+import be.ahm282.QuickClock.application.dto.TokenMetadata;
 import be.ahm282.QuickClock.application.dto.TokenPair;
 import be.ahm282.QuickClock.application.ports.in.RefreshTokenUseCase;
 import be.ahm282.QuickClock.application.ports.out.InvalidatedTokenRepositoryPort;
@@ -19,19 +20,16 @@ import java.util.Optional;
 public class RefreshTokenService implements RefreshTokenUseCase {
     private final InvalidatedTokenRepositoryPort invalidatedTokenRepositoryPort;
     private final TokenProviderPort tokenProviderPort;
-    private final UserRepositoryPort userRepositoryPort;
 
     public RefreshTokenService(InvalidatedTokenRepositoryPort invalidatedTokenRepositoryPort,
-                               TokenProviderPort tokenProviderPort,
-                               UserRepositoryPort userRepositoryPort) {
+                               TokenProviderPort tokenProviderPort) {
         this.invalidatedTokenRepositoryPort = invalidatedTokenRepositoryPort;
         this.tokenProviderPort = tokenProviderPort;
-        this.userRepositoryPort = userRepositoryPort;
     }
 
     @Override
     @Transactional
-    public TokenPair rotateRefreshTokenByToken(String refreshToken) {
+    public TokenPair rotateRefreshTokenByToken(String refreshToken, TokenMetadata metadata) {
         boolean isRefreshToken = tokenProviderPort.isRefreshToken(refreshToken);
 
         if (!isRefreshToken) {
@@ -52,9 +50,9 @@ public class RefreshTokenService implements RefreshTokenUseCase {
         // Persist old JTI as invalidated using the token's expiry
         invalidatedTokenRepositoryPort.save(new InvalidatedToken(jti, userId, expiry));
 
-        // Generate new tokens (fresh access + refresh) in pair
-        String newAccessToken = tokenProviderPort.generateAccessToken(username, userId);
-        String newRefreshToken = tokenProviderPort.generateRefreshToken(username, userId);
+        // Generate new tokens (fresh access and refresh) in a pair
+        String newAccessToken = tokenProviderPort.generateAccessToken(username, userId, metadata);
+        String newRefreshToken = tokenProviderPort.generateRefreshToken(username, userId, metadata);
 
         return new TokenPair(newAccessToken, newRefreshToken);
     }

@@ -1,5 +1,6 @@
 package be.ahm282.QuickClock.application.services;
 
+import be.ahm282.QuickClock.application.dto.TokenMetadata;
 import be.ahm282.QuickClock.application.dto.TokenPair;
 import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
 import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
@@ -29,7 +30,7 @@ public class AuthenticationService implements AuthUseCase {
     }
 
     @Override
-    public TokenPair login(String username, String password) {
+    public TokenPair login(String username, String password, TokenMetadata metadata) {
         Optional<User> maybeUser = userRepositoryPort.findByUsername(username);
         if (maybeUser.isEmpty()) {
             throw new IllegalArgumentException("Invalid username or password");
@@ -40,8 +41,8 @@ public class AuthenticationService implements AuthUseCase {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
-        String accessToken = tokenProviderPort.generateAccessToken(user.getUsername(), user.getId());
-        String refreshToken = tokenProviderPort.generateRefreshToken(user.getUsername(), user.getId());
+        String accessToken = tokenProviderPort.generateAccessToken(user.getUsername(), user.getId(), metadata);
+        String refreshToken = tokenProviderPort.generateRefreshToken(user.getUsername(), user.getId(), metadata);
 
         return new TokenPair(accessToken, refreshToken);
     }
@@ -59,7 +60,7 @@ public class AuthenticationService implements AuthUseCase {
 
     private String generateSecret() {
         byte[] bytes = new byte[64];
-        new SecureRandom().nextBytes(bytes);
+        secureRandom.nextBytes(bytes);
         return Base64.getEncoder().encodeToString(bytes);
     }
 }
