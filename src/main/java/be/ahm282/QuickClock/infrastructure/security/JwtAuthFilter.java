@@ -1,6 +1,8 @@
 package be.ahm282.QuickClock.infrastructure.security;
 
+import be.ahm282.QuickClock.application.dto.TokenMetadata;
 import be.ahm282.QuickClock.infrastructure.security.service.JwtTokenService;
+import be.ahm282.QuickClock.infrastructure.security.service.RequestMetadataExtractorService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -29,9 +31,11 @@ import java.util.stream.Collectors;
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtTokenService jwtTokenService;
     private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
+    private final RequestMetadataExtractorService metadataExtractor;
 
-    public JwtAuthFilter(JwtTokenService jwtTokenService) {
+    public JwtAuthFilter(JwtTokenService jwtTokenService, RequestMetadataExtractorService metadataExtractor) {
         this.jwtTokenService = jwtTokenService;
+        this.metadataExtractor = metadataExtractor;
     }
 
     @Override
@@ -52,8 +56,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             String tokenType = claims.get("type", String.class);
             if (!"access".equals(tokenType)) {
-                filterChain.doFilter(request, response); // Refresh token or other type, ignore.
+                filterChain.doFilter(request, response); // Refresh token or another type, ignore.
                 return;
+            }
+
+            String tokenDeviceId = claims.get("deviceId", String.class);
+            String tokenIpAddress = claims.get("ipAddress", String.class);
+
+            TokenMetadata currentMetadata = metadataExtractor.extract(request);
+
+            if (tokenDeviceId != null && !tokenDeviceId.equals(currentMetadata.deviceId())) {
+                log.warn("Device ID mismatch for user {}. Token stolen?", claims.getSubject());
+                // sendError(response, "Token used from different device");
+                // return;
+            }
+
+            if (tokenIpAddress != null && !tokenIpAddress.equals(currentMetadata.ipAddress())) {
+                log.info("IP address changed for user {}", claims.getSubject()); // IPs change regularly
             }
 
             String username = claims.getSubject();
