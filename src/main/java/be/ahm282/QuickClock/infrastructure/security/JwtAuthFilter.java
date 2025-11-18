@@ -75,24 +75,24 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             }
         }  catch (ExpiredJwtException e) {
             log.warn("JWT is expired: {}", e.getMessage());
-            sendError(response, "Token expired");
+            sendError(response);
             return; // Stop chain
         } catch (SignatureException e) {
             log.warn("JWT signature validation failed: {}", e.getMessage());
-            sendError(response, "Invalid token signature");
+            sendError(response);
             return;
         } catch (JwtException e) {
             log.warn("JWT token validation failed: {}", e.getMessage());
-            sendError(response, "Invalid token");
+            sendError(response);
             return;
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private void sendError(HttpServletResponse response, String message) throws IOException {
+    private void sendError(HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
-        response.getWriter().write(String.format("{\"error\": \"%s\", \"status\": 401}", message));
+        response.getWriter().write(String.format("{\"error\": \"%s\", \"status\": 401}", "Authentication failed. Please log in again."));
     }
 }
