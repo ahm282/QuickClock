@@ -4,9 +4,7 @@ import be.ahm282.QuickClock.application.dto.TokenMetadata;
 import be.ahm282.QuickClock.infrastructure.security.service.JwtTokenService;
 import be.ahm282.QuickClock.infrastructure.security.service.RequestMetadataExtractorService;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +23,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -42,67 +41,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
+        String token = extractToken(request);
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String token = authHeader.substring(7);
-
         try {
             Claims claims = jwtTokenService.parseClaims(token);
 
-            String tokenType = claims.get("type", String.class);
-            if (!"access".equals(tokenType)) {
+            if (!isAccessToken(claims)) {
                 filterChain.doFilter(request, response); // Refresh token or another type, ignore.
                 return;
             }
 
-            String tokenDeviceId = claims.get("deviceId", String.class);
-            String tokenIpAddress = claims.get("ipAddress", String.class);
-
-            TokenMetadata currentMetadata = metadataExtractor.extract(request);
-
-            if (tokenDeviceId != null && !tokenDeviceId.equals(currentMetadata.deviceId())) {
-                log.warn("Device ID mismatch for user {}. Token stolen?", claims.getSubject());
-                // sendError(response, "Token used from different device");
-                // return;
-            }
-
-            if (tokenIpAddress != null && !tokenIpAddress.equals(currentMetadata.ipAddress())) {
-                log.info("IP address changed for user {}", claims.getSubject()); // IPs change regularly
-            }
-
-            String username = claims.getSubject();
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                List<String> roles = claims.get("roles", List.class);
-                if (roles == null) {
-                    roles = Collections.emptyList();
-                }
-
-                List<GrantedAuthority> authorities = roles.stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                        .collect(Collectors.toUnmodifiableList());
-
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        username,
-                        null,
-                        authorities); // TODO: Add authorities or roles
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-            }
-        }  catch (ExpiredJwtException e) {
-            log.warn("JWT is expired: {}", e.getMessage());
-            sendError(response);
-            return; // Stop chain
-        } catch (SignatureException e) {
-            log.warn("JWT signature validation failed: {}", e.getMessage());
-            sendError(response);
-            return;
-        } catch (JwtException e) {
-            log.warn("JWT token validation failed: {}", e.getMessage());
+            validateMetadata(claims, request);
+            authenticate(claims, request);
+        }  catch (JwtException e) {
+            log.warn("JWT validation failed: {}", e.getMessage());
             sendError(response);
             return;
         }
@@ -110,6 +67,75 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    // ------------------------
+    // Extraction and Validation
+    // ------------------------
+    private String extractToken(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            return null;
+        }
+        return header.substring(7);
+    }
+
+    private boolean isAccessToken(Claims claims) {
+        return "access".equals(claims.get("type", String.class));
+    }
+
+    private void validateMetadata(Claims claims, HttpServletRequest request) {
+        TokenMetadata currentMetadata = metadataExtractor.extract(request);
+
+        String tokenDeviceId = claims.get("deviceId", String.class);
+        String tokenIp = claims.get("ipAddress", String.class);
+
+        if (tokenDeviceId != null && !tokenDeviceId.equals(currentMetadata.deviceId())) {
+            log.warn("Device ID mismatch for user {}. Token stolen?", claims.getSubject());
+        }
+
+        if (tokenIp != null && !tokenIp.equals(currentMetadata.ipAddress())) {
+            log.info("IP change detected for user {}", claims.getSubject());
+        }
+    }
+
+    // ------------------------
+    // Authentication
+    // ------------------------
+    private void authenticate(Claims claims, HttpServletRequest request) {
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            return; // Already authenticated
+        }
+
+        String username = claims.getSubject();
+        if (username == null) {
+            return;
+        }
+
+        List<?> rawRoles = claims.get("roles", List.class);
+        List<String> roles = rawRoles == null
+                ? Collections.emptyList()
+                : rawRoles.stream()
+                .filter(String.class::isInstance)
+                .map(String.class::cast)
+                .toList();
+
+        List<GrantedAuthority> authorities =
+                roles.stream()
+                        .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
+                        .collect(toUnmodifiableList());
+
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                username,
+                null,
+                authorities
+        );
+
+        auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    // ------------------------
+    // Error Handling
+    // ------------------------
     private void sendError(HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
