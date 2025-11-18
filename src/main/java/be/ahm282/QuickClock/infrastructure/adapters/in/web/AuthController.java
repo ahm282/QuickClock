@@ -124,7 +124,7 @@ public class AuthController {
         cookie.setSecure(false); // set to false for local dev
         cookie.setPath("/");
         cookie.setMaxAge(REFRESH_COOKIE_MAX_AGE);
-        cookie.setAttribute("SameSite", "Lax");
+        cookie.setAttribute("SameSite", "Strict");
         response.addCookie(cookie);
     }
 
