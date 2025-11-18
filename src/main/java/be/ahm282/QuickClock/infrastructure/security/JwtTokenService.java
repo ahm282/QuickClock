@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import static io.jsonwebtoken.Jwts.SIG.HS512;
@@ -19,7 +20,7 @@ import static io.jsonwebtoken.Jwts.SIG.HS512;
 @Service
 public class JwtTokenService implements TokenProviderPort {
     private static final long ACCESS_TOKEN_EXPIRATION_MS = 1_800_000; // 30 minutes
-    private static final long REFRESH_TOKEN_EXPIRATION_MS = 604_800_000L; // 7 days
+    private static final long REFRESH_TOKEN_EXPIRATION_MS = 2_592_000_000L; // 30 days
 
     private final SecretKey signingKey;
     private final String issuer;
@@ -33,7 +34,7 @@ public class JwtTokenService implements TokenProviderPort {
     ) {
         byte[] keyBytes = Decoders.BASE64.decode(base64Secret);
 
-        if (keyBytes.length < 64) { // <<< ADDED: Enforce key length for HS512
+        if (keyBytes.length < 64) {
             throw new IllegalArgumentException("JWT secret key must be at least 64 bytes for HS512");
         }
 
@@ -58,6 +59,7 @@ public class JwtTokenService implements TokenProviderPort {
 
     public String buildToken(String username, Long userId, long validityMs, String type) {
         long now = System.currentTimeMillis();
+        List<String> roles = List.of("EMPLOYEE");
 
         return Jwts.builder()
                 .subject(username)
@@ -65,6 +67,7 @@ public class JwtTokenService implements TokenProviderPort {
                 .audience().add(audience).and()
                 .claim("userId", userId)
                 .claim("type", type)
+                .claim("roles", roles)
                 .id(UUID.randomUUID().toString())
                 .issuedAt(new Date(now))
                 .expiration(new Date(now + validityMs))

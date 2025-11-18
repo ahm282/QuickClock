@@ -20,7 +20,6 @@ public class UserSeeder {
 
     @PostConstruct
     public void seed() {
-        // Example: seed two users
         seedUser("alice");
         seedUser("bob");
     }

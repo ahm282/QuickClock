@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    private final static Logger log = LoggerFactory.getLogger(AuthController.class);
-    private final static int REFRESH_TOKEN_MAX_AGE = 30 * 24 * 60 * 60; // 30 days
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+    private static final int REFRESH_COOKIE_MAX_AGE = 2_592_000; // 30 days
 
     private final AuthUseCase authUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
@@ -119,16 +119,18 @@ public class AuthController {
     // --- Cookie Helpers ---
     private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
         Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setDomain("localhost:8081");
         cookie.setHttpOnly(true);
         cookie.setSecure(false); // set to false for local dev
         cookie.setPath("/");
-        cookie.setMaxAge(REFRESH_TOKEN_MAX_AGE);
+        cookie.setMaxAge(REFRESH_COOKIE_MAX_AGE);
         cookie.setAttribute("SameSite", "Lax");
         response.addCookie(cookie);
     }
 
     private void clearRefreshTokenCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie("refreshToken", null);
+        cookie.setDomain(null);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         cookie.setPath("/");
