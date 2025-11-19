@@ -35,3 +35,110 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# ============================================
+# Environment Files
+# ============================================
+.env
+.env.local
+.env.*.local
+.env.staging
+.env.prod
+
+# Old application.properties with secrets (if you kept it)
+application.properties.backup
+
+# ============================================
+# Maven
+# ============================================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ============================================
+# IDE Files
+# ============================================
+# IntelliJ IDEA
+.idea/
+
+# VS Code
+*.code-workspace
+
+# Eclipse
+.settings/
+
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# ============================================
+# OS Files
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ============================================
+# Logs
+# ============================================
+*.log
+logs/
+*.log.*
+
+# ============================================
+# Temporary Files
+# ============================================
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ============================================
+# Spring Boot
+# ============================================
+spring-boot-devtools.properties
+
+# ============================================
+# Database
+# ============================================
+*.db
+*.sqlite
+*.h2.db
+
+# ============================================
+# Compiled Class Files
+# ============================================
+*.class
+
+# ============================================
+# Package Files
+# ============================================
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# ============================================
+# Virtual Machine Crash Logs
+# ============================================
+hs_err_pid*
+replay_pid*
