@@ -1,6 +1,7 @@
 package be.ahm282.QuickClock.infrastructure.security;
 
 import be.ahm282.QuickClock.application.dto.TokenMetadata;
+import be.ahm282.QuickClock.application.ports.out.InvalidatedTokenRepositoryPort;
 import be.ahm282.QuickClock.infrastructure.security.service.JwtTokenService;
 import be.ahm282.QuickClock.infrastructure.security.service.RequestMetadataExtractorService;
 import io.jsonwebtoken.Claims;
@@ -31,10 +32,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtTokenService jwtTokenService;
     private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
     private final RequestMetadataExtractorService metadataExtractor;
+    private final InvalidatedTokenRepositoryPort invalidatedTokenRepository;
 
-    public JwtAuthFilter(JwtTokenService jwtTokenService, RequestMetadataExtractorService metadataExtractor) {
+    public JwtAuthFilter(JwtTokenService jwtTokenService,
+                        RequestMetadataExtractorService metadataExtractor,
+                        InvalidatedTokenRepositoryPort invalidatedTokenRepository) {
         this.jwtTokenService = jwtTokenService;
         this.metadataExtractor = metadataExtractor;
+        this.invalidatedTokenRepository = invalidatedTokenRepository;
     }
 
     @Override
@@ -52,7 +57,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             Claims claims = jwtTokenService.parseClaims(token);
 
             if (!isAccessToken(claims)) {
-                filterChain.doFilter(request, response); // Refresh token or another type, ignore.
+                log.warn("Non-access token used in Authorization header");
+                sendError(response);
+                return;
+            }
+
+            // Check if the token is blacklisted/invalidated
+            String jti = claims.getId();
+            if (jti != null && invalidatedTokenRepository.findByJti(jti).isPresent()) {
+                log.warn("Invalidated token attempted use: jti={}", jti);
+                sendError(response);
                 return;
             }
 
@@ -88,12 +102,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String tokenDeviceId = claims.get("deviceId", String.class);
         String tokenIp = claims.get("ipAddress", String.class);
 
+        // Strict device binding enforcement
         if (tokenDeviceId != null && !tokenDeviceId.equals(currentMetadata.deviceId())) {
-            log.warn("Device ID mismatch for user {}. Token stolen?", claims.getSubject());
+            log.error("SECURITY: Device ID mismatch for user {}. Expected: {}, Got: {}. Token may be stolen.",
+                claims.getSubject(), tokenDeviceId, currentMetadata.deviceId());
+            throw new JwtException("Device binding validation failed");
         }
 
+        // IP change is logged but not blocked (users can change networks)
         if (tokenIp != null && !tokenIp.equals(currentMetadata.ipAddress())) {
-            log.info("IP change detected for user {}", claims.getSubject());
+            log.info("IP change detected for user {} from {} to {}",
+                claims.getSubject(), tokenIp, currentMetadata.ipAddress());
         }
     }
 

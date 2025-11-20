@@ -1,6 +1,7 @@
 package be.ahm282.QuickClock.infrastructure.security;
 
 import be.ahm282.QuickClock.application.dto.TokenMetadata;
+import be.ahm282.QuickClock.application.ports.out.InvalidatedTokenRepositoryPort;
 import be.ahm282.QuickClock.infrastructure.security.service.JwtTokenService;
 import be.ahm282.QuickClock.infrastructure.security.service.RequestMetadataExtractorService;
 import io.jsonwebtoken.Claims;
@@ -14,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -23,6 +25,7 @@ class JwtAuthFilterTest {
 
     private JwtTokenService jwtTokenService;
     private RequestMetadataExtractorService metadataExtractor;
+    private InvalidatedTokenRepositoryPort invalidatedTokenRepository;
     private JwtAuthFilter filter;
 
     private HttpServletRequest request;
@@ -33,7 +36,8 @@ class JwtAuthFilterTest {
     void setup() throws Exception {
         jwtTokenService = mock(JwtTokenService.class);
         metadataExtractor = mock(RequestMetadataExtractorService.class);
-        filter = new JwtAuthFilter(jwtTokenService, metadataExtractor);
+        invalidatedTokenRepository = mock(InvalidatedTokenRepositoryPort.class);
+        filter = new JwtAuthFilter(jwtTokenService, metadataExtractor, invalidatedTokenRepository);
 
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
@@ -43,6 +47,9 @@ class JwtAuthFilterTest {
         when(response.getWriter()).thenReturn(writer);
 
         SecurityContextHolder.clearContext();
+
+        // By default, no tokens are invalidated
+        when(invalidatedTokenRepository.findByJti(any())).thenReturn(Optional.empty());
     }
 
     // ---------------------------------------------------------
@@ -81,6 +88,7 @@ class JwtAuthFilterTest {
         when(request.getHeader("Authorization")).thenReturn("Bearer valid");
 
         Claims claims = mock(Claims.class);
+        when(claims.getId()).thenReturn("jti-123");
         when(claims.getSubject()).thenReturn("john");
         when(claims.get("type", String.class)).thenReturn("access");
         when(claims.get("roles", List.class)).thenReturn(List.of("USER"));
@@ -100,10 +108,10 @@ class JwtAuthFilterTest {
     }
 
     // ---------------------------------------------------------
-    // Non-access tokens (refresh) → ignored
+    // Non-access tokens (refresh) → rejected with 401
     // ---------------------------------------------------------
     @Test
-    void shouldIgnoreNonAccessToken() throws Exception {
+    void shouldRejectNonAccessToken() throws Exception {
         when(request.getHeader("Authorization")).thenReturn("Bearer valid");
 
         Claims claims = mock(Claims.class);
@@ -113,18 +121,19 @@ class JwtAuthFilterTest {
 
         filter.doFilterInternal(request, response, filterChain);
 
-        assertNull(SecurityContextHolder.getContext().getAuthentication());
-        verify(filterChain).doFilter(request, response);
+        verify(response).setStatus(401);
+        verify(filterChain, never()).doFilter(any(), any());
     }
 
     // ---------------------------------------------------------
-    // Device/IP mismatch → still authenticates but logs
+    // Device mismatch → rejected with 401
     // ---------------------------------------------------------
     @Test
-    void shouldLogMetadataMismatchButStillAuthenticate() throws Exception {
+    void shouldRejectOnDeviceMismatch() throws Exception {
         when(request.getHeader("Authorization")).thenReturn("Bearer valid");
 
         Claims claims = mock(Claims.class);
+        when(claims.getId()).thenReturn("jti-456");
         when(claims.getSubject()).thenReturn("alice");
         when(claims.get("type", String.class)).thenReturn("access");
         when(claims.get("roles", List.class)).thenReturn(List.of("ADMIN"));
@@ -139,7 +148,35 @@ class JwtAuthFilterTest {
 
         filter.doFilterInternal(request, response, filterChain);
 
+        verify(response).setStatus(401);
+        verify(filterChain, never()).doFilter(any(), any());
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
+    }
+
+    // ---------------------------------------------------------
+    // IP change (but same device) → authenticates (allows network switching)
+    // ---------------------------------------------------------
+    @Test
+    void shouldAllowIpChangeWithSameDevice() throws Exception {
+        when(request.getHeader("Authorization")).thenReturn("Bearer valid");
+
+        Claims claims = mock(Claims.class);
+        when(claims.getId()).thenReturn("jti-789");
+        when(claims.getSubject()).thenReturn("bob");
+        when(claims.get("type", String.class)).thenReturn("access");
+        when(claims.get("roles", List.class)).thenReturn(List.of("USER"));
+        when(claims.get("deviceId", String.class)).thenReturn("same-device");
+        when(claims.get("ipAddress", String.class)).thenReturn("1.1.1.1");
+
+        when(jwtTokenService.parseClaims("valid")).thenReturn(claims);
+
+        when(metadataExtractor.extract(request))
+                .thenReturn(new TokenMetadata("same-device", "2.2.2.2", "Mobile App"));
+
+        filter.doFilterInternal(request, response, filterChain);
+
         assertNotNull(SecurityContextHolder.getContext().getAuthentication());
-        assertEquals("alice", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        assertEquals("bob", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        verify(filterChain).doFilter(request, response);
     }
 }

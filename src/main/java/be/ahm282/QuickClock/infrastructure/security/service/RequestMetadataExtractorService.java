@@ -73,7 +73,7 @@ public class RequestMetadataExtractorService {
     public Cookie createDeviceIdCookie(String deviceId, boolean secure) {
         Cookie cookie = new Cookie(DEVICE_ID_COOKIE, deviceId);
         cookie.setMaxAge(DEVICE_ID_MAX_AGE);
-        cookie.setHttpOnly(false);
+        cookie.setHttpOnly(true);
         cookie.setSecure(secure);
         cookie.setPath("/");
         cookie.setMaxAge(DEVICE_ID_MAX_AGE);

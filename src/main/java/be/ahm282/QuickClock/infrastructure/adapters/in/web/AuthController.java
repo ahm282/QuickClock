@@ -10,6 +10,7 @@ import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.AccessTokenRespon
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.ErrorResponseDTO;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.LoginRequestDTO;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.RegisterRequestDTO;
+import be.ahm282.QuickClock.infrastructure.security.service.RateLimitService;
 import be.ahm282.QuickClock.infrastructure.security.service.RequestMetadataExtractorService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
@@ -29,27 +30,43 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     private static final int REFRESH_COOKIE_MAX_AGE = 2_592_000; // 30 days
-    private static final boolean cookieSecure = false;
 
     private final AuthUseCase authUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
     private final TokenProviderPort tokenProviderPort;
     private final RequestMetadataExtractorService metadataExtractor;
+    private final RateLimitService rateLimitService;
+
+    @org.springframework.beans.factory.annotation.Value("${app.cookie.secure:false}")
+    private boolean cookieSecure;
+
+    @org.springframework.beans.factory.annotation.Value("${app.cookie.domain:}")
+    private String cookieDomain;
 
     public AuthController(AuthUseCase authUseCase,
                           RefreshTokenUseCase refreshTokenUseCase,
                           TokenProviderPort tokenProviderPort,
-                          RequestMetadataExtractorService metadataExtractor) {
+                          RequestMetadataExtractorService metadataExtractor,
+                          RateLimitService rateLimitService) {
         this.authUseCase = authUseCase;
         this.refreshTokenUseCase = refreshTokenUseCase;
         this.tokenProviderPort = tokenProviderPort;
         this.metadataExtractor = metadataExtractor;
+        this.rateLimitService = rateLimitService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request, HttpServletRequest httpRequest) {
+        String rateLimitKey = metadataExtractor.extract(httpRequest).ipAddress();
+
+        if (!rateLimitService.allowRegisterAttempt(rateLimitKey)) {
+            log.warn("Rate limit exceeded for registration attempt from: {}", rateLimitKey);
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(new ErrorResponseDTO("Too many registration attempts. Please try again later.", 429));
+        }
+
         try {
-            Long userId = authUseCase.register(request.username(),request.password());
+            Long userId = authUseCase.register(request.username(), request.password());
             return ResponseEntity.status(HttpStatus.CREATED).body(userId);
         } catch (Exception e) {
             log.error("Registration failed", e);
@@ -61,10 +78,20 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request, HttpServletRequest httpRequest, HttpServletResponse response) {
-        try {
-            TokenMetadata metadata = metadataExtractor.extract(httpRequest);
+        TokenMetadata metadata = metadataExtractor.extract(httpRequest);
+        String rateLimitKey = metadata.ipAddress() + ":" + request.username();
 
+        if (!rateLimitService.allowLoginAttempt(rateLimitKey)) {
+            log.warn("Rate limit exceeded for login attempt: {}", rateLimitKey);
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(new ErrorResponseDTO("Too many login attempts. Please try again later.", 429));
+        }
+
+        try {
             TokenPair pair = authUseCase.login(request.username(), request.password(), metadata);
+
+            // Reset rate limit on successful login
+            rateLimitService.resetLoginLimit(rateLimitKey);
 
             Cookie deviceIdCookie = metadataExtractor.createDeviceIdCookie(metadata.deviceId(), cookieSecure);
             response.addCookie(deviceIdCookie);
@@ -72,6 +99,7 @@ public class AuthController {
             addRefreshTokenCookie(response, pair.refreshToken());
             return ResponseEntity.ok(new AccessTokenResponseDTO(pair.accessToken()));
         } catch (IllegalArgumentException e) {
+            // Failed attempt already consumed a token from the bucket
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponseDTO("Authentication failed. Please log in again.", 401));
         } catch (Exception e) {
@@ -83,6 +111,16 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(HttpServletRequest request, HttpServletResponse response) {
+        TokenMetadata metadata = metadataExtractor.extract(request);
+        String rateLimitKey = "refresh:" + metadata.deviceId();
+
+        // Check rate limit
+        if (!rateLimitService.allowRefreshAttempt(rateLimitKey)) {
+            log.warn("Rate limit exceeded for refresh attempt: {}", rateLimitKey);
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(new ErrorResponseDTO("Too many refresh attempts. Please try again later.", 429));
+        }
+
         try {
             String refreshToken = extractRefreshTokenFromCookies(request);
 
@@ -91,14 +129,17 @@ public class AuthController {
                         .body(new ErrorResponseDTO("Invalid refresh token", 401));
             }
 
-            TokenMetadata metadata = metadataExtractor.extract(request);
-
             TokenPair pair = refreshTokenUseCase.rotateRefreshTokenByToken(refreshToken, metadata);
+
+            // Reset rate limit on successful refresh
+            rateLimitService.resetRefreshLimit(rateLimitKey);
+
             addRefreshTokenCookie(response, pair.refreshToken());
 
             return ResponseEntity.ok(new AccessTokenResponseDTO(pair.accessToken()));
         } catch (TokenException e) {
             log.warn("!!! SECURITY ALERT: Token replay detected. Invalidating all sessions for user ID: {}", e.getUserId());
+
             if (e.getUserId() != null) {
                 refreshTokenUseCase.invalidateAllTokensForUser(e.getUserId());
             }
@@ -106,10 +147,12 @@ public class AuthController {
             return unauthorized(e.getMessage());
         } catch (JwtException e) {
             log.warn("Invalid JWT on refresh {}", e.getMessage());
+
             clearRefreshTokenCookie(response);
             return unauthorized("Invalid or expired refresh token");
         } catch (Exception e) {
             log.error("Error during token refresh", e);
+
             clearRefreshTokenCookie(response);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ErrorResponseDTO("Server error", 500));
@@ -135,9 +178,14 @@ public class AuthController {
     // --- Cookie Helpers ---
     private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
         Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setDomain("localhost");
+
+        // Only set domain if configured (empty string means don't set domain)
+        if (cookieDomain != null && !cookieDomain.isEmpty()) {
+            cookie.setDomain(cookieDomain);
+        }
+
         cookie.setHttpOnly(true);
-        cookie.setSecure(cookieSecure); // set to false for local dev
+        cookie.setSecure(cookieSecure);
         cookie.setPath("/");
         cookie.setMaxAge(REFRESH_COOKIE_MAX_AGE);
         cookie.setAttribute("SameSite", "Strict");
@@ -146,7 +194,12 @@ public class AuthController {
 
     private void clearRefreshTokenCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie("refreshToken", null);
-        cookie.setDomain(null);
+
+        // Only set domain if configured
+        if (cookieDomain != null && !cookieDomain.isEmpty()) {
+            cookie.setDomain(cookieDomain);
+        }
+
         cookie.setHttpOnly(true);
         cookie.setSecure(cookieSecure);
         cookie.setPath("/");

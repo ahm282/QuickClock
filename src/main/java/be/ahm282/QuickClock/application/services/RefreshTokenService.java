@@ -5,7 +5,6 @@ import be.ahm282.QuickClock.application.dto.TokenPair;
 import be.ahm282.QuickClock.application.ports.in.RefreshTokenUseCase;
 import be.ahm282.QuickClock.application.ports.out.InvalidatedTokenRepositoryPort;
 import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
-import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.exception.TokenException;
 import be.ahm282.QuickClock.domain.model.InvalidatedToken;
 import io.jsonwebtoken.Claims;
@@ -36,10 +35,18 @@ public class RefreshTokenService implements RefreshTokenUseCase {
             throw new JwtException("Not a refresh token");
         }
 
-        String jti = tokenProviderPort.extractJti(refreshToken);
-        Long userId = tokenProviderPort.extractUserId(refreshToken);
-        String username =  tokenProviderPort.extractUsername(refreshToken);
-        Instant expiry = tokenProviderPort.extractExpiration(refreshToken).toInstant();
+        Claims claims = tokenProviderPort.parseClaims(refreshToken);
+
+        String jti = claims.getId();
+        Long userId = claims.get("userId", Long.class);
+        String username = claims.getSubject();
+        Instant expiry = claims.getExpiration().toInstant();
+
+        // Validate device binding - critical for mobile apps
+        String tokenDeviceId = claims.get("deviceId", String.class);
+        if (tokenDeviceId != null && !tokenDeviceId.equals(metadata.deviceId())) {
+            throw new TokenException("Device binding validation failed - token may be stolen", userId);
+        }
 
         // Detect replay before doing anything!
         Optional<InvalidatedToken> maybeExisting = invalidatedTokenRepositoryPort.findByJti(jti);

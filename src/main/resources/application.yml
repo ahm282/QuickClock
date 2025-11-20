@@ -19,3 +19,7 @@ app:
 
   cookie:
     secure: ${COOKIE_SECURE:false}
+    domain: ${COOKIE_DOMAIN:}
+
+  security:
+    dummy-hash: ${DUMMY_HASH:$2a$10$dummy.hash.for.timing.attack.mitigation}

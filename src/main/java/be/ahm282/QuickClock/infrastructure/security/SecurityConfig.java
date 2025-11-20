@@ -1,7 +1,11 @@
 package be.ahm282.QuickClock.infrastructure.security;
 
+import be.ahm282.QuickClock.application.ports.out.InvalidatedTokenRepositoryPort;
+import be.ahm282.QuickClock.infrastructure.security.service.JwtTokenService;
+import be.ahm282.QuickClock.infrastructure.security.service.RequestMetadataExtractorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -11,10 +15,22 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private final JwtTokenService jwtTokenService;
+    private final RequestMetadataExtractorService metadataExtractor;
+    private final InvalidatedTokenRepositoryPort invalidatedTokenRepository;
+
+    public SecurityConfig(JwtTokenService jwtTokenService,
+                                 RequestMetadataExtractorService metadataExtractor,
+                                 InvalidatedTokenRepositoryPort invalidatedTokenRepository) {
+        this.jwtTokenService = jwtTokenService;
+        this.metadataExtractor = metadataExtractor;
+        this.invalidatedTokenRepository = invalidatedTokenRepository;
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -22,7 +38,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
@@ -36,8 +52,17 @@ public class SecurityConfig {
                         .xssProtection(xss -> xss.headerValue(XXssProtectionHeaderWriter.HeaderValue.ENABLED_MODE_BLOCK))
                         .httpStrictTransportSecurity(hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
                 )
+                .exceptionHandling(exceptions -> exceptions
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"Authentication required\"}");
+                        })
+                )
                 .csrf(AbstractHttpConfigurer::disable)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(
+                        new JwtAuthFilter(jwtTokenService, metadataExtractor, invalidatedTokenRepository),
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
