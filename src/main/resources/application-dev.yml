@@ -43,3 +43,5 @@ app:
     base-url: http://localhost:8081
   cookie:
     secure: false
+  security:
+    dummy-hash: ${DUMMY_HASH}

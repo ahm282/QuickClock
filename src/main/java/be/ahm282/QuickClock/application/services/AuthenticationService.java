@@ -6,6 +6,7 @@ import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
 import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.model.User;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,8 @@ public class AuthenticationService implements AuthUseCase {
     private final TokenProviderPort tokenProviderPort;
     private final PasswordEncoder passwordEncoder;
     private final SecureRandom secureRandom;
+    @Value("${app.security.dummy-hash}")
+    private String dummyHash;
 
     public AuthenticationService(UserRepositoryPort userRepositoryPort,
                                  TokenProviderPort tokenProviderPort,
@@ -33,11 +36,13 @@ public class AuthenticationService implements AuthUseCase {
     public TokenPair login(String username, String password, TokenMetadata metadata) {
         Optional<User> maybeUser = userRepositoryPort.findByUsername(username);
         if (maybeUser.isEmpty()) {
+            mitigateTimingAttack(password);
             throw new IllegalArgumentException("Invalid username or password");
         }
 
         User user = maybeUser.get();
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+            mitigateTimingAttack(password);
             throw new IllegalArgumentException("Invalid username or password");
         }
 
@@ -62,5 +67,9 @@ public class AuthenticationService implements AuthUseCase {
         byte[] bytes = new byte[64];
         secureRandom.nextBytes(bytes);
         return Base64.getEncoder().encodeToString(bytes);
+    }
+
+    private void mitigateTimingAttack(String password) {
+        passwordEncoder.matches(password, dummyHash);
     }
 }
