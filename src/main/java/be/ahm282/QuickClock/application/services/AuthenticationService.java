@@ -1,22 +1,27 @@
 package be.ahm282.QuickClock.application.services;
 
-import be.ahm282.QuickClock.application.dto.TokenMetadata;
 import be.ahm282.QuickClock.application.dto.TokenPair;
 import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
+import be.ahm282.QuickClock.application.ports.out.RefreshTokenRepositoryPort;
 import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
+import be.ahm282.QuickClock.domain.model.RefreshToken;
 import be.ahm282.QuickClock.domain.model.User;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuthenticationService implements AuthUseCase {
     private final UserRepositoryPort userRepositoryPort;
+    private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
     private final TokenProviderPort tokenProviderPort;
     private final PasswordEncoder passwordEncoder;
     private final SecureRandom secureRandom;
@@ -24,16 +29,18 @@ public class AuthenticationService implements AuthUseCase {
     private String dummyHash;
 
     public AuthenticationService(UserRepositoryPort userRepositoryPort,
+                                 RefreshTokenRepositoryPort refreshTokenRepositoryPort,
                                  TokenProviderPort tokenProviderPort,
                                  PasswordEncoder passwordEncoder) throws Exception {
         this.userRepositoryPort = userRepositoryPort;
+        this.refreshTokenRepositoryPort = refreshTokenRepositoryPort;
         this.tokenProviderPort = tokenProviderPort;
         this.passwordEncoder = passwordEncoder;
         this.secureRandom = SecureRandom.getInstanceStrong();
     }
 
     @Override
-    public TokenPair login(String username, String password, TokenMetadata metadata) {
+    public TokenPair login(String username, String password) {
         Optional<User> maybeUser = userRepositoryPort.findByUsername(username);
         if (maybeUser.isEmpty()) {
             mitigateTimingAttack(password);
@@ -46,8 +53,32 @@ public class AuthenticationService implements AuthUseCase {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
-        String accessToken = tokenProviderPort.generateAccessToken(user.getUsername(), user.getId(), metadata);
-        String refreshToken = tokenProviderPort.generateRefreshToken(user.getUsername(), user.getId(), metadata);
+        // Generate tokens
+        String accessToken = tokenProviderPort.generateAccessToken(user.getUsername(), user.getId());
+        String refreshToken = tokenProviderPort.generateRefreshToken(user.getUsername(), user.getId());
+
+        // Create new token family for this login session
+        UUID rootFamilyId = UUID.randomUUID();
+
+        // Parse refresh token to extract its JTI and expiry
+        Claims claims = tokenProviderPort.parseClaims(refreshToken);
+        String jti = claims.getId();
+        Instant expiry = claims.getExpiration().toInstant();
+        Instant issuedAt = Instant.now();
+
+        // Store refresh token as the root of a new family
+        RefreshToken refreshTokenEntity = new RefreshToken(
+            jti,
+            null,  // No parent - this is the root token
+            rootFamilyId,
+            user.getId(),
+            user.getUsername(),
+            false,
+            false,
+            issuedAt,
+            expiry
+        );
+        refreshTokenRepositoryPort.save(refreshTokenEntity);
 
         return new TokenPair(accessToken, refreshToken);
     }

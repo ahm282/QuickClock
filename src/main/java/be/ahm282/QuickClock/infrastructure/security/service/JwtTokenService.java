@@ -1,6 +1,5 @@
 package be.ahm282.QuickClock.infrastructure.security.service;
 
-import be.ahm282.QuickClock.application.dto.TokenMetadata;
 import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
@@ -78,16 +77,16 @@ public class JwtTokenService implements TokenProviderPort {
     }
 
     @Override
-    public String generateAccessToken(String username, Long userId, TokenMetadata metadata) {
-        return buildToken(username, userId, ACCESS_TOKEN_EXPIRATION_MS, "access", metadata);
+    public String generateAccessToken(String username, Long userId) {
+        return buildToken(username, userId, ACCESS_TOKEN_EXPIRATION_MS, "access");
     }
 
     @Override
-    public String generateRefreshToken(String username, Long userId, TokenMetadata metadata) {
-        return buildToken(username, userId, REFRESH_TOKEN_EXPIRATION_MS, "refresh", metadata);
+    public String generateRefreshToken(String username, Long userId) {
+        return buildToken(username, userId, REFRESH_TOKEN_EXPIRATION_MS, "refresh");
     }
 
-    private String buildToken(String username, Long userId, long validityMs, String type, TokenMetadata metadata) {
+    private String buildToken(String username, Long userId, long validityMs, String type) {
         long now = System.currentTimeMillis();
         List<String> roles = List.of("EMPLOYEE");
 
@@ -98,9 +97,6 @@ public class JwtTokenService implements TokenProviderPort {
                 .claim("userId", userId)
                 .claim("type", type)
                 .claim("roles", roles)
-                .claim("deviceId", metadata.deviceId())
-                .claim("ipAddress", metadata.ipAddress())
-                .claim("userAgent", metadata.userAgent())
                 .id(UUID.randomUUID().toString())
                 .issuedAt(new Date(now))
                 .expiration(new Date(now + validityMs))

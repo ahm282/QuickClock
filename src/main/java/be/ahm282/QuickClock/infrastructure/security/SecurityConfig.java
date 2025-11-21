@@ -2,7 +2,6 @@ package be.ahm282.QuickClock.infrastructure.security;
 
 import be.ahm282.QuickClock.application.ports.out.InvalidatedTokenRepositoryPort;
 import be.ahm282.QuickClock.infrastructure.security.service.JwtTokenService;
-import be.ahm282.QuickClock.infrastructure.security.service.RequestMetadataExtractorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -15,20 +14,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtTokenService jwtTokenService;
-    private final RequestMetadataExtractorService metadataExtractor;
     private final InvalidatedTokenRepositoryPort invalidatedTokenRepository;
 
     public SecurityConfig(JwtTokenService jwtTokenService,
-                                 RequestMetadataExtractorService metadataExtractor,
                                  InvalidatedTokenRepositoryPort invalidatedTokenRepository) {
         this.jwtTokenService = jwtTokenService;
-        this.metadataExtractor = metadataExtractor;
         this.invalidatedTokenRepository = invalidatedTokenRepository;
     }
 
@@ -61,7 +56,7 @@ public class SecurityConfig {
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(
-                        new JwtAuthFilter(jwtTokenService, metadataExtractor, invalidatedTokenRepository),
+                        new JwtAuthFilter(jwtTokenService, invalidatedTokenRepository),
                         UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -1,14 +1,13 @@
 package be.ahm282.QuickClock.application.ports.out;
 
-import be.ahm282.QuickClock.application.dto.TokenMetadata;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 
 import java.util.Date;
 
 public interface TokenProviderPort {
-    String generateAccessToken(String username, Long userId, TokenMetadata metadata);
-    String generateRefreshToken(String username, Long userId, TokenMetadata metadata);
+    String generateAccessToken(String username, Long userId);
+    String generateRefreshToken(String username, Long userId);
 
     boolean isRefreshToken(String token);
     void validateToken(String token) throws JwtException;

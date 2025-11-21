@@ -1,6 +1,5 @@
 package be.ahm282.QuickClock.infrastructure.adapters.in.web;
 
-import be.ahm282.QuickClock.application.dto.TokenMetadata;
 import be.ahm282.QuickClock.application.dto.TokenPair;
 import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
 import be.ahm282.QuickClock.application.ports.in.RefreshTokenUseCase;
@@ -11,7 +10,6 @@ import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.ErrorResponseDTO;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.LoginRequestDTO;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.RegisterRequestDTO;
 import be.ahm282.QuickClock.infrastructure.security.service.RateLimitService;
-import be.ahm282.QuickClock.infrastructure.security.service.RequestMetadataExtractorService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,7 +32,6 @@ public class AuthController {
     private final AuthUseCase authUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
     private final TokenProviderPort tokenProviderPort;
-    private final RequestMetadataExtractorService metadataExtractor;
     private final RateLimitService rateLimitService;
 
     @org.springframework.beans.factory.annotation.Value("${app.cookie.secure:false}")
@@ -46,18 +43,17 @@ public class AuthController {
     public AuthController(AuthUseCase authUseCase,
                           RefreshTokenUseCase refreshTokenUseCase,
                           TokenProviderPort tokenProviderPort,
-                          RequestMetadataExtractorService metadataExtractor,
                           RateLimitService rateLimitService) {
         this.authUseCase = authUseCase;
         this.refreshTokenUseCase = refreshTokenUseCase;
         this.tokenProviderPort = tokenProviderPort;
-        this.metadataExtractor = metadataExtractor;
         this.rateLimitService = rateLimitService;
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request, HttpServletRequest httpRequest) {
-        String rateLimitKey = metadataExtractor.extract(httpRequest).ipAddress();
+        String ipAddress = getClientIp(httpRequest);
+        String rateLimitKey = ipAddress;
 
         if (!rateLimitService.allowRegisterAttempt(rateLimitKey)) {
             log.warn("Rate limit exceeded for registration attempt from: {}", rateLimitKey);
@@ -78,8 +74,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO request, HttpServletRequest httpRequest, HttpServletResponse response) {
-        TokenMetadata metadata = metadataExtractor.extract(httpRequest);
-        String rateLimitKey = metadata.ipAddress() + ":" + request.username();
+        String ipAddress = getClientIp(httpRequest);
+        String rateLimitKey = ipAddress + ":" + request.username();
 
         if (!rateLimitService.allowLoginAttempt(rateLimitKey)) {
             log.warn("Rate limit exceeded for login attempt: {}", rateLimitKey);
@@ -88,13 +84,11 @@ public class AuthController {
         }
 
         try {
-            TokenPair pair = authUseCase.login(request.username(), request.password(), metadata);
+            TokenPair pair = authUseCase.login(request.username(), request.password());
 
             // Reset rate limit on successful login
             rateLimitService.resetLoginLimit(rateLimitKey);
 
-            Cookie deviceIdCookie = metadataExtractor.createDeviceIdCookie(metadata.deviceId(), cookieSecure);
-            response.addCookie(deviceIdCookie);
 
             addRefreshTokenCookie(response, pair.refreshToken());
             return ResponseEntity.ok(new AccessTokenResponseDTO(pair.accessToken()));
@@ -111,8 +105,8 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(HttpServletRequest request, HttpServletResponse response) {
-        TokenMetadata metadata = metadataExtractor.extract(request);
-        String rateLimitKey = "refresh:" + metadata.deviceId();
+        String ipAddress = getClientIp(request);
+        String rateLimitKey = "refresh:" + ipAddress;
 
         // Check rate limit
         if (!rateLimitService.allowRefreshAttempt(rateLimitKey)) {
@@ -129,7 +123,7 @@ public class AuthController {
                         .body(new ErrorResponseDTO("Invalid refresh token", 401));
             }
 
-            TokenPair pair = refreshTokenUseCase.rotateRefreshTokenByToken(refreshToken, metadata);
+            TokenPair pair = refreshTokenUseCase.rotateRefreshTokenByToken(refreshToken);
 
             // Reset rate limit on successful refresh
             rateLimitService.resetRefreshLimit(rateLimitKey);
@@ -223,5 +217,61 @@ public class AuthController {
     private ResponseEntity<ErrorResponseDTO> unauthorized(String message) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponseDTO(message, 401));
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        // Headers to check in order of preference
+        // Note: These can be spoofed if not behind a trusted proxy
+        String[] headers = {
+                "X-Forwarded-For",    // Standard proxy header
+                "X-Real-IP",          // Nginx
+                "HTTP_X_FORWARDED_FOR",
+                "HTTP_X_FORWARDED",
+                "HTTP_CLIENT_IP",
+                "HTTP_FORWARDED_FOR",
+                "HTTP_FORWARDED",
+                "HTTP_VIA",
+                "REMOTE_ADDR"
+        };
+
+        for (String header : headers) {
+            String ip = request.getHeader(header);
+            
+            if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
+                // Trim whitespace first
+                ip = ip.trim();
+                
+                // X-Forwarded-For format: "client, proxy1, proxy2"
+                // Take the leftmost IP (the client's actual IP before any proxies)
+                if (ip.contains(",")) {
+                    ip = ip.split(",")[0].trim();
+                }
+
+                if (isValidIpFormat(ip)) {
+                    return ip;
+                }
+            }
+        }
+
+        // Fallback: direct connection IP (most reliable but may be proxy IP)
+        String remoteAddr = request.getRemoteAddr();
+        return remoteAddr != null ? remoteAddr : "unknown";
+    }
+
+    private boolean isValidIpFormat(String ip) {
+        if (ip == null || ip.isEmpty()) {
+            return false;
+        }
+        
+
+        if (ip.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
+            return true;
+        }
+
+        if (ip.contains(":") && ip.length() >= 2) {
+            return true;
+        }
+        
+        return false;
     }
 }

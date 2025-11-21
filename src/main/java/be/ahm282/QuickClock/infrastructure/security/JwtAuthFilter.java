@@ -1,9 +1,7 @@
 package be.ahm282.QuickClock.infrastructure.security;
 
-import be.ahm282.QuickClock.application.dto.TokenMetadata;
 import be.ahm282.QuickClock.application.ports.out.InvalidatedTokenRepositoryPort;
 import be.ahm282.QuickClock.infrastructure.security.service.JwtTokenService;
-import be.ahm282.QuickClock.infrastructure.security.service.RequestMetadataExtractorService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -31,14 +29,11 @@ import static java.util.stream.Collectors.*;
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtTokenService jwtTokenService;
     private static final Logger log = LoggerFactory.getLogger(JwtAuthFilter.class);
-    private final RequestMetadataExtractorService metadataExtractor;
     private final InvalidatedTokenRepositoryPort invalidatedTokenRepository;
 
     public JwtAuthFilter(JwtTokenService jwtTokenService,
-                        RequestMetadataExtractorService metadataExtractor,
                         InvalidatedTokenRepositoryPort invalidatedTokenRepository) {
         this.jwtTokenService = jwtTokenService;
-        this.metadataExtractor = metadataExtractor;
         this.invalidatedTokenRepository = invalidatedTokenRepository;
     }
 
@@ -70,7 +65,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
 
-            validateMetadata(claims, request);
             authenticate(claims, request);
         }  catch (JwtException e) {
             log.warn("JWT validation failed: {}", e.getMessage());
@@ -96,25 +90,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         return "access".equals(claims.get("type", String.class));
     }
 
-    private void validateMetadata(Claims claims, HttpServletRequest request) {
-        TokenMetadata currentMetadata = metadataExtractor.extract(request);
-
-        String tokenDeviceId = claims.get("deviceId", String.class);
-        String tokenIp = claims.get("ipAddress", String.class);
-
-        // Strict device binding enforcement
-        if (tokenDeviceId != null && !tokenDeviceId.equals(currentMetadata.deviceId())) {
-            log.error("SECURITY: Device ID mismatch for user {}. Expected: {}, Got: {}. Token may be stolen.",
-                claims.getSubject(), tokenDeviceId, currentMetadata.deviceId());
-            throw new JwtException("Device binding validation failed");
-        }
-
-        // IP change is logged but not blocked (users can change networks)
-        if (tokenIp != null && !tokenIp.equals(currentMetadata.ipAddress())) {
-            log.info("IP change detected for user {} from {} to {}",
-                claims.getSubject(), tokenIp, currentMetadata.ipAddress());
-        }
-    }
 
     // ------------------------
     // Authentication
