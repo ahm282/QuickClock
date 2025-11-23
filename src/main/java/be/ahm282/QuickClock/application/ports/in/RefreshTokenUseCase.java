@@ -28,6 +28,15 @@ public interface RefreshTokenUseCase {
      * @param userId the ID of the user.
      */
     void invalidateAllTokensForUser(Long userId);
+
+    /**
+     * Logout the current session: invalidate the given refresh token and
+     * blacklist the current access token so it cannot be reused.
+     *
+     * @param refreshToken refresh token from cookie (maybe null)
+     * @param accessToken  access token from Authorization header (maybe null)
+     */
+    void logout(String refreshToken, String accessToken);
 }
 
 

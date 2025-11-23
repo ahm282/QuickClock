@@ -179,4 +179,40 @@ public class RefreshTokenService implements RefreshTokenUseCase {
         invalidatedTokenRepositoryPort.deleteByUserId(userId);
         refreshTokenRepositoryPort.deleteByUserId(userId);
     }
+
+    @Override
+    @Transactional
+    public void logout(String accessToken, String refreshToken) {
+        // Invalidate the refresh token if present
+        if (refreshToken != null && !refreshToken.isBlank()) {
+            try {
+                invalidateRefreshToken(refreshToken);
+            } catch (JwtException e) {
+                log.warn("Invalid refresh token provided during logout: {}", e.getMessage());
+            }
+        }
+
+        // Blacklist the access token if present and valid
+        if (accessToken != null && !accessToken.isBlank()) {
+            try {
+                tokenProviderPort.validateToken(accessToken);
+
+                if (!tokenProviderPort.isRefreshToken(accessToken)) {
+                    Claims claims = tokenProviderPort.parseClaims(accessToken);
+                    String jti = claims.getId();
+                    Long userId = claims.get("userId", Long.class);
+                    Instant expiry = claims.getExpiration().toInstant();
+
+                    if (jti != null && userId != null && expiry != null) {
+                        invalidatedTokenRepositoryPort.save(new InvalidatedToken(jti, userId, expiry));
+                        log.debug("Access token blacklisted during logout: userId={}, jti={}", userId, jti);
+                    }
+                } else {
+                    log.warn("Access token provided during logout is actually a refresh token, skipping blacklist.");
+                }
+            } catch (JwtException e) {
+                log.warn("Invalid access token provided during logout: {}", e.getMessage());
+            }
+        }
+    }
 }

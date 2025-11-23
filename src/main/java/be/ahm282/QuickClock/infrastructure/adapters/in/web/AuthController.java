@@ -88,9 +88,8 @@ public class AuthController {
 
             // Reset rate limit on successful login
             rateLimitService.resetLoginLimit(rateLimitKey);
-
-
             addRefreshTokenCookie(response, pair.refreshToken());
+
             return ResponseEntity.ok(new AccessTokenResponseDTO(pair.accessToken()));
         } catch (IllegalArgumentException e) {
             // Failed attempt already consumed a token from the bucket
@@ -157,15 +156,11 @@ public class AuthController {
     public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
         try {
             String refreshToken = extractRefreshTokenFromCookies(request);
-            if (refreshToken != null) {
-                refreshTokenUseCase.invalidateRefreshToken(refreshToken);
-            }
-        } catch (JwtException e) {
-            log.warn("Invalid JWT during logout: {}", e.getMessage());
+            String accessToken = extractAccessTokenFromHeader(request);
+            refreshTokenUseCase.logout(accessToken, refreshToken);
         } finally {
             clearRefreshTokenCookie(response);
         }
-
         return ResponseEntity.ok().build();
     }
 
@@ -201,6 +196,14 @@ public class AuthController {
         cookie.setValue(null);
         cookie.setAttribute("SameSite", "Lax");
         response.addCookie(cookie);
+    }
+
+    private String extractAccessTokenFromHeader(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return null;
     }
 
     private String extractRefreshTokenFromCookies(HttpServletRequest request) {
