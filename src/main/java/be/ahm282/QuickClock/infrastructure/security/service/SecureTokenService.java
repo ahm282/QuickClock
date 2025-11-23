@@ -6,18 +6,19 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.time.Instant;
 import java.util.Base64;
 
 @Service
 public class SecureTokenService {
 
     private static final String HMAC_ALGORITHM = "HmacSHA512";
-    private static final long INTERVAL_SECONDS = 30;
+    private static final long TOKEN_TTL_SECONDS = 30L;
 
     public String generateToken(Long userId, String userSecret) {
-        long timestamp = getCurrentWindow();
-        String payload = userId + ":" + timestamp;
-        String signature = hmacSha512(userSecret, payload);
+        long issuedAt = Instant.now().getEpochSecond();
+        String payload = userId + ":" + issuedAt;
+        String signature = hmac(userSecret, payload);
         String fullPayload = payload + ":" + signature;
 
         return Base64.getUrlEncoder().withoutPadding()
@@ -28,7 +29,9 @@ public class SecureTokenService {
         try {
             String decoded = new String(Base64.getUrlDecoder().decode(token), StandardCharsets.UTF_8);
             String[] parts = decoded.split(":");
-            if (parts.length < 2) throw new IllegalArgumentException();
+            if (parts.length < 2) {
+                throw new IllegalArgumentException();
+            }
             return Long.parseLong(parts[0]);
         } catch (Exception e) {
             throw new IllegalArgumentException("Malformed token format");
@@ -43,35 +46,33 @@ public class SecureTokenService {
                 return false;
             }
 
-            long timestamp = Long.parseLong(parts[1]);
-            String signature = parts[2];
+            String userIdPart = parts[0];
+            long issuedAt = Long.parseLong(parts[1]);
+            String providedSignature = parts[2];
 
-            String expectedSignature = hmacSha512(userSecret, parts[0] + ":" + parts[1]);
-            boolean signaturesMatch = MessageDigest.isEqual(
-                    expectedSignature.getBytes(StandardCharsets.UTF_8),
-                    signature.getBytes(StandardCharsets.UTF_8)
-            );
+            long now = Instant.now().getEpochSecond();
+            long age = now - issuedAt;
 
-            if (!signaturesMatch) {
-                return false;
+            if (age < 0 || age > TOKEN_TTL_SECONDS) {
+                return false; // Token expired or clock skew detected
             }
 
-            long currentWindow = getCurrentWindow();
-            return Math.abs(currentWindow - timestamp) <= 1;
+            String expectedSignature = hmac(userSecret, userIdPart + ":" + issuedAt);
+            byte[] expectedBytes = expectedSignature.getBytes(StandardCharsets.UTF_8);
+            byte[] providedBytes = providedSignature.getBytes(StandardCharsets.UTF_8);
+
+            return MessageDigest.isEqual(expectedBytes, providedBytes);
         } catch (Exception e) {
             return false;
         }
     }
 
-    private long getCurrentWindow() {
-        return System.currentTimeMillis() / 1000 / INTERVAL_SECONDS;
-    }
-
-    private String hmacSha512(String secret, String data) {
+    private String hmac(String secret, String data) {
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
             mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), HMAC_ALGORITHM));
-            return Base64.getUrlEncoder().withoutPadding().encodeToString(mac.doFinal(data.getBytes(StandardCharsets.UTF_8)));
+            byte[] raw = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(raw);
         } catch (Exception e) {
             throw new IllegalStateException("HMAC generation failed", e);
         }
