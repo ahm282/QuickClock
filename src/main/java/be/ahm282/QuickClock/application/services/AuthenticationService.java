@@ -8,7 +8,6 @@ import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.model.RefreshToken;
 import be.ahm282.QuickClock.domain.model.User;
 import io.jsonwebtoken.Claims;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +24,7 @@ public class AuthenticationService implements AuthUseCase {
     private final TokenProviderPort tokenProviderPort;
     private final PasswordEncoder passwordEncoder;
     private final SecureRandom secureRandom;
-    @Value("${app.security.dummy-hash}")
-    private String dummyHash;
+    private final String dummyHash;
 
     public AuthenticationService(UserRepositoryPort userRepositoryPort,
                                  RefreshTokenRepositoryPort refreshTokenRepositoryPort,
@@ -37,6 +35,7 @@ public class AuthenticationService implements AuthUseCase {
         this.tokenProviderPort = tokenProviderPort;
         this.passwordEncoder = passwordEncoder;
         this.secureRandom = SecureRandom.getInstanceStrong();
+        this.dummyHash = passwordEncoder.encode(UUID.randomUUID().toString());
     }
 
     @Override
@@ -49,7 +48,6 @@ public class AuthenticationService implements AuthUseCase {
 
         User user = maybeUser.get();
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-            mitigateTimingAttack(password);
             throw new IllegalArgumentException("Invalid username or password");
         }
 
