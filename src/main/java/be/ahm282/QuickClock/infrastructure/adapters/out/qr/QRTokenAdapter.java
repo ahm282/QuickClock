@@ -3,6 +3,7 @@ package be.ahm282.QuickClock.infrastructure.adapters.out.qr;
 import be.ahm282.QuickClock.application.ports.out.QRTokenPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.exception.BusinessRuleException;
+import be.ahm282.QuickClock.domain.exception.ValidationException;
 import be.ahm282.QuickClock.infrastructure.security.service.SecureTokenService;
 import org.springframework.stereotype.Component;
 
@@ -33,15 +34,15 @@ public class QRTokenAdapter implements QRTokenPort {
         try {
             userId = secureTokenService.extractUserIdUnsafe(token);
         } catch (IllegalArgumentException e) {
-            throw new BusinessRuleException("Invalid QR Token Format");
+            throw new ValidationException("Token is expired or invalid");
         }
 
         String secret = userRepositoryPort.findById(userId)
-                .orElseThrow(() -> new BusinessRuleException("User not found"))
+                .orElseThrow(() -> new ValidationException("Token is expired or invalid"))
                 .getSecret();
 
         if (!secureTokenService.isValid(token, secret)) {
-            throw new BusinessRuleException("QR Token is expired or invalid");
+            throw new ValidationException("Token is expired or invalid");
         }
 
         return userId;

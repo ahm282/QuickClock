@@ -5,18 +5,19 @@ import org.springframework.stereotype.Service;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.Base64;
 
 @Service
 public class SecureTokenService {
 
-    private static final String HMAC_ALGORITHM = "HmacSHA256";
+    private static final String HMAC_ALGORITHM = "HmacSHA512";
     private static final long INTERVAL_SECONDS = 30;
 
     public String generateToken(Long userId, String userSecret) {
         long timestamp = getCurrentWindow();
         String payload = userId + ":" + timestamp;
-        String signature = hmacSha256(userSecret, payload);
+        String signature = hmacSha512(userSecret, payload);
         String fullPayload = payload + ":" + signature;
 
         return Base64.getUrlEncoder().withoutPadding()
@@ -34,7 +35,7 @@ public class SecureTokenService {
         }
     }
 
-    public boolean isValid(String token, String userRequest) {
+    public boolean isValid(String token, String userSecret) {
         try {
             String decoded = new String(Base64.getUrlDecoder().decode(token), StandardCharsets.UTF_8);
             String[] parts = decoded.split(":");
@@ -45,8 +46,13 @@ public class SecureTokenService {
             long timestamp = Long.parseLong(parts[1]);
             String signature = parts[2];
 
-            String expectedSignature = hmacSha256(userRequest, parts[0] + ":" + parts[1]);
-            if (!expectedSignature.equals(signature)) {
+            String expectedSignature = hmacSha512(userSecret, parts[0] + ":" + parts[1]);
+            boolean signaturesMatch = MessageDigest.isEqual(
+                    expectedSignature.getBytes(StandardCharsets.UTF_8),
+                    signature.getBytes(StandardCharsets.UTF_8)
+            );
+
+            if (!signaturesMatch) {
                 return false;
             }
 
@@ -61,7 +67,7 @@ public class SecureTokenService {
         return System.currentTimeMillis() / 1000 / INTERVAL_SECONDS;
     }
 
-    private String hmacSha256(String secret, String data) {
+    private String hmacSha512(String secret, String data) {
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
             mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), HMAC_ALGORITHM));

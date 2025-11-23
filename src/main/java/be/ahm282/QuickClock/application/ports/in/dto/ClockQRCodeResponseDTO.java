@@ -2,13 +2,11 @@ package be.ahm282.QuickClock.application.ports.in.dto;
 
 public class ClockQRCodeResponseDTO {
     private String token;
-    private String url;
+    private String path;
 
-    public ClockQRCodeResponseDTO() {}
-
-    public ClockQRCodeResponseDTO(String token, String url) {
+    public ClockQRCodeResponseDTO(String token, String path) {
         this.token = token;
-        this.url = url;
+        this.path = path;
     }
 
     public String getToken() {
@@ -19,11 +17,11 @@ public class ClockQRCodeResponseDTO {
         this.token = token;
     }
 
-    public String getUrl() {
-        return url;
+    public String getPath() {
+        return path;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    private  void setPath(String path) {
+        this.path = path;
     }
 }
