@@ -10,10 +10,26 @@ import be.ahm282.QuickClock.domain.exception.ValidationException;
 import be.ahm282.QuickClock.domain.model.RefreshToken;
 import be.ahm282.QuickClock.domain.model.User;
 import io.jsonwebtoken.Claims;
+import me.gosimple.nbvcxz.Nbvcxz;
+import me.gosimple.nbvcxz.resources.Configuration;
+import me.gosimple.nbvcxz.resources.ConfigurationBuilder;
+import me.gosimple.nbvcxz.resources.Feedback;
+import me.gosimple.nbvcxz.scoring.Result;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Optional;
@@ -21,12 +37,18 @@ import java.util.UUID;
 
 @Service
 public class AuthenticationService implements AuthUseCase {
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
+    private static final String HIBP_API_URL = "https://api.pwnedpasswords.com/range/";
+    private static final double MINIMUM_PASSWORD_ENTROPY = 42.0; // Secure enough without unnecessary friction
+
     private final UserRepositoryPort userRepositoryPort;
     private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
     private final TokenProviderPort tokenProviderPort;
     private final PasswordEncoder passwordEncoder;
     private final SecureRandom secureRandom;
     private final String dummyHash;
+    private final Nbvcxz nbvcxz;
+    private final HttpClient httpClient;
 
     public AuthenticationService(UserRepositoryPort userRepositoryPort,
                                  RefreshTokenRepositoryPort refreshTokenRepositoryPort,
@@ -38,6 +60,17 @@ public class AuthenticationService implements AuthUseCase {
         this.passwordEncoder = passwordEncoder;
         this.secureRandom = SecureRandom.getInstanceStrong();
         this.dummyHash = passwordEncoder.encode(UUID.randomUUID().toString());
+
+        this.httpClient = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(30))
+                .version(HttpClient.Version.HTTP_2)
+                .build();
+
+        Configuration passwordConfig = new ConfigurationBuilder()
+                .setMinimumEntropy(MINIMUM_PASSWORD_ENTROPY)
+                .createConfiguration();
+
+        this.nbvcxz = new Nbvcxz(passwordConfig);
     }
 
     @Override
@@ -73,7 +106,6 @@ public class AuthenticationService implements AuthUseCase {
             null,  // No parent - this is the root token
             rootFamilyId,
             user.getId(),
-            user.getUsername(),
             false,
             false,
             issuedAt,
@@ -86,10 +118,10 @@ public class AuthenticationService implements AuthUseCase {
 
     @Override
     public Long register(String username, String password) {
+        validatePassword(username, password);
+
         String passwordHash = passwordEncoder.encode(password);
         String secret = generateSecret();
-
-        validatePassword(username, password);
 
         User toSave = new User(null, username, passwordHash, secret);
         User savedUser = userRepositoryPort.save(toSave);
@@ -108,10 +140,6 @@ public class AuthenticationService implements AuthUseCase {
     }
 
     private void validatePassword(String username, String password) {
-        if (password.length() < 10 || password.length() > 72) {
-            throw new ValidationException("Password must be between 10 and 72 characters");
-        }
-
         if (password.equalsIgnoreCase(username)) {
             throw new ValidationException("Password must not be the same as username");
         }
@@ -127,9 +155,74 @@ public class AuthenticationService implements AuthUseCase {
         if (hasDigit) buckets++;
         if (hasSymbol) buckets++;
 
-        if (buckets < 3) {
+        if (buckets < 2) {
             throw new ValidationException("Password is too weak");
+        }
+
+        Result result = nbvcxz.estimate(password);
+        if (!result.isMinimumEntropyMet()) {
+            Feedback feedback = result.getFeedback();
+            String warning = feedback.getWarning();
+
+            if (warning != null && !warning.isEmpty()) {
+                throw new ValidationException("Password is too weak: " + warning);
+            } else {
+                throw new ValidationException("Password does not meet the minimum strength requirements.");
+            }
+        }
+
+        // Check Have I Been Pwned
+        try {
+            int pwnedCount = checkHaveIBeenPwned(password);
+            if (pwnedCount > 0) {
+                throw new ValidationException("This password has been exposed in a data breach " + pwnedCount + " times. Please choose a different password.");
+            }
+        } catch (ValidationException ve) {
+            throw ve;
+        } catch (Exception e) {
+            // Log the exception but do not prevent registration
+            log.error("HIBP validation failed: {}", e.getMessage(), e);
         }
     }
 
+    private int checkHaveIBeenPwned(String password) throws NoSuchAlgorithmException,
+            IOException,
+            InterruptedException {
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
+        byte[] hashBytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
+        String hash = bytesToHex(hashBytes).toUpperCase();
+
+        String prefix = hash.substring(0, 5);
+        String suffix = hash.substring(5);
+
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(HIBP_API_URL + prefix))
+                .header("Add-Padding", "true")
+                .timeout(Duration.ofSeconds(10))
+                .GET()
+                .build();
+
+        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200) {
+            log.warn("Have I Been Pwned API returned status {}: {}", response.statusCode(), response.body());
+            throw new IOException("Error querying Have I Been Pwned API: " + response.statusCode());
+        }
+
+        for (String line : response.body().split("\r\n")) {
+            String[] parts = line.split(":");
+            if (parts[0].equalsIgnoreCase(suffix)) {
+                return Integer.parseInt(parts[1]);
+            }
+        }
+        return 0;
+    }
+
+    private String bytesToHex(byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
 }
