@@ -141,7 +141,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
           "timestamp": "%s",
           "status": 401,
           "error": "Unauthorized",
-          "message": "Authentication failed. Please log in again.",
+          "message": "Authentication failed. Please try again.",
           "type": "AuthenticationFailure"
         }
         """.formatted(Instant.now().toString());

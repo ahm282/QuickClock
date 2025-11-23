@@ -15,6 +15,7 @@ import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -52,7 +53,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Void> register(@RequestBody @Valid RegisterRequestDTO request, HttpServletRequest httpRequest) {
         String rateLimitKey = getClientIp(httpRequest);
 
         if (!rateLimitService.allowRegisterAttempt(rateLimitKey)) {
@@ -60,12 +61,12 @@ public class AuthController {
             throw new RateLimitException("Too many registration attempts. Please try again later.");
         }
 
-        Long userId = authUseCase.register(request.username(), request.password());
-        return ResponseEntity.status(HttpStatus.CREATED).body(userId);
+        authUseCase.register(request.username(), request.password());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request, HttpServletRequest httpRequest, HttpServletResponse response) {
+    public ResponseEntity<AccessTokenResponseDTO> login(@RequestBody @Valid LoginRequestDTO request, HttpServletRequest httpRequest, HttpServletResponse response) {
         String ipAddress = getClientIp(httpRequest);
         String rateLimitKey = ipAddress + ":" + request.username();
 
@@ -84,7 +85,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<AccessTokenResponseDTO> refresh(HttpServletRequest request, HttpServletResponse response) {
         String ipAddress = getClientIp(request);
         String rateLimitKey = "refresh:" + ipAddress;
 
