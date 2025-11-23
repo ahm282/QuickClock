@@ -52,24 +52,17 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequestDTO request, HttpServletRequest httpRequest) {
-        String ipAddress = getClientIp(httpRequest);
-        String rateLimitKey = ipAddress;
+        String rateLimitKey = getClientIp(httpRequest);
 
         if (!rateLimitService.allowRegisterAttempt(rateLimitKey)) {
             log.warn("Rate limit exceeded for registration attempt from: {}", rateLimitKey);
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body(new ErrorResponseDTO("Too many registration attempts. Please try again later.", 429));
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(
+                    new ErrorResponseDTO("Too many registration attempts. Please try again later.",
+            429));
         }
 
-        try {
-            Long userId = authUseCase.register(request.username(), request.password());
-            return ResponseEntity.status(HttpStatus.CREATED).body(userId);
-        } catch (Exception e) {
-            log.error("Registration failed", e);
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(
-                    new ErrorResponseDTO("Username already exists", 409)
-            );
-        }
+        Long userId = authUseCase.register(request.username(), request.password());
+        return ResponseEntity.status(HttpStatus.CREATED).body(userId);
     }
 
     @PostMapping("/login")
@@ -79,27 +72,18 @@ public class AuthController {
 
         if (!rateLimitService.allowLoginAttempt(rateLimitKey)) {
             log.warn("Rate limit exceeded for login attempt: {}", rateLimitKey);
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body(new ErrorResponseDTO("Too many login attempts. Please try again later.", 429));
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(
+                    new ErrorResponseDTO("Too many login attempts. Please try again later.",
+            429));
         }
 
-        try {
-            TokenPair pair = authUseCase.login(request.username(), request.password());
+        TokenPair pair = authUseCase.login(request.username(), request.password());
 
-            // Reset rate limit on successful login
-            rateLimitService.resetLoginLimit(rateLimitKey);
-            addRefreshTokenCookie(response, pair.refreshToken());
+        // Reset rate limit on successful login
+        rateLimitService.resetLoginLimit(rateLimitKey);
+        addRefreshTokenCookie(response, pair.refreshToken());
 
-            return ResponseEntity.ok(new AccessTokenResponseDTO(pair.accessToken()));
-        } catch (IllegalArgumentException e) {
-            // Failed attempt already consumed a token from the bucket
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponseDTO("Authentication failed. Invalid username or password.", 401));
-        } catch (Exception e) {
-            log.error("Login failed", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponseDTO("Authentication failed.", 500));
-        }
+        return ResponseEntity.ok(new AccessTokenResponseDTO(pair.accessToken()));
     }
 
     @PostMapping("/refresh")

@@ -6,6 +6,7 @@ import be.ahm282.QuickClock.application.ports.in.dto.ClockRequestDTO;
 import be.ahm282.QuickClock.application.ports.in.dto.ClockResponseDTO;
 import be.ahm282.QuickClock.application.services.ClockService;
 import be.ahm282.QuickClock.application.services.QRCodeService;
+import be.ahm282.QuickClock.domain.exception.RateLimitException;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.mapper.ClockResponseDTOMapper;
 import be.ahm282.QuickClock.infrastructure.security.service.RateLimitService;
@@ -76,10 +77,7 @@ public class ClockController {
                                           HttpServletRequest httpRequest) {
         String ipAddress = getClientIp(httpRequest);
         if (!rateLimitService.allowClockQrAttempt(ipAddress)) {
-            throw new ResponseStatusException(
-                    HttpStatus.TOO_MANY_REQUESTS,
-                    "Too many QR code clock-in attempts. Please try again later."
-            );
+            throw new RateLimitException("Too many QR code clock-in attempts. Please try again later.");
         }
 
         ClockRecord record = clockService.clockInWithQR(request.getToken());
@@ -92,10 +90,7 @@ public class ClockController {
                                            HttpServletRequest httpRequest) {
         String ipAddress = getClientIp(httpRequest);
         if (!rateLimitService.allowClockQrAttempt(ipAddress)) {
-            throw new ResponseStatusException(
-                    HttpStatus.TOO_MANY_REQUESTS,
-                    "Too many QR code clock-out attempts. Please try again later."
-            );
+            throw new RateLimitException("Too many QR code clock-out attempts. Please try again later.");
         }
 
         ClockRecord record = clockService.clockOutWithQR(request.getToken());
