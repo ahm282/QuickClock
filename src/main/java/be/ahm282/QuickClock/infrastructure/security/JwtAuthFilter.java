@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 
@@ -133,6 +134,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private void sendError(HttpServletResponse response) throws IOException {
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType("application/json");
-        response.getWriter().write(String.format("{\"error\": \"%s\", \"status\": 401}", "Authentication failed. Please log in again."));
+        String body = """
+        {
+          "timestamp": "%s",
+          "status": 401,
+          "error": "Unauthorized",
+          "message": "Authentication failed. Please log in again.",
+          "type": "AuthenticationFailure"
+        }
+        """.formatted(Instant.now().toString());
+        response.getWriter().write(body);
     }
 }
