@@ -219,59 +219,7 @@ public class AuthController {
                 .body(new ErrorResponseDTO(message, 401));
     }
 
-    private String getClientIp(HttpServletRequest request) {
-        // Headers to check in order of preference
-        // Note: These can be spoofed if not behind a trusted proxy
-        String[] headers = {
-                "X-Forwarded-For",    // Standard proxy header
-                "X-Real-IP",          // Nginx
-                "HTTP_X_FORWARDED_FOR",
-                "HTTP_X_FORWARDED",
-                "HTTP_CLIENT_IP",
-                "HTTP_FORWARDED_FOR",
-                "HTTP_FORWARDED",
-                "HTTP_VIA",
-                "REMOTE_ADDR"
-        };
-
-        for (String header : headers) {
-            String ip = request.getHeader(header);
-            
-            if (ip != null && !ip.isEmpty() && !"unknown".equalsIgnoreCase(ip)) {
-                // Trim whitespace first
-                ip = ip.trim();
-                
-                // X-Forwarded-For format: "client, proxy1, proxy2"
-                // Take the leftmost IP (the client's actual IP before any proxies)
-                if (ip.contains(",")) {
-                    ip = ip.split(",")[0].trim();
-                }
-
-                if (isValidIpFormat(ip)) {
-                    return ip;
-                }
-            }
-        }
-
-        // Fallback: direct connection IP (most reliable but may be proxy IP)
-        String remoteAddr = request.getRemoteAddr();
-        return remoteAddr != null ? remoteAddr : "unknown";
-    }
-
-    private boolean isValidIpFormat(String ip) {
-        if (ip == null || ip.isEmpty()) {
-            return false;
-        }
-        
-
-        if (ip.matches("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$")) {
-            return true;
-        }
-
-        if (ip.contains(":") && ip.length() >= 2) {
-            return true;
-        }
-        
-        return false;
+    private String getClientIp(HttpServletRequest request) { // TODO Re-evaluate this method if behind a proxy
+        return request.getRemoteAddr() != null ? request.getRemoteAddr() : "unknown";
     }
 }
