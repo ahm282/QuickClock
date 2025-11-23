@@ -5,6 +5,7 @@ import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
 import be.ahm282.QuickClock.application.ports.out.RefreshTokenRepositoryPort;
 import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
+import be.ahm282.QuickClock.domain.exception.AuthenticationException;
 import be.ahm282.QuickClock.domain.model.RefreshToken;
 import be.ahm282.QuickClock.domain.model.User;
 import io.jsonwebtoken.Claims;
@@ -46,7 +47,7 @@ public class AuthenticationService implements AuthUseCase {
         boolean passwordMatches = passwordEncoder.matches(password, hashToCheck);
 
         if (maybeUser.isEmpty() || !passwordMatches) {
-            throw new IllegalArgumentException("Invalid username or password");
+            throw new AuthenticationException("Authentication failed. Invalid username or password.");
         }
 
         // Valid user, proceed with token generation

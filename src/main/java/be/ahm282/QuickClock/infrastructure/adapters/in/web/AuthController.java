@@ -94,11 +94,11 @@ public class AuthController {
         } catch (IllegalArgumentException e) {
             // Failed attempt already consumed a token from the bucket
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new ErrorResponseDTO("Authentication failed. Please log in again.", 401));
+                    .body(new ErrorResponseDTO("Authentication failed. Invalid username or password.", 401));
         } catch (Exception e) {
             log.error("Login failed", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponseDTO("Internal server error. Authentication failed. Please log in again.", 500));
+                    .body(new ErrorResponseDTO("Authentication failed.", 500));
         }
     }
 
