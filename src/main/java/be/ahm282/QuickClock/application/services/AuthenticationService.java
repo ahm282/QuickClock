@@ -41,15 +41,16 @@ public class AuthenticationService implements AuthUseCase {
     @Override
     public TokenPair login(String username, String password) {
         Optional<User> maybeUser = userRepositoryPort.findByUsername(username);
-        if (maybeUser.isEmpty()) {
-            mitigateTimingAttack(password);
+
+        String hashToCheck = maybeUser.map(User::getPasswordHash).orElse(dummyHash);
+        boolean passwordMatches = passwordEncoder.matches(password, hashToCheck);
+
+        if (maybeUser.isEmpty() || !passwordMatches) {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
+        // Valid user, proceed with token generation
         User user = maybeUser.get();
-        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
-            throw new IllegalArgumentException("Invalid username or password");
-        }
 
         // Generate tokens
         String accessToken = tokenProviderPort.generateAccessToken(user.getUsername(), user.getId());
@@ -96,9 +97,5 @@ public class AuthenticationService implements AuthUseCase {
         byte[] bytes = new byte[64];
         secureRandom.nextBytes(bytes);
         return Base64.getEncoder().encodeToString(bytes);
-    }
-
-    private void mitigateTimingAttack(String password) {
-        passwordEncoder.matches(password, dummyHash);
     }
 }
