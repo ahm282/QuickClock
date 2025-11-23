@@ -4,9 +4,10 @@ import be.ahm282.QuickClock.application.dto.TokenPair;
 import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
 import be.ahm282.QuickClock.application.ports.in.RefreshTokenUseCase;
 import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
+import be.ahm282.QuickClock.domain.exception.AuthenticationException;
+import be.ahm282.QuickClock.domain.exception.RateLimitException;
 import be.ahm282.QuickClock.domain.exception.TokenException;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.AccessTokenResponseDTO;
-import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.ErrorResponseDTO;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.LoginRequestDTO;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.RegisterRequestDTO;
 import be.ahm282.QuickClock.infrastructure.security.service.RateLimitService;
@@ -56,9 +57,7 @@ public class AuthController {
 
         if (!rateLimitService.allowRegisterAttempt(rateLimitKey)) {
             log.warn("Rate limit exceeded for registration attempt from: {}", rateLimitKey);
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(
-                    new ErrorResponseDTO("Too many registration attempts. Please try again later.",
-            429));
+            throw new RateLimitException("Too many registration attempts. Please try again later.");
         }
 
         Long userId = authUseCase.register(request.username(), request.password());
@@ -72,9 +71,7 @@ public class AuthController {
 
         if (!rateLimitService.allowLoginAttempt(rateLimitKey)) {
             log.warn("Rate limit exceeded for login attempt: {}", rateLimitKey);
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(
-                    new ErrorResponseDTO("Too many login attempts. Please try again later.",
-            429));
+            throw new RateLimitException("Too many login attempts. Please try again later.");
         }
 
         TokenPair pair = authUseCase.login(request.username(), request.password());
@@ -94,18 +91,17 @@ public class AuthController {
         // Check rate limit
         if (!rateLimitService.allowRefreshAttempt(rateLimitKey)) {
             log.warn("Rate limit exceeded for refresh attempt: {}", rateLimitKey);
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                    .body(new ErrorResponseDTO("Too many refresh attempts. Please try again later.", 429));
+            throw new RateLimitException("Too many refresh attempts. Please try again later.");
+        }
+
+        String refreshToken = extractRefreshTokenFromCookies(request);
+
+        if (refreshToken == null || !tokenProviderPort.isRefreshToken(refreshToken)) {
+            clearRefreshTokenCookie(response);
+            throw new AuthenticationException("Invalid refresh token");
         }
 
         try {
-            String refreshToken = extractRefreshTokenFromCookies(request);
-
-            if (refreshToken == null || !tokenProviderPort.isRefreshToken(refreshToken)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ErrorResponseDTO("Invalid refresh token", 401));
-            }
-
             TokenPair pair = refreshTokenUseCase.rotateRefreshTokenByToken(refreshToken);
 
             // Reset rate limit on successful refresh
@@ -121,18 +117,11 @@ public class AuthController {
                 refreshTokenUseCase.invalidateAllTokensForUser(e.getUserId());
             }
             clearRefreshTokenCookie(response);
-            return unauthorized(e.getMessage());
+            throw e; // Re-throw to let GlobalExceptionHandler handle it
         } catch (JwtException e) {
             log.warn("Invalid JWT on refresh {}", e.getMessage());
-
             clearRefreshTokenCookie(response);
-            return unauthorized("Invalid or expired refresh token");
-        } catch (Exception e) {
-            log.error("Error during token refresh", e);
-
-            clearRefreshTokenCookie(response);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ErrorResponseDTO("Server error", 500));
+            throw e; // Re-throw to let GlobalExceptionHandler handle it
         }
     }
 
@@ -201,10 +190,6 @@ public class AuthController {
         return null;
     }
 
-    private ResponseEntity<ErrorResponseDTO> unauthorized(String message) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(new ErrorResponseDTO(message, 401));
-    }
 
     private String getClientIp(HttpServletRequest request) { // TODO Re-evaluate this method if behind a proxy
         return request.getRemoteAddr() != null ? request.getRemoteAddr() : "unknown";
