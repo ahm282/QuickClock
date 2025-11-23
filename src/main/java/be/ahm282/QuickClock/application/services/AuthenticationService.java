@@ -2,6 +2,7 @@ package be.ahm282.QuickClock.application.services;
 
 import be.ahm282.QuickClock.application.dto.TokenPair;
 import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
+import be.ahm282.QuickClock.application.ports.out.BreachedPasswordCheckPort;
 import be.ahm282.QuickClock.application.ports.out.RefreshTokenRepositoryPort;
 import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
@@ -20,16 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Optional;
@@ -38,33 +31,29 @@ import java.util.UUID;
 @Service
 public class AuthenticationService implements AuthUseCase {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
-    private static final String HIBP_API_URL = "https://api.pwnedpasswords.com/range/";
     private static final double MINIMUM_PASSWORD_ENTROPY = 42.0; // Secure enough without unnecessary friction
 
     private final UserRepositoryPort userRepositoryPort;
     private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
     private final TokenProviderPort tokenProviderPort;
+    private final BreachedPasswordCheckPort breachedPasswordCheckPort;
     private final PasswordEncoder passwordEncoder;
     private final SecureRandom secureRandom;
     private final String dummyHash;
     private final Nbvcxz nbvcxz;
-    private final HttpClient httpClient;
 
     public AuthenticationService(UserRepositoryPort userRepositoryPort,
                                  RefreshTokenRepositoryPort refreshTokenRepositoryPort,
                                  TokenProviderPort tokenProviderPort,
-                                 PasswordEncoder passwordEncoder) throws Exception {
+                                 PasswordEncoder passwordEncoder,
+                                 BreachedPasswordCheckPort breachedPasswordCheckPort) throws NoSuchAlgorithmException {
         this.userRepositoryPort = userRepositoryPort;
         this.refreshTokenRepositoryPort = refreshTokenRepositoryPort;
         this.tokenProviderPort = tokenProviderPort;
+        this.breachedPasswordCheckPort = breachedPasswordCheckPort;
         this.passwordEncoder = passwordEncoder;
         this.secureRandom = SecureRandom.getInstanceStrong();
         this.dummyHash = passwordEncoder.encode(UUID.randomUUID().toString());
-
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(30))
-                .version(HttpClient.Version.HTTP_2)
-                .build();
 
         Configuration passwordConfig = new ConfigurationBuilder()
                 .setMinimumEntropy(MINIMUM_PASSWORD_ENTROPY)
@@ -173,7 +162,7 @@ public class AuthenticationService implements AuthUseCase {
 
         // Check Have I Been Pwned
         try {
-            int pwnedCount = checkHaveIBeenPwned(password);
+            int pwnedCount = breachedPasswordCheckPort.getBreachCount(password);
             if (pwnedCount > 0) {
                 throw new ValidationException("This password has been exposed in a data breach " + pwnedCount + " times. Please choose a different password.");
             }
@@ -183,46 +172,5 @@ public class AuthenticationService implements AuthUseCase {
             // Log the exception but do not prevent registration
             log.error("HIBP validation failed: {}", e.getMessage(), e);
         }
-    }
-
-    private int checkHaveIBeenPwned(String password) throws NoSuchAlgorithmException,
-            IOException,
-            InterruptedException {
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
-        byte[] hashBytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
-        String hash = bytesToHex(hashBytes).toUpperCase();
-
-        String prefix = hash.substring(0, 5);
-        String suffix = hash.substring(5);
-
-        var request = HttpRequest.newBuilder()
-                .uri(URI.create(HIBP_API_URL + prefix))
-                .header("Add-Padding", "true")
-                .timeout(Duration.ofSeconds(10))
-                .GET()
-                .build();
-
-        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() != 200) {
-            log.warn("Have I Been Pwned API returned status {}: {}", response.statusCode(), response.body());
-            throw new IOException("Error querying Have I Been Pwned API: " + response.statusCode());
-        }
-
-        for (String line : response.body().split("\r\n")) {
-            String[] parts = line.split(":");
-            if (parts[0].equalsIgnoreCase(suffix)) {
-                return Integer.parseInt(parts[1]);
-            }
-        }
-        return 0;
-    }
-
-    private String bytesToHex(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(String.format("%02x", b));
-        }
-        return sb.toString();
     }
 }
