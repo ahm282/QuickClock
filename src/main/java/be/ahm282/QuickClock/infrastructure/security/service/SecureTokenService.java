@@ -67,7 +67,7 @@ public class SecureTokenService {
             mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), HMAC_ALGORITHM));
             return Base64.getUrlEncoder().withoutPadding().encodeToString(mac.doFinal(data.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
-            throw new RuntimeException("HMAC generation failed", e);
+            throw new IllegalStateException("HMAC generation failed", e);
         }
     }
 }

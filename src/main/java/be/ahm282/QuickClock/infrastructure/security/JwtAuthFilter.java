@@ -60,7 +60,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             // Check if the token is blacklisted/invalidated
             String jti = claims.getId();
-            if (jti != null && invalidatedTokenRepository.findByJti(jti).isPresent()) {
+            boolean isTokenBlacklistedOrInvalidated = jti != null && invalidatedTokenRepository.findByJti(jti).isPresent();
+
+            if (isTokenBlacklistedOrInvalidated) {
                 log.warn("Invalidated token attempted use: jti={}", jti);
                 sendError(response);
                 return;

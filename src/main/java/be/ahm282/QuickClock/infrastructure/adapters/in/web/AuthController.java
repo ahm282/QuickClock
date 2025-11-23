@@ -112,16 +112,19 @@ public class AuthController {
             return ResponseEntity.ok(new AccessTokenResponseDTO(pair.accessToken()));
         } catch (TokenException e) {
             log.warn("!!! SECURITY ALERT: Token replay detected. Invalidating all sessions for user ID: {}", e.getUserId());
-
             if (e.getUserId() != null) {
                 refreshTokenUseCase.invalidateAllTokensForUser(e.getUserId());
             }
             clearRefreshTokenCookie(response);
-            throw e; // Re-throw to let GlobalExceptionHandler handle it
+            throw e;
         } catch (JwtException e) {
             log.warn("Invalid JWT on refresh {}", e.getMessage());
             clearRefreshTokenCookie(response);
-            throw e; // Re-throw to let GlobalExceptionHandler handle it
+            throw e;
+        } catch (Exception e) {
+            log.error("Error during token refresh", e);
+            clearRefreshTokenCookie(response);
+            throw e;
         }
     }
 
