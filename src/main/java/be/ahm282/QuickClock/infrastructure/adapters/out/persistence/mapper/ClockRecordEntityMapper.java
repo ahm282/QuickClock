@@ -20,11 +20,11 @@ public class ClockRecordEntityMapper {
     public ClockRecord toDomain(ClockRecordEntity entity) {
         if (entity == null) return null;
 
-        ClockRecord record = new ClockRecord();
-        record.setId(entity.getId());
-        record.setUserId(entity.getUserId());
-        record.setType(entity.getType());
-        record.setTimestamp(entity.getTimestamp());
-        return record;
+        return new ClockRecord(
+                entity.getId(),
+                entity.getUserId(),
+                entity.getType(),
+                entity.getTimestamp()
+        );
     }
 }

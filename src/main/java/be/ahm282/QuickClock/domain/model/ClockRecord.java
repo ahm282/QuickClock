@@ -2,7 +2,7 @@ package be.ahm282.QuickClock.domain.model;
 
 import be.ahm282.QuickClock.domain.exception.ValidationException;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * Domain model for TimeEntry.
@@ -11,13 +11,13 @@ public class ClockRecord {
 
     private Long id;
     private Long userId;
-    private String type;
-    private LocalDateTime timestamp;
+    private ClockRecordType type;
+    private Instant timestamp;
 
     // Private constructor for persistence mapping
     public ClockRecord() {}
 
-    public ClockRecord(Long id, Long userId,  String type, LocalDateTime timestamp) {
+    public ClockRecord(Long id, Long userId,  ClockRecordType type, Instant timestamp) {
         this.id = id;
         this.userId = userId;
         this.type = type;
@@ -38,18 +38,18 @@ public class ClockRecord {
             throw new ValidationException("TimeEntry must be associated with a timestamp.");
         }
 
-        if (!type.equals("IN")  && !type.equals("OUT")) {
+        if (type != ClockRecordType.IN && type != ClockRecordType.OUT) {
             throw new ValidationException("Type must be either IN or OUT.");
         }
     }
 
-    public static ClockRecord create(Long userId, String type) {
-        ClockRecord record = new ClockRecord(null, userId, type, LocalDateTime.now());
+    public static ClockRecord create(Long userId, ClockRecordType type) {
+        ClockRecord record = new ClockRecord(null, userId, type, Instant.now());
         record.validate();
         return record;
     }
 
-    public static ClockRecord fromEntity(Long id, Long userId, String type, LocalDateTime timestamp) {
+    public static ClockRecord fromEntity(Long id, Long userId, ClockRecordType type, Instant timestamp) {
         ClockRecord record = new ClockRecord();
         record.id = id;
         record.userId = userId;
@@ -75,19 +75,15 @@ public class ClockRecord {
         this.userId = userId;
     }
 
-    public String getType() {
+    public ClockRecordType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ClockRecordType type) {
         this.type = type;
     }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
+    public Instant getTimestamp() { return timestamp; }
 
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
+    public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }
 }

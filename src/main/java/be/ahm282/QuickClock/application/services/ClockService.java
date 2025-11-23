@@ -5,6 +5,7 @@ import be.ahm282.QuickClock.application.ports.out.ClockRecordRepositoryPort;
 import be.ahm282.QuickClock.application.ports.out.QRTokenPort;
 import be.ahm282.QuickClock.domain.exception.BusinessRuleException;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
+import be.ahm282.QuickClock.domain.model.ClockRecordType;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +26,14 @@ public class ClockService implements ClockUseCase {
     @Override
     public ClockRecord clockIn(Long userId) {
         checkClockInRules(userId);
-        ClockRecord record = ClockRecord.create(userId, "IN");
+        ClockRecord record = ClockRecord.create(userId, ClockRecordType.IN);
         return clockRepo.save(record);
     }
 
     @Override
     public ClockRecord clockOut(Long userId) {
         checkClockOutRules(userId);
-        ClockRecord record = ClockRecord.create(userId, "OUT");
+        ClockRecord record = ClockRecord.create(userId, ClockRecordType.OUT);
         return clockRepo.save(record);
     }
 
@@ -55,7 +56,7 @@ public class ClockService implements ClockUseCase {
 
     private void checkClockInRules(Long userId) {
         clockRepo.findLatestByUserId(userId).ifPresent(lastRecord -> {
-            if ("IN".equals(lastRecord.getType())) {
+            if (ClockRecordType.IN.equals(lastRecord.getType())) {
                 throw new BusinessRuleException("Cannot clock in twice in a row");
             }
         });
@@ -63,7 +64,7 @@ public class ClockService implements ClockUseCase {
 
     private void checkClockOutRules(Long userId) {
         clockRepo.findLatestByUserId(userId).ifPresent(lastRecord -> {
-            if ("OUT".equals(lastRecord.getType())) {
+            if (ClockRecordType.OUT.equals(lastRecord.getType())) {
                 throw new BusinessRuleException("Cannot clock out twice in a row");
             }
         });

@@ -12,7 +12,6 @@ public class RefreshToken {
     private UUID parentId;
     private UUID rootFamilyId;
     private Long userId;
-    private String username;
     private boolean revoked;
     private boolean used;
     private Instant issuedAt;
@@ -20,13 +19,12 @@ public class RefreshToken {
 
     public RefreshToken() {}
 
-    public RefreshToken(String jti, UUID parentId, UUID rootFamilyId, Long userId, String username,
-                       boolean revoked, boolean used, Instant issuedAt, Instant expiresAt) {
+    public RefreshToken(String jti, UUID parentId, UUID rootFamilyId, Long userId, boolean revoked,
+                        boolean used, Instant issuedAt, Instant expiresAt) {
         this.jti = jti;
         this.parentId = parentId;
         this.rootFamilyId = rootFamilyId;
         this.userId = userId;
-        this.username = username;
         this.revoked = revoked;
         this.used = used;
         this.issuedAt = issuedAt;
@@ -64,14 +62,6 @@ public class RefreshToken {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public boolean isRevoked() {

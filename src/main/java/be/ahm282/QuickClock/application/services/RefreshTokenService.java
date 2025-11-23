@@ -104,7 +104,6 @@ public class RefreshTokenService implements RefreshTokenUseCase {
             parentId,
             rootFamilyId,
             userId,
-            username,
             false,
             false,
             issuedAt,
@@ -139,7 +138,6 @@ public class RefreshTokenService implements RefreshTokenUseCase {
             null,  // No parent - this is the root
             rootFamilyId,
             userId,
-            username,
             false,
             false,
             issuedAt,

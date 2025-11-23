@@ -1,18 +1,32 @@
 package be.ahm282.QuickClock.infrastructure.entity;
 
+import be.ahm282.QuickClock.domain.model.ClockRecordType;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
-@Table(name = "clock_records")
-public class ClockRecordEntity {
+@Table(
+        name = "clock_records",
+        indexes = {
+            @Index(name = "idx_clock_user", columnList = "user_id"),
+            @Index(name = "idx_clock_user_ts", columnList = "user_id, timestamp")
+        }
+)
+public class ClockRecordEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "user_id", nullable = false)
     private Long userId;
-    private String type;
-    private LocalDateTime timestamp;
+
+    @Column(name = "type", nullable = false, length = 16)
+    @Enumerated(EnumType.STRING)
+    private ClockRecordType type;
+
+    @Column(name = "timestamp", nullable = false)
+    private Instant timestamp;
 
     public Long getId() {
         return id;
@@ -30,19 +44,19 @@ public class ClockRecordEntity {
         this.userId = userId;
     }
 
-    public String getType() {
+    public ClockRecordType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ClockRecordType type) {
         this.type = type;
     }
 
-    public LocalDateTime getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 }

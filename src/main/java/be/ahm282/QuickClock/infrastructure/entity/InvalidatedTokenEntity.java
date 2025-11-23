@@ -7,9 +7,10 @@ import java.time.Instant;
 @Entity
 @Table(name = "invalidated_tokens", indexes = {
         @Index(name = "idx_invalidated_jti", columnList = "jti"),
-        @Index(name = "idx_invalidated_user", columnList = "user_id")
+        @Index(name = "idx_invalidated_user", columnList = "user_id"),
+        @Index(name = "idx_invalidated_expiry", columnList = "expiry_time")
 })
-public class InvalidatedTokenEntity {
+public class InvalidatedTokenEntity extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,6 +30,10 @@ public class InvalidatedTokenEntity {
         this.jti = jti;
         this.userId = userId;
         this.expiryTime = expiryTime;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getJti() { return jti; }

@@ -1,16 +1,18 @@
 package be.ahm282.QuickClock.application.ports.in.dto;
 
-import java.time.LocalDateTime;
+import be.ahm282.QuickClock.domain.model.ClockRecordType;
+
+import java.time.Instant;
 
 public class ClockResponseDTO {
     private Long id;
     private Long userId;
-    private String type;
-    private LocalDateTime timestamp;
+    private ClockRecordType type;
+    private Instant timestamp;
 
     public ClockResponseDTO() {}
 
-    public ClockResponseDTO(Long id, Long userId, String type, LocalDateTime timestamp) {
+    public ClockResponseDTO(Long id, Long userId, ClockRecordType type, Instant timestamp) {
         this.id = id;
         this.userId = userId;
         this.type = type;
@@ -33,19 +35,19 @@ public class ClockResponseDTO {
         this.userId = userId;
     }
 
-    public String getType() {
+    public ClockRecordType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ClockRecordType type) {
         this.type = type;
     }
 
-    public LocalDateTime getTimestamp() {
+    public Instant getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
     }
 }
