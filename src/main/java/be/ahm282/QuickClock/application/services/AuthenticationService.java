@@ -6,6 +6,7 @@ import be.ahm282.QuickClock.application.ports.out.RefreshTokenRepositoryPort;
 import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.exception.AuthenticationException;
+import be.ahm282.QuickClock.domain.exception.ValidationException;
 import be.ahm282.QuickClock.domain.model.RefreshToken;
 import be.ahm282.QuickClock.domain.model.User;
 import io.jsonwebtoken.Claims;
@@ -88,15 +89,47 @@ public class AuthenticationService implements AuthUseCase {
         String passwordHash = passwordEncoder.encode(password);
         String secret = generateSecret();
 
+        validatePassword(username, password);
+
         User toSave = new User(null, username, passwordHash, secret);
         User savedUser = userRepositoryPort.save(toSave);
 
         return savedUser.getId();
     }
 
+    // ====================
+    // Private helpers
+    // ====================
+
     private String generateSecret() {
         byte[] bytes = new byte[64];
         secureRandom.nextBytes(bytes);
         return Base64.getEncoder().encodeToString(bytes);
     }
+
+    private void validatePassword(String username, String password) {
+        if (password.length() < 10 || password.length() > 72) {
+            throw new ValidationException("Password must be between 10 and 72 characters");
+        }
+
+        if (password.equalsIgnoreCase(username)) {
+            throw new ValidationException("Password must not be the same as username");
+        }
+
+        boolean hasUpper = password.chars().anyMatch(Character::isUpperCase);
+        boolean hasLower = password.chars().anyMatch(Character::isLowerCase);
+        boolean hasDigit = password.chars().anyMatch(Character::isDigit);
+        boolean hasSymbol = password.chars().anyMatch(c -> !Character.isLetterOrDigit(c));
+
+        int buckets = 0;
+        if (hasUpper) buckets++;
+        if (hasLower) buckets++;
+        if (hasDigit) buckets++;
+        if (hasSymbol) buckets++;
+
+        if (buckets < 3) {
+            throw new ValidationException("Password is too weak");
+        }
+    }
+
 }
