@@ -27,9 +27,13 @@ public class RateLimitService {
     private static final int REGISTER_CAPACITY = 3;  // 3 attempts
     private static final Duration REGISTER_REFILL_PERIOD = Duration.ofMinutes(10);  // per 10 minutes
 
+    private static final int CLOCK_QR_CAPACITY = 30; // 30 attempts
+    private static final Duration CLOCK_QR_REFILL_PERIOD = Duration.ofMinutes(1); // per minute
+
     private final Map<String, Bucket> loginBuckets = new ConcurrentHashMap<>();
     private final Map<String, Bucket> refreshBuckets = new ConcurrentHashMap<>();
     private final Map<String, Bucket> registerBuckets = new ConcurrentHashMap<>();
+    private final Map<String, Bucket> clockQrBuckets = new ConcurrentHashMap<>();
 
     /**
      * Check if a login attempt is allowed for the given identifier.
@@ -77,6 +81,23 @@ public class RateLimitService {
 
         if (!allowed) {
             log.warn("Registration rate limit exceeded for: {}", identifier);
+        }
+
+        return allowed;
+    }
+
+    /**
+     * Check if a Clock QR attempt is allowed for the given identifier.
+     *
+     * @param identifier Unique identifier (typically IP address)
+     * @return true if allowed, false if rate-limited
+     */
+    public boolean allowClockQrAttempt(String identifier) {
+        Bucket bucket = clockQrBuckets.computeIfAbsent(identifier, k -> createClockQrBucket());
+        boolean allowed = bucket.tryConsume(1);
+
+        if (!allowed) {
+            log.warn("Clock QR rate limit exceeded for: {}", identifier);
         }
 
         return allowed;
@@ -146,6 +167,17 @@ public class RateLimitService {
                 .build();
     }
 
+    private Bucket createClockQrBucket() {
+        Bandwidth limit = Bandwidth.builder()
+                .capacity(CLOCK_QR_CAPACITY)
+                .refillGreedy(CLOCK_QR_CAPACITY, CLOCK_QR_REFILL_PERIOD)
+                .build();
+
+        return Bucket.builder()
+                .addLimit(limit)
+                .build();
+    }
+
     /**
      * Cleanup method - can be scheduled to run periodically.
      * Removes buckets that are full (indicating no recent activity).
@@ -157,6 +189,8 @@ public class RateLimitService {
             entry.getValue().getAvailableTokens() >= REFRESH_CAPACITY);
         registerBuckets.entrySet().removeIf(entry ->
             entry.getValue().getAvailableTokens() >= REGISTER_CAPACITY);
+        clockQrBuckets.entrySet().removeIf(entry ->
+            entry.getValue().getAvailableTokens() >= CLOCK_QR_CAPACITY);
     }
 }
 

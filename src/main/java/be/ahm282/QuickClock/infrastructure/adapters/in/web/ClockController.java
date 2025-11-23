@@ -8,9 +8,12 @@ import be.ahm282.QuickClock.application.services.ClockService;
 import be.ahm282.QuickClock.application.services.QRCodeService;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.mapper.ClockResponseDTOMapper;
+import be.ahm282.QuickClock.infrastructure.security.service.RateLimitService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -21,13 +24,16 @@ public class ClockController {
     private final ClockService clockService;
     private final QRCodeService qrCodeService;
     private final ClockResponseDTOMapper responseMapper;
+    private final RateLimitService rateLimitService;
 
     public ClockController(ClockService clockService,
                            QRCodeService qrCodeService,
-                           ClockResponseDTOMapper responseMapper) {
+                           ClockResponseDTOMapper responseMapper,
+                           RateLimitService rateLimitService) {
         this.clockService = clockService;
         this.qrCodeService = qrCodeService;
         this.responseMapper = responseMapper;
+        this.rateLimitService = rateLimitService;
     }
 
     // ---------- ID-based endpoints ----------
@@ -66,15 +72,37 @@ public class ClockController {
 
     @PostMapping("/qr/in")
     @ResponseStatus(HttpStatus.CREATED)
-    public ClockResponseDTO clockInWithQR(@RequestBody @Valid ClockQRCodeRequestDTO request) {
+    public ClockResponseDTO clockInWithQR(@RequestBody @Valid ClockQRCodeRequestDTO request,
+                                          HttpServletRequest httpRequest) {
+        String ipAddress = getClientIp(httpRequest);
+        if (!rateLimitService.allowClockQrAttempt(ipAddress)) {
+            throw new ResponseStatusException(
+                    HttpStatus.TOO_MANY_REQUESTS,
+                    "Too many QR code clock-in attempts. Please try again later."
+            );
+        }
+
         ClockRecord record = clockService.clockInWithQR(request.getToken());
         return responseMapper.toDTO(record);
     }
 
     @PostMapping("/qr/out")
     @ResponseStatus(HttpStatus.CREATED)
-    public ClockResponseDTO clockOutWithQR(@RequestBody @Valid ClockQRCodeRequestDTO request) {
+    public ClockResponseDTO clockOutWithQR(@RequestBody @Valid ClockQRCodeRequestDTO request,
+                                           HttpServletRequest httpRequest) {
+        String ipAddress = getClientIp(httpRequest);
+        if (!rateLimitService.allowClockQrAttempt(ipAddress)) {
+            throw new ResponseStatusException(
+                    HttpStatus.TOO_MANY_REQUESTS,
+                    "Too many QR code clock-out attempts. Please try again later."
+            );
+        }
+
         ClockRecord record = clockService.clockOutWithQR(request.getToken());
         return responseMapper.toDTO(record);
+    }
+
+    private String getClientIp(HttpServletRequest request) { // TODO Re-evaluate this method if behind a proxy
+        return request.getRemoteAddr() != null ? request.getRemoteAddr() : "unknown";
     }
 }
