@@ -8,13 +8,14 @@ import be.ahm282.QuickClock.application.services.ClockService;
 import be.ahm282.QuickClock.application.services.QRCodeService;
 import be.ahm282.QuickClock.domain.exception.RateLimitException;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
+import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.AdminClockRequestDTO;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.mapper.ClockResponseDTOMapper;
 import be.ahm282.QuickClock.infrastructure.security.service.RateLimitService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -37,7 +38,10 @@ public class ClockController {
         this.rateLimitService = rateLimitService;
     }
 
-    // ---------- ID-based endpoints ----------
+    // -------------------------------------------------------------------------
+    // Employee clocking via userId (will remove in favor of QR-based flow once dev is done)
+    // -------------------------------------------------------------------------
+
     @PostMapping("/in")
     @ResponseStatus(HttpStatus.CREATED)
     public ClockResponseDTO clockIn(@RequestBody @Valid ClockRequestDTO requestDTO) {
@@ -60,7 +64,10 @@ public class ClockController {
                 .toList();
     }
 
-    // ---------- QR-based endpoints ----------
+    // -------------------------------------------------------------------------
+    // QR-based endpoints (employee flow; requires JWT on the phone)
+    // -------------------------------------------------------------------------
+
     @GetMapping("/qr/generate/in/{userId}")
     public ClockQRCodeResponseDTO generateClockInQRCode(@PathVariable Long userId) {
         return qrCodeService.generateClockInQRCode(userId);
@@ -73,6 +80,7 @@ public class ClockController {
 
     @PostMapping("/qr/in")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EMPLOYEE') or hasAnyRole('ADMIN','SUPER_ADMIN')")
     public ClockResponseDTO clockInWithQR(@RequestBody @Valid ClockQRCodeRequestDTO request,
                                           HttpServletRequest httpRequest) {
         String ipAddress = getClientIp(httpRequest);
@@ -86,6 +94,7 @@ public class ClockController {
 
     @PostMapping("/qr/out")
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('EMPLOYEE') or hasAnyRole('ADMIN','SUPER_ADMIN')")
     public ClockResponseDTO clockOutWithQR(@RequestBody @Valid ClockQRCodeRequestDTO request,
                                            HttpServletRequest httpRequest) {
         String ipAddress = getClientIp(httpRequest);
@@ -96,6 +105,38 @@ public class ClockController {
         ClockRecord record = clockService.clockOutWithQR(request.getToken());
         return responseMapper.toDTO(record);
     }
+
+    // -------------------------------------------------------------------------
+    // Admin manual clocking: explicit endpoints + reason + timestamp
+    // -------------------------------------------------------------------------
+
+    @PostMapping("/admin/in")
+    @ResponseStatus(HttpStatus.CREATED)
+//    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public ClockResponseDTO adminClockIn(@RequestBody @Valid AdminClockRequestDTO request) {
+        ClockRecord record = clockService.adminClockIn(
+                request.userId(),
+                request.timestamp(),
+                request.reason()
+        );
+        return responseMapper.toDTO(record);
+    }
+
+    @PostMapping("/admin/out")
+    @ResponseStatus(HttpStatus.CREATED)
+//    @PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+    public ClockResponseDTO adminClockOut(@RequestBody @Valid AdminClockRequestDTO request) {
+        ClockRecord record = clockService.adminClockOut(
+                request.userId(),
+                request.timestamp(),
+                request.reason()
+        );
+        return responseMapper.toDTO(record);
+    }
+
+    // -------------------------------------------------------------------------
+    // Utilities
+    // -------------------------------------------------------------------------
 
     private String getClientIp(HttpServletRequest request) { // TODO Re-evaluate this method if behind a proxy
         return request.getRemoteAddr() != null ? request.getRemoteAddr() : "unknown";

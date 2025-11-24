@@ -23,8 +23,7 @@ public class JpaClockRecordAdapter implements ClockRecordRepositoryPort {
     @Override
     public ClockRecord save(ClockRecord clockRecord) {
         ClockRecordEntity saved = repository.save(mapper.toEntity(clockRecord));
-        clockRecord.setId(saved.getId());
-        return clockRecord;
+        return mapper.toDomain(saved);
     }
 
     @Override

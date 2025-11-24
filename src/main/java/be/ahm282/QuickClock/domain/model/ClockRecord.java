@@ -13,15 +13,17 @@ public class ClockRecord {
     private Long userId;
     private ClockRecordType type;
     private Instant timestamp;
+    private  String reason;
 
     // Private constructor for persistence mapping
     public ClockRecord() {}
 
-    public ClockRecord(Long id, Long userId,  ClockRecordType type, Instant timestamp) {
+    public ClockRecord(Long id, Long userId,  ClockRecordType type, Instant timestamp, String reason) {
         this.id = id;
         this.userId = userId;
         this.type = type;
         this.timestamp = timestamp;
+        this.reason = reason;
         this.validate();
     }
 
@@ -44,9 +46,14 @@ public class ClockRecord {
     }
 
     public static ClockRecord create(Long userId, ClockRecordType type) {
-        ClockRecord record = new ClockRecord(null, userId, type, Instant.now());
+        ClockRecord record = new ClockRecord(null, userId, type, Instant.now(), null);
         record.validate();
         return record;
+    }
+
+    public static ClockRecord createAt(Long userId, ClockRecordType type, Instant timestamp, String reason) {
+        Instant effectiveTimestamp = (timestamp != null) ? timestamp : Instant.now();
+        return new ClockRecord(null, userId, type, effectiveTimestamp, reason);
     }
 
     public static ClockRecord fromEntity(Long id, Long userId, ClockRecordType type, Instant timestamp) {
@@ -63,27 +70,15 @@ public class ClockRecord {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getUserId() {
         return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
     }
 
     public ClockRecordType getType() {
         return type;
     }
 
-    public void setType(ClockRecordType type) {
-        this.type = type;
-    }
-
     public Instant getTimestamp() { return timestamp; }
 
-    public void setTimestamp(Instant timestamp) { this.timestamp = timestamp; }
+    public  String getReason() { return reason; }
 }

@@ -9,6 +9,7 @@ import be.ahm282.QuickClock.domain.model.ClockRecordType;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -54,6 +55,24 @@ public class ClockService implements ClockUseCase {
         return clockRepo.findAllByUserId(userId);
     }
 
+    // ---------- Admin manual clocking ----------
+
+    @Override
+    public ClockRecord adminClockIn(Long userId, Instant timestamp, String reason) {
+        // TODO: Consider enforcing time constraints (e.g., cannot clock in for a time in the future)
+        checkClockInRules(userId);
+        ClockRecord record = ClockRecord.createAt(userId, ClockRecordType.IN, timestamp, reason);
+        return clockRepo.save(record);
+    }
+
+    @Override
+    public ClockRecord adminClockOut(Long userId, Instant timestamp, String reason) {
+        checkClockOutRules(userId);
+        ClockRecord record = ClockRecord.createAt(userId, ClockRecordType.OUT, timestamp, reason);
+        return clockRepo.save(record);
+    }
+
+    // ---------- Business rules ----------
     private void checkClockInRules(Long userId) {
         clockRepo.findLatestByUserId(userId).ifPresent(lastRecord -> {
             if (ClockRecordType.IN.equals(lastRecord.getType())) {
@@ -61,7 +80,6 @@ public class ClockService implements ClockUseCase {
             }
         });
     }
-
     private void checkClockOutRules(Long userId) {
         clockRepo.findLatestByUserId(userId).ifPresent(lastRecord -> {
             if (ClockRecordType.OUT.equals(lastRecord.getType())) {

@@ -27,6 +27,8 @@ public class ClockRecordEntity extends AuditableEntity {
 
     @Column(name = "timestamp", nullable = false)
     private Instant timestamp;
+    @Column(name = "reason", length = 255)
+    private String reason;
 
     public Long getId() {
         return id;
@@ -58,5 +60,13 @@ public class ClockRecordEntity extends AuditableEntity {
 
     public void setTimestamp(Instant timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }
