@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class AuthenticationService implements AuthUseCase {
@@ -90,7 +87,7 @@ public class AuthenticationService implements AuthUseCase {
         String passwordHash = passwordEncoder.encode(password);
         String secret = generateSecret();
 
-        User toSave = new User(null, username, passwordHash, secret, Role.EMPLOYEE);
+        User toSave = new User(null, username, passwordHash, secret, Set.of(Role.EMPLOYEE));
         User savedUser = userRepositoryPort.save(toSave);
 
         return savedUser.getId();
@@ -100,8 +97,10 @@ public class AuthenticationService implements AuthUseCase {
     // Private helpers
     // ====================
     private List<Role> toRoleList(User user) {
-        Role role = user.getRole();
-        return (role != null) ? List.of(role) : List.of();
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            return Collections.emptyList();
+        }
+        return List.copyOf(user.getRoles());
     }
 
     /**

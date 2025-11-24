@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.Set;
 
 @Component
 public class UserSeeder {
@@ -31,7 +32,7 @@ public class UserSeeder {
         }
 
         String secret = generateSecret();
-        User user = new User(null, username, "$2a$10$cMvvFY1gy6ilpjxZg7CyIuchDr/Z7QKXPOsDzUhefU5nMeZ.cGAUu", secret, Role.EMPLOYEE);
+        User user = new User(null, username, "$2a$10$cMvvFY1gy6ilpjxZg7CyIuchDr/Z7QKXPOsDzUhefU5nMeZ.cGAUu", secret, Set.of(Role.EMPLOYEE));
         userRepositoryPort.save(user);
     }
 

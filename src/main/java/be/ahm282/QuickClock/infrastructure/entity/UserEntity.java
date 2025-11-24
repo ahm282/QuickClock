@@ -3,6 +3,9 @@ package be.ahm282.QuickClock.infrastructure.entity;
 import be.ahm282.QuickClock.domain.model.Role;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(name = "uk_users_username", columnNames = "username"),
@@ -22,18 +25,29 @@ public class UserEntity extends AuditableEntity {
     private String passwordHash;
     @Column(nullable = false, length = 100)
     private String secret;
-    @Enumerated(EnumType.STRING)
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_roles_user")),
+            indexes = {
+                    @Index(name = "idx_user_roles_user_id", columnList = "user_id"),
+                    @Index(name = "idx_user_roles_role", columnList = "role"),
+                    @Index(name = "idx_user_roles_user_id_role", columnList = "user_id, role")
+            }
+    )
     @Column(name = "role", nullable = false, length = 32)
-    private Role role;
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles = new HashSet<>();
+
 
     public UserEntity() {
     }
 
-    public UserEntity(String username, String passwordHash, String secret, Role role) {
+    public UserEntity(String username, String passwordHash, String secret, Set<Role> roles) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.secret = secret;
-        this.role = role;
+        setRoles(roles);
     }
 
     public Long getId() {
@@ -68,11 +82,11 @@ public class UserEntity extends AuditableEntity {
         this.secret = secret;
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = (roles == null) ? new HashSet<>() : new HashSet<>(roles);
     }
 }

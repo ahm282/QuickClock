@@ -156,8 +156,10 @@ public class RefreshTokenService implements RefreshTokenUseCase {
     // ====================
 
     private List<Role> toRoleList(User user) {
-        Role role = user.getRole();
-        return (role != null) ? List.of(role) : List.of();
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            return List.of();
+        }
+        return List.copyOf(user.getRoles());
     }
 
     private TokenPair createNewTokenFamily(User user, List<Role> roles) {
