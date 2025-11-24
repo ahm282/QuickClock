@@ -2,12 +2,10 @@ package be.ahm282.QuickClock.application.services;
 
 import be.ahm282.QuickClock.application.dto.TokenPair;
 import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
-import be.ahm282.QuickClock.application.ports.out.BreachedPasswordCheckPort;
-import be.ahm282.QuickClock.application.ports.out.RefreshTokenRepositoryPort;
-import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
-import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
+import be.ahm282.QuickClock.application.ports.out.*;
 import be.ahm282.QuickClock.domain.exception.AuthenticationException;
 import be.ahm282.QuickClock.domain.exception.ValidationException;
+import be.ahm282.QuickClock.domain.model.InviteCode;
 import be.ahm282.QuickClock.domain.model.RefreshToken;
 import be.ahm282.QuickClock.domain.model.Role;
 import be.ahm282.QuickClock.domain.model.User;
@@ -33,6 +31,7 @@ public class AuthenticationService implements AuthUseCase {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
 
     private final UserRepositoryPort userRepositoryPort;
+    private final InviteCodeRepositoryPort inviteCodeRepositoryPort;
     private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
     private final TokenProviderPort tokenProviderPort;
     private final BreachedPasswordCheckPort breachedPasswordCheckPort;
@@ -42,6 +41,7 @@ public class AuthenticationService implements AuthUseCase {
     private final Nbvcxz nbvcxz;
 
     public AuthenticationService(UserRepositoryPort userRepositoryPort,
+                                 InviteCodeRepositoryPort inviteCodeRepositoryPort,
                                  RefreshTokenRepositoryPort refreshTokenRepositoryPort,
                                  TokenProviderPort tokenProviderPort,
                                  PasswordEncoder passwordEncoder,
@@ -49,6 +49,7 @@ public class AuthenticationService implements AuthUseCase {
                                  @Value("${app.password.min-entropy:42}")
                                  double minimumPasswordEntropy) throws NoSuchAlgorithmException {
         this.userRepositoryPort = userRepositoryPort;
+        this.inviteCodeRepositoryPort = inviteCodeRepositoryPort;
         this.refreshTokenRepositoryPort = refreshTokenRepositoryPort;
         this.tokenProviderPort = tokenProviderPort;
         this.breachedPasswordCheckPort = breachedPasswordCheckPort;
@@ -81,8 +82,9 @@ public class AuthenticationService implements AuthUseCase {
     }
 
     @Override
-    public Long register(String username, String password) {
+    public Long register(String username, String password, String inviteCode) {
         validatePassword(username, password);
+        validateInviteCode(inviteCode);
 
         String passwordHash = passwordEncoder.encode(password);
         String secret = generateSecret();
@@ -90,6 +92,7 @@ public class AuthenticationService implements AuthUseCase {
         User toSave = new User(null, username, passwordHash, secret, Set.of(Role.EMPLOYEE));
         User savedUser = userRepositoryPort.save(toSave);
 
+        markInviteCodeUsed(inviteCode, savedUser.getId());
         return savedUser.getId();
     }
 
@@ -189,5 +192,24 @@ public class AuthenticationService implements AuthUseCase {
             // Log the exception but do not prevent registration
             log.error("HIBP validation failed: {}", e.getMessage(), e);
         }
+    }
+
+    private void validateInviteCode(String code) {
+        var inviteOptional = inviteCodeRepositoryPort.findByCode(code);
+        if (inviteOptional.isEmpty()) {
+            throw new ValidationException("Invalid invite code");
+        }
+
+        var inviteCode = inviteOptional.get();
+        if (inviteCode.isUsed() || inviteCode.isExpired()) {
+            throw new ValidationException("Invite code has expired or already been used");
+        }
+    }
+
+    private void markInviteCodeUsed(String code, Long userId) {
+        var invite = inviteCodeRepositoryPort.findByCode(code).orElseThrow(() ->
+                new IllegalStateException("Invite code disappeared during registration"));
+        InviteCode used = invite.markAsUsed(userId);
+        inviteCodeRepositoryPort.save(used);
     }
 }

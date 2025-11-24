@@ -61,7 +61,7 @@ public class AuthController {
             throw new RateLimitException("Too many registration attempts. Please try again later.");
         }
 
-        authUseCase.register(request.username(), request.password());
+        authUseCase.register(request.username(), request.password(), request.inviteCode());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

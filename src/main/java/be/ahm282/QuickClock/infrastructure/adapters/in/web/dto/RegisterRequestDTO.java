@@ -17,6 +17,9 @@ public record RegisterRequestDTO(
         @Pattern(
                 regexp = "^[\\x21-\\x7E]+$",
                 message = "Password may only contain printable ASCII characters (no spaces or emojis)")
-        String password
+        String password,
+
+        @NotBlank
+        String inviteCode
 ) {
 }
