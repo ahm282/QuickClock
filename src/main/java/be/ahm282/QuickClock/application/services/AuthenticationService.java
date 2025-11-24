@@ -35,7 +35,6 @@ import java.util.UUID;
 public class AuthenticationService implements AuthUseCase {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
 
-    private final double minimumPasswordEntropy; // Secure enough without unnecessary friction
     private final UserRepositoryPort userRepositoryPort;
     private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
     private final TokenProviderPort tokenProviderPort;
@@ -59,10 +58,9 @@ public class AuthenticationService implements AuthUseCase {
         this.passwordEncoder = passwordEncoder;
         this.secureRandom = SecureRandom.getInstanceStrong();
         this.dummyHash = passwordEncoder.encode(UUID.randomUUID().toString());
-        this.minimumPasswordEntropy = minimumPasswordEntropy;
 
         Configuration passwordConfig = new ConfigurationBuilder()
-                .setMinimumEntropy(this.minimumPasswordEntropy)
+                .setMinimumEntropy(minimumPasswordEntropy)
                 .createConfiguration();
 
         this.nbvcxz = new Nbvcxz(passwordConfig);
@@ -79,38 +77,10 @@ public class AuthenticationService implements AuthUseCase {
             throw new AuthenticationException("Authentication failed. Invalid username or password.");
         }
 
-        // Valid user, proceed with token generation
         User user = maybeUser.get();
-        Role role = user.getRole();
-        List<Role> roles = (role != null) ? List.of(role) : List.of();
+        List<Role> roles = toRoleList(user);
 
-        // Generate tokens
-        String accessToken = tokenProviderPort.generateAccessToken(user.getUsername(), user.getId(), roles);
-        String refreshToken = tokenProviderPort.generateRefreshToken(user.getUsername(), user.getId());
-
-        // Create new token family for this login session
-        UUID rootFamilyId = UUID.randomUUID();
-
-        // Parse refresh token to extract its JTI and expiry
-        Claims claims = tokenProviderPort.parseClaims(refreshToken);
-        String jti = claims.getId();
-        Instant expiry = claims.getExpiration().toInstant();
-        Instant issuedAt = Instant.now();
-
-        // Store refresh token as the root of a new family
-        RefreshToken refreshTokenEntity = new RefreshToken(
-            jti,
-            null,  // No parent - this is the root token
-            rootFamilyId,
-            user.getId(),
-            false,
-            false,
-            issuedAt,
-            expiry
-        );
-        refreshTokenRepositoryPort.save(refreshTokenEntity);
-
-        return new TokenPair(accessToken, refreshToken);
+        return issueInitialTokens(user, roles);
     }
 
     @Override
@@ -129,6 +99,46 @@ public class AuthenticationService implements AuthUseCase {
     // ====================
     // Private helpers
     // ====================
+    private List<Role> toRoleList(User user) {
+        Role role = user.getRole();
+        return (role != null) ? List.of(role) : List.of();
+    }
+
+    /**
+     * Issues an access/refresh pair and stores the root refresh token in DB.
+     * Used for initial login; refresh rotation is handled in RefreshTokenService.
+     */
+    private TokenPair issueInitialTokens(User user, List<Role> roles) {
+        String username = user.getUsername();
+        Long userId = user.getId();
+
+        String accessToken = tokenProviderPort.generateAccessToken(username, userId, roles);
+        String refreshToken = tokenProviderPort.generateRefreshToken(username, userId);
+
+        UUID rootFamilyId = UUID.randomUUID();
+        persistRefreshTokenAsRoot(refreshToken, rootFamilyId, userId);
+
+        return new TokenPair(accessToken, refreshToken);
+    }
+
+    private void persistRefreshTokenAsRoot(String refreshToken, UUID rootFamilyId, Long userId) {
+        Claims claims = tokenProviderPort.parseClaims(refreshToken);
+        String jti = claims.getId();
+        Instant expiry = claims.getExpiration().toInstant();
+        Instant issuedAt = Instant.now();
+
+        RefreshToken refreshTokenEntity = new RefreshToken(
+                jti,
+                null,                  // parentId = null → root
+                rootFamilyId,
+                userId,
+                false,                 // revoked
+                false,                 // used
+                issuedAt,
+                expiry
+        );
+        refreshTokenRepositoryPort.save(refreshTokenEntity);
+    }
 
     private String generateSecret() {
         byte[] bytes = new byte[64];
