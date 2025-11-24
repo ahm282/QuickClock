@@ -8,8 +8,8 @@ import java.util.List;
 public interface ClockUseCase {
     ClockRecord clockIn(Long userId);
     ClockRecord clockOut(Long userId);
-    ClockRecord clockInWithQR(String token);
-    ClockRecord clockOutWithQR(String token);
+    ClockRecord clockInWithQR(String token, Long authenticatedUserId);
+    ClockRecord clockOutWithQR(String token, Long authenticatedUserId);
     List<ClockRecord> getHistory(Long userId);
 
     // Admin corrections

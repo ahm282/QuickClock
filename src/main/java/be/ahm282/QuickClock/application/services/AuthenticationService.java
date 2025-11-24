@@ -195,6 +195,11 @@ public class AuthenticationService implements AuthUseCase {
     }
 
     private void validateInviteCode(String code) {
+        // TODO temporary: allow "ok" as a universal code during dev
+        if (code.equals("ok")) {
+            return;
+        }
+
         var inviteOptional = inviteCodeRepositoryPort.findByCode(code);
         if (inviteOptional.isEmpty()) {
             throw new ValidationException("Invalid invite code");
@@ -207,6 +212,10 @@ public class AuthenticationService implements AuthUseCase {
     }
 
     private void markInviteCodeUsed(String code, Long userId) {
+        if (code.equals("ok")) {
+            return;
+        }
+
         var invite = inviteCodeRepositoryPort.findByCode(code).orElseThrow(() ->
                 new IllegalStateException("Invite code disappeared during registration"));
         InviteCode used = invite.markAsUsed(userId);

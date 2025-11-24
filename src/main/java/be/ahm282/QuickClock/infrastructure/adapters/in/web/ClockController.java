@@ -119,8 +119,8 @@ public class ClockController {
             throw new RateLimitException("Too many QR code clock-in attempts. Please try again later.");
         }
 
-        // TODO (important, next step): cross-check that QR token's userId == JWT userId
-        ClockRecord record = clockService.clockInWithQR(request.getToken());
+        Long authenticatedUserId = securityUtil.extractUserIdFromRequestToken(httpRequest);
+        ClockRecord record = clockService.clockInWithQR(request.getToken(), authenticatedUserId);
         return responseMapper.toDTO(record);
     }
 
@@ -133,8 +133,8 @@ public class ClockController {
             throw new RateLimitException("Too many QR code clock-out attempts. Please try again later.");
         }
 
-        // TODO (important, next step): cross-check that QR token's userId == JWT userId
-        ClockRecord record = clockService.clockOutWithQR(request.getToken());
+        Long authenticatedUserId = securityUtil.extractUserIdFromRequestToken(httpRequest);
+        ClockRecord record = clockService.clockOutWithQR(request.getToken(), authenticatedUserId);
         return responseMapper.toDTO(record);
     }
 

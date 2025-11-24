@@ -32,7 +32,12 @@ public class UserSeeder {
         }
 
         String secret = generateSecret();
-        User user = new User(null, username, "$2a$10$cMvvFY1gy6ilpjxZg7CyIuchDr/Z7QKXPOsDzUhefU5nMeZ.cGAUu", secret, Set.of(Role.EMPLOYEE));
+        User user = new User(
+                null,
+                username,
+                "$2a$12$arCwvNjUX42eEOdol04eReAZnDKMx9MTUmF9xAgn4.OoJjvV3hrUi",
+                secret,
+                Set.of(Role.ADMIN, Role.EMPLOYEE));
         userRepositoryPort.save(user);
     }
 
