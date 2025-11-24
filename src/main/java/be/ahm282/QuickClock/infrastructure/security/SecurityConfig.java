@@ -19,11 +19,14 @@ import org.springframework.security.web.header.writers.XXssProtectionHeaderWrite
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtTokenService jwtTokenService;
+    private final JwtAuthFilter jwtAuthFilter;
     private final InvalidatedTokenRepositoryPort invalidatedTokenRepository;
 
     public SecurityConfig(JwtTokenService jwtTokenService,
-                                 InvalidatedTokenRepositoryPort invalidatedTokenRepository) {
+                          JwtAuthFilter jwtAuthFilter,
+                          InvalidatedTokenRepositoryPort invalidatedTokenRepository) {
         this.jwtTokenService = jwtTokenService;
+        this.jwtAuthFilter = jwtAuthFilter;
         this.invalidatedTokenRepository = invalidatedTokenRepository;
     }
 
@@ -35,15 +38,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(AbstractHttpConfigurer::disable)
                 .securityMatcher("/api/**")
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-//                        .requestMatchers("/api/clock/qr/generate/**").hasAnyRole("ADMIN", "SERVICE_ACCOUNT")
-//                        .requestMatchers("/api/clock/history/**").hasAnyRole("ADMIN", "EMPLOYEE")
-//                        .requestMatchers("/api/clock/qr/**").hasAnyRole("ADMIN", "EMPLOYEE", "SERVICE_ACCOUNT")
-                        .anyRequest().authenticated()
-                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                                .requestMatchers("/api/auth/**").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/clock/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+//                        .requestMatchers("/api/clock/history/**").authenticated()
+//                        .requestMatchers("/api/clock/qr/**").authenticated()
+                                .anyRequest().authenticated()
+                )
                 .headers(headers -> headers
                         .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'self'"))
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin)
@@ -57,9 +61,8 @@ public class SecurityConfig {
                             response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"Authentication required\"}");
                         })
                 )
-                .csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(
-                        new JwtAuthFilter(jwtTokenService, invalidatedTokenRepository),
+                        jwtAuthFilter,
                         UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

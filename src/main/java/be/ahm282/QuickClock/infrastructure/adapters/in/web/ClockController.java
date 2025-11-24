@@ -70,13 +70,6 @@ public class ClockController {
     // - Admin / Super Admin: can read any user's history
     // - Others: only their own
     // -------------------------------------------------------------------------
-
-// -------------------------------------------------------------------------
-// History endpoints
-// - Admin / Super Admin: can read any user's history
-// - Others: only their own
-// -------------------------------------------------------------------------
-
     @GetMapping("/history/{userId}")
     public List<ClockResponseDTO> getHistory(@PathVariable Long userId,
                                              HttpServletRequest request) {
