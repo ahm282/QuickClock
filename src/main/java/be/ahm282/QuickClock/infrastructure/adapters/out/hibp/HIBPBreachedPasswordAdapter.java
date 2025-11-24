@@ -17,7 +17,6 @@ import java.time.Duration;
 
 @Component
 public class HIBPBreachedPasswordAdapter implements BreachedPasswordCheckPort {
-
     private static final Logger log = LoggerFactory.getLogger(HIBPBreachedPasswordAdapter.class);
     private static final String HIBP_API_URL = "https://api.pwnedpasswords.com/range/";
 

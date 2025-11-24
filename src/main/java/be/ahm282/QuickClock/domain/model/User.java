@@ -6,12 +6,14 @@ public class User {
     private final String username;
     private final String passwordHash;
     private final String secret;
+    private final Role role;
 
-    public User(Long id, String username, String passwordHash, String secret) {
+    public User(Long id, String username, String passwordHash, String secret, Role role) {
         this.id = id;
         this.username = username;
         this.passwordHash = passwordHash;
         this.secret = secret;
+        this.role = role;
     }
 
     public Long getId() {
@@ -28,5 +30,9 @@ public class User {
 
     public String getSecret() {
         return secret;
+    }
+
+    public Role getRole() {
+        return role;
     }
 }

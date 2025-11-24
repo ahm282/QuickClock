@@ -20,3 +20,6 @@ app:
   cookie:
     secure: ${COOKIE_SECURE:false}
     domain: ${COOKIE_DOMAIN:}
+
+  password:
+      min-entropy: ${PASSWORD_MIN_ENTROPY:42}

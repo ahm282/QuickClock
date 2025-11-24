@@ -16,7 +16,8 @@ public class UserMapper {
                 entity.getId(),
                 entity.getUsername(),
                 entity.getPasswordHash(),
-                entity.getSecret()
+                entity.getSecret(),
+                entity.getRole()
         );
     }
 
@@ -30,6 +31,7 @@ public class UserMapper {
         entity.setUsername(user.getUsername());
         entity.setPasswordHash(user.getPasswordHash());
         entity.setSecret(user.getSecret());
+        entity.setRole(user.getRole());
         return entity;
     }
 }

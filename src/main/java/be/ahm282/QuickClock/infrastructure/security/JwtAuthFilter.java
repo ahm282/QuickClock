@@ -111,9 +111,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         List<String> roles = rawRoles == null
                 ? Collections.emptyList()
                 : rawRoles.stream()
-                .filter(String.class::isInstance)
-                .map(String.class::cast)
-                .toList();
+                    .filter(String.class::isInstance)
+                    .map(String.class::cast)
+                    .toList();
 
         List<GrantedAuthority> authorities =
                 roles.stream()

@@ -1,6 +1,7 @@
 package be.ahm282.QuickClock.infrastructure.entity;
 
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
+import be.ahm282.QuickClock.domain.model.Role;
 import be.ahm282.QuickClock.domain.model.User;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
@@ -30,7 +31,7 @@ public class UserSeeder {
         }
 
         String secret = generateSecret();
-        User user = new User(null, username, "$2a$10$cMvvFY1gy6ilpjxZg7CyIuchDr/Z7QKXPOsDzUhefU5nMeZ.cGAUu", secret);
+        User user = new User(null, username, "$2a$10$cMvvFY1gy6ilpjxZg7CyIuchDr/Z7QKXPOsDzUhefU5nMeZ.cGAUu", secret, Role.EMPLOYEE);
         userRepositoryPort.save(user);
     }
 

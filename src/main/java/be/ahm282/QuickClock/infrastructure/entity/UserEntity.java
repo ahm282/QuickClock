@@ -1,5 +1,6 @@
 package be.ahm282.QuickClock.infrastructure.entity;
 
+import be.ahm282.QuickClock.domain.model.Role;
 import jakarta.persistence.*;
 
 @Entity
@@ -21,14 +22,18 @@ public class UserEntity extends AuditableEntity {
     private String passwordHash;
     @Column(nullable = false, length = 100)
     private String secret;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false, length = 32)
+    private Role role;
 
     public UserEntity() {
     }
 
-    public UserEntity(String username, String passwordHash, String secret) {
+    public UserEntity(String username, String passwordHash, String secret, Role role) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.secret = secret;
+        this.role = role;
     }
 
     public Long getId() {
@@ -61,5 +66,13 @@ public class UserEntity extends AuditableEntity {
 
     public void setSecret(String secret) {
         this.secret = secret;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

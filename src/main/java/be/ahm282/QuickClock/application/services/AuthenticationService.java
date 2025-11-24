@@ -9,6 +9,7 @@ import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.exception.AuthenticationException;
 import be.ahm282.QuickClock.domain.exception.ValidationException;
 import be.ahm282.QuickClock.domain.model.RefreshToken;
+import be.ahm282.QuickClock.domain.model.Role;
 import be.ahm282.QuickClock.domain.model.User;
 import io.jsonwebtoken.Claims;
 import me.gosimple.nbvcxz.Nbvcxz;
@@ -18,6 +19,7 @@ import me.gosimple.nbvcxz.resources.Feedback;
 import me.gosimple.nbvcxz.scoring.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,14 +27,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class AuthenticationService implements AuthUseCase {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
-    private static final double MINIMUM_PASSWORD_ENTROPY = 42.0; // Secure enough without unnecessary friction
 
+    private final double minimumPasswordEntropy; // Secure enough without unnecessary friction
     private final UserRepositoryPort userRepositoryPort;
     private final RefreshTokenRepositoryPort refreshTokenRepositoryPort;
     private final TokenProviderPort tokenProviderPort;
@@ -46,7 +49,9 @@ public class AuthenticationService implements AuthUseCase {
                                  RefreshTokenRepositoryPort refreshTokenRepositoryPort,
                                  TokenProviderPort tokenProviderPort,
                                  PasswordEncoder passwordEncoder,
-                                 BreachedPasswordCheckPort breachedPasswordCheckPort) throws NoSuchAlgorithmException {
+                                 BreachedPasswordCheckPort breachedPasswordCheckPort,
+                                 @Value("${app.password.min-entropy:42}")
+                                 double minimumPasswordEntropy) throws NoSuchAlgorithmException {
         this.userRepositoryPort = userRepositoryPort;
         this.refreshTokenRepositoryPort = refreshTokenRepositoryPort;
         this.tokenProviderPort = tokenProviderPort;
@@ -54,9 +59,10 @@ public class AuthenticationService implements AuthUseCase {
         this.passwordEncoder = passwordEncoder;
         this.secureRandom = SecureRandom.getInstanceStrong();
         this.dummyHash = passwordEncoder.encode(UUID.randomUUID().toString());
+        this.minimumPasswordEntropy = minimumPasswordEntropy;
 
         Configuration passwordConfig = new ConfigurationBuilder()
-                .setMinimumEntropy(MINIMUM_PASSWORD_ENTROPY)
+                .setMinimumEntropy(this.minimumPasswordEntropy)
                 .createConfiguration();
 
         this.nbvcxz = new Nbvcxz(passwordConfig);
@@ -75,9 +81,11 @@ public class AuthenticationService implements AuthUseCase {
 
         // Valid user, proceed with token generation
         User user = maybeUser.get();
+        Role role = user.getRole();
+        List<Role> roles = (role != null) ? List.of(role) : List.of();
 
         // Generate tokens
-        String accessToken = tokenProviderPort.generateAccessToken(user.getUsername(), user.getId());
+        String accessToken = tokenProviderPort.generateAccessToken(user.getUsername(), user.getId(), roles);
         String refreshToken = tokenProviderPort.generateRefreshToken(user.getUsername(), user.getId());
 
         // Create new token family for this login session
@@ -112,7 +120,7 @@ public class AuthenticationService implements AuthUseCase {
         String passwordHash = passwordEncoder.encode(password);
         String secret = generateSecret();
 
-        User toSave = new User(null, username, passwordHash, secret);
+        User toSave = new User(null, username, passwordHash, secret, Role.EMPLOYEE);
         User savedUser = userRepositoryPort.save(toSave);
 
         return savedUser.getId();

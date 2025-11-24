@@ -1,6 +1,7 @@
 package be.ahm282.QuickClock.infrastructure.security.service;
 
 import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
+import be.ahm282.QuickClock.domain.model.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
@@ -77,31 +78,34 @@ public class JwtTokenService implements TokenProviderPort {
     }
 
     @Override
-    public String generateAccessToken(String username, Long userId) {
-        return buildToken(username, userId, ACCESS_TOKEN_EXPIRATION_MS, "access");
+    public String generateAccessToken(String username, Long userId, List<Role> roles) {
+        return buildToken(username, userId, ACCESS_TOKEN_EXPIRATION_MS, "access", roles);
     }
 
     @Override
     public String generateRefreshToken(String username, Long userId) {
-        return buildToken(username, userId, REFRESH_TOKEN_EXPIRATION_MS, "refresh");
+        return buildToken(username, userId, REFRESH_TOKEN_EXPIRATION_MS, "refresh", null);
     }
 
-    private String buildToken(String username, Long userId, long validityMs, String type) {
+    private String buildToken(String username, Long userId, long validityMs, String type, List<Role> roles) {
         long now = System.currentTimeMillis();
-        List<String> roles = List.of("EMPLOYEE");
 
-        return Jwts.builder()
+        var builder = Jwts.builder()
                 .subject(username)
                 .issuer(issuer)
                 .audience().add(audience).and()
                 .claim("userId", userId)
                 .claim("type", type)
-                .claim("roles", roles)
                 .id(UUID.randomUUID().toString())
                 .issuedAt(new Date(now))
                 .expiration(new Date(now + validityMs))
-                .signWith(signingKey, HS512)
-                .compact();
+                .signWith(signingKey, HS512);
+
+        if (roles != null && !roles.isEmpty()) {
+            builder.claim("roles", roles.stream().map(Role::name).toList());
+        }
+
+        return builder.compact();
     }
 
     @Override
