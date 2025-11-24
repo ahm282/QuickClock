@@ -57,15 +57,18 @@ public class RefreshTokenService implements RefreshTokenUseCase {
         User user = userRepositoryPort.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("User not found for id " + userId));
 
+        List<Role> roles = toRoleList(user);
+
         Optional<RefreshToken> existingTokenOpt = refreshTokenRepositoryPort.findByJti(jti);
 
         if (existingTokenOpt.isEmpty()) {
             log.warn("Refresh token not found in database for user {}, creating new family", username);
-            return createNewTokenFamily(user);
+            return createNewTokenFamily(user, roles);
         }
 
         RefreshToken existingToken = existingTokenOpt.get();
 
+        // Reuse detection
         if (existingToken.isRevoked() || existingToken.isUsed()) {
             log.error("SECURITY ALERT: Token reuse detected for user {} - Family: {}",
                     userId, existingToken.getRootFamilyId());
@@ -78,7 +81,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
             );
         }
 
-        // mark current token as used / revoked
+        // Mark current token as used + revoked
         existingToken.setUsed(true);
         existingToken.setRevoked(true);
         refreshTokenRepositoryPort.save(existingToken);
@@ -86,55 +89,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
         UUID parentId = UUID.fromString(jti);
         UUID rootFamilyId = existingToken.getRootFamilyId();
 
-        TokenPair pair = issueNewTokens(user, rootFamilyId, parentId);
-        log.debug("Token rotated successfully for user {} - Family: {}", userId, rootFamilyId);
-        return pair;
-    }
-
-    /**
-     * Creates a new token family for initial login or legacy refresh token.
-     */
-    private TokenPair createNewTokenFamily(User user) {
-        UUID rootFamilyId = UUID.randomUUID();
-        TokenPair pair = issueNewTokens(user, rootFamilyId, null);
-
-        log.debug("New token family created for user {} - Family: {}", user.getId(), rootFamilyId);
-        return pair;
-    }
-
-    /**
-     * Shared logic for:
-     *  - creating a new family (parentId == null)
-     *  - rotating within an existing family (parentId != null)
-     */
-    private TokenPair issueNewTokens(User user, UUID rootFamilyId, UUID parentId) {
-        Long userId = user.getId();
-        String username = user.getUsername();
-
-        Role role = user.getRole();
-        List<Role> roles = (role != null) ? List.of(role) : List.of();
-
-        String accessToken = tokenProviderPort.generateAccessToken(username, userId, roles);
-        String refreshTokenJwt = tokenProviderPort.generateRefreshToken(username, userId);
-
-        Claims claims = tokenProviderPort.parseClaims(refreshTokenJwt);
-        String jti = claims.getId();
-        Instant expiry = claims.getExpiration().toInstant();
-        Instant issuedAt = Instant.now();
-
-        RefreshToken token = new RefreshToken(
-                jti,
-                parentId,      // null => root, non-null => child
-                rootFamilyId,
-                userId,
-                false,
-                false,
-                issuedAt,
-                expiry
-        );
-        refreshTokenRepositoryPort.save(token);
-
-        return new TokenPair(accessToken, refreshTokenJwt);
+        return issueTokensInFamily(user, roles, rootFamilyId, parentId);
     }
 
     @Override
@@ -194,5 +149,59 @@ public class RefreshTokenService implements RefreshTokenUseCase {
                 log.warn("Invalid access token provided during logout: {}", e.getMessage());
             }
         }
+    }
+
+    // ====================
+    // Private helpers
+    // ====================
+
+    private List<Role> toRoleList(User user) {
+        Role role = user.getRole();
+        return (role != null) ? List.of(role) : List.of();
+    }
+
+    private TokenPair createNewTokenFamily(User user, List<Role> roles) {
+        UUID rootFamilyId = UUID.randomUUID();
+        return issueTokensInFamily(user, roles, rootFamilyId, null);
+    }
+
+    /**
+     * Core token-issuing logic for this service.
+     * - Generates access + refresh
+     * - Parses refresh JTI/expiry
+     * - Persists refresh token with family/parent linkage
+     */
+    private TokenPair issueTokensInFamily(User user,
+                                          List<Role> roles,
+                                          UUID rootFamilyId,
+                                          UUID parentId) {
+
+        Long userId = user.getId();
+        String username = user.getUsername();
+
+        String accessToken = tokenProviderPort.generateAccessToken(username, userId, roles);
+        String refreshTokenJwt = tokenProviderPort.generateRefreshToken(username, userId);
+
+        Claims claims = tokenProviderPort.parseClaims(refreshTokenJwt);
+        String jti = claims.getId();
+        Instant expiry = claims.getExpiration().toInstant();
+        Instant issuedAt = Instant.now();
+
+        RefreshToken newToken = new RefreshToken(
+                jti,
+                parentId,
+                rootFamilyId,
+                userId,
+                false,
+                false,
+                issuedAt,
+                expiry
+        );
+        refreshTokenRepositoryPort.save(newToken);
+
+        log.debug("Issued new tokens for user {} - Family: {}, parent: {}",
+                userId, rootFamilyId, parentId);
+
+        return new TokenPair(accessToken, refreshTokenJwt);
     }
 }
