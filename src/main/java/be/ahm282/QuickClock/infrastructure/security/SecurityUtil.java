@@ -48,4 +48,8 @@ public class SecurityUtil {
         String token = header.substring(7);
         return tokenProviderPort.extractUserId(token);
     }
+
+    public String getClientIp(HttpServletRequest request) { // TODO Re-evaluate this method if behind a proxy
+        return request.getRemoteAddr() != null ? request.getRemoteAddr() : "unknown";
+    }
 }

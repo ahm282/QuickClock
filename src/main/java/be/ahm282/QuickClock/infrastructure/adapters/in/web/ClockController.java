@@ -11,14 +11,13 @@ import be.ahm282.QuickClock.domain.exception.RateLimitException;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.AdminClockRequestDTO;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.mapper.ClockResponseDTOMapper;
+import be.ahm282.QuickClock.infrastructure.security.SecurityUtil;
 import be.ahm282.QuickClock.infrastructure.security.service.RateLimitService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,18 +30,19 @@ public class ClockController {
     private final QRCodeService qrCodeService;
     private final ClockResponseDTOMapper responseMapper;
     private final RateLimitService rateLimitService;
-    private final TokenProviderPort tokenProviderPort;
+    private final SecurityUtil securityUtil;
 
     public ClockController(ClockService clockService,
                            QRCodeService qrCodeService,
                            ClockResponseDTOMapper responseMapper,
                            RateLimitService rateLimitService,
-                           TokenProviderPort tokenProviderPort) {
+                           TokenProviderPort tokenProviderPort,
+                           SecurityUtil securityUtil) {
         this.clockService = clockService;
         this.qrCodeService = qrCodeService;
         this.responseMapper = responseMapper;
         this.rateLimitService = rateLimitService;
-        this.tokenProviderPort = tokenProviderPort;
+        this.securityUtil = securityUtil;
     }
 
     // -------------------------------------------------------------------------
@@ -52,7 +52,7 @@ public class ClockController {
     @PostMapping("/in")
     @ResponseStatus(HttpStatus.CREATED)
     public ClockResponseDTO clockIn(@RequestBody @Valid ClockRequestDTO requestDTO) {
-        // Consider restricting this to admins only, or removing once QR flow is stable
+        // TODO Consider restricting this to admins only, or removing once QR flow is stable
         ClockRecord record = clockService.clockIn(requestDTO.getUserId());
         return responseMapper.toDTO(record);
     }
@@ -60,7 +60,6 @@ public class ClockController {
     @PostMapping("/out")
     @ResponseStatus(HttpStatus.CREATED)
     public ClockResponseDTO clockOut(@RequestBody @Valid ClockRequestDTO requestDTO) {
-        // Consider restricting this to admins only, or removing once QR flow is stable
         ClockRecord record = clockService.clockOut(requestDTO.getUserId());
         return responseMapper.toDTO(record);
     }
@@ -73,11 +72,11 @@ public class ClockController {
     @GetMapping("/history/{userId}")
     public List<ClockResponseDTO> getHistory(@PathVariable Long userId,
                                              HttpServletRequest request) {
-        Authentication auth = getAuthenticationOrThrow();
+        Authentication auth = securityUtil.getAuthenticationOrThrow();
 
-        boolean isAdmin = hasAdminRole(auth);
+        boolean isAdmin = securityUtil.hasAdminRole(auth);
         if (!isAdmin) {
-            Long tokenUserId = extractUserIdFromRequestToken(request);
+            Long tokenUserId = securityUtil.extractUserIdFromRequestToken(request);
             if (!userId.equals(tokenUserId)) {
                 throw new AccessDeniedException("You are not allowed to view another user's history.");
             }
@@ -91,7 +90,7 @@ public class ClockController {
 
     @GetMapping("/history/me")
     public List<ClockResponseDTO> getMyHistory(HttpServletRequest request) {
-        Long userId = extractUserIdFromRequestToken(request);
+        Long userId = securityUtil.extractUserIdFromRequestToken(request);
         return getHistory(userId, request);
     }
 
@@ -101,15 +100,13 @@ public class ClockController {
 
     @GetMapping("/qr/generate/in/{userId}")
     public ClockQRCodeResponseDTO generateClockInQRCode(@PathVariable Long userId) {
-        // This is kiosk/admin-side functionality → protect it
-        requireAdmin();
+        securityUtil.requireAdmin();
         return qrCodeService.generateClockInQRCode(userId);
     }
 
     @GetMapping("/qr/generate/out/{userId}")
     public ClockQRCodeResponseDTO generateClockOutQRCode(@PathVariable Long userId) {
-        // This is kiosk/admin-side functionality → protect it
-        requireAdmin();
+        securityUtil.requireAdmin();
         return qrCodeService.generateClockOutQRCode(userId);
     }
 
@@ -117,7 +114,7 @@ public class ClockController {
     @ResponseStatus(HttpStatus.CREATED)
     public ClockResponseDTO clockInWithQR(@RequestBody @Valid ClockQRCodeRequestDTO request,
                                           HttpServletRequest httpRequest) {
-        String ipAddress = getClientIp(httpRequest);
+        String ipAddress = securityUtil.getClientIp(httpRequest);
         if (!rateLimitService.allowClockQrAttempt(ipAddress)) {
             throw new RateLimitException("Too many QR code clock-in attempts. Please try again later.");
         }
@@ -131,7 +128,7 @@ public class ClockController {
     @ResponseStatus(HttpStatus.CREATED)
     public ClockResponseDTO clockOutWithQR(@RequestBody @Valid ClockQRCodeRequestDTO request,
                                            HttpServletRequest httpRequest) {
-        String ipAddress = getClientIp(httpRequest);
+        String ipAddress = securityUtil.getClientIp(httpRequest);
         if (!rateLimitService.allowClockQrAttempt(ipAddress)) {
             throw new RateLimitException("Too many QR code clock-out attempts. Please try again later.");
         }
@@ -148,7 +145,7 @@ public class ClockController {
     @PostMapping("/admin/in")
     @ResponseStatus(HttpStatus.CREATED)
     public ClockResponseDTO adminClockIn(@RequestBody @Valid AdminClockRequestDTO request) {
-        requireAdmin();
+        securityUtil.requireAdmin();
         ClockRecord record = clockService.adminClockIn(
                 request.userId(),
                 request.timestamp(),
@@ -160,51 +157,12 @@ public class ClockController {
     @PostMapping("/admin/out")
     @ResponseStatus(HttpStatus.CREATED)
     public ClockResponseDTO adminClockOut(@RequestBody @Valid AdminClockRequestDTO request) {
-        requireAdmin();
+        securityUtil.requireAdmin();
         ClockRecord record = clockService.adminClockOut(
                 request.userId(),
                 request.timestamp(),
                 request.reason()
         );
         return responseMapper.toDTO(record);
-    }
-
-    // -------------------------------------------------------------------------
-    // Utilities
-    // -------------------------------------------------------------------------
-
-    private Authentication getAuthenticationOrThrow() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || !auth.isAuthenticated()) {
-            throw new AccessDeniedException("Not authenticated");
-        }
-        return auth;
-    }
-
-    private boolean hasAdminRole(Authentication auth) {
-        return auth.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .anyMatch(a -> "ROLE_ADMIN".equals(a) || "ROLE_SUPER_ADMIN".equals(a));
-    }
-
-    private void requireAdmin() {
-        Authentication auth = getAuthenticationOrThrow();
-        if (!hasAdminRole(auth)) {
-            throw new AccessDeniedException("Admin privileges are required for this operation.");
-        }
-    }
-
-    private Long extractUserIdFromRequestToken(HttpServletRequest request) {
-        String header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
-            throw new AccessDeniedException("Not authenticated");
-        }
-        String token = header.substring(7);
-        return tokenProviderPort.extractUserId(token);
-    }
-
-    private String getClientIp(HttpServletRequest request) { // TODO Re-evaluate this method if behind a proxy
-        return request.getRemoteAddr() != null ? request.getRemoteAddr() : "unknown";
     }
 }
