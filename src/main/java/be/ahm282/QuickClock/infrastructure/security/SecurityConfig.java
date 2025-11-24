@@ -38,9 +38,9 @@ public class SecurityConfig {
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/clock/qr/generate/**").hasAnyRole("ADMIN", "SERVICE_ACCOUNT")
-                        .requestMatchers("/api/clock/history/**").hasAnyRole("ADMIN", "EMPLOYEE")
-                        .requestMatchers("/api/clock/qr/**").hasAnyRole("ADMIN", "EMPLOYEE", "SERVICE_ACCOUNT")
+//                        .requestMatchers("/api/clock/qr/generate/**").hasAnyRole("ADMIN", "SERVICE_ACCOUNT")
+//                        .requestMatchers("/api/clock/history/**").hasAnyRole("ADMIN", "EMPLOYEE")
+//                        .requestMatchers("/api/clock/qr/**").hasAnyRole("ADMIN", "EMPLOYEE", "SERVICE_ACCOUNT")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
