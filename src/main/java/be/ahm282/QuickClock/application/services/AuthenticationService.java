@@ -206,6 +206,10 @@ public class AuthenticationService implements AuthUseCase {
         }
 
         var inviteCode = inviteOptional.get();
+        if (inviteCode.isRevoked()) {
+            throw new ValidationException("Invite code has been revoked and cannot be used");
+        }
+
         if (inviteCode.isUsed() || inviteCode.isExpired()) {
             throw new ValidationException("Invite code has expired or already been used");
         }

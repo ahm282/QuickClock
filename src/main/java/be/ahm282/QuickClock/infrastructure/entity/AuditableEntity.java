@@ -36,7 +36,7 @@ public abstract class AuditableEntity {
         return updatedAt;
     }
 
-    protected void setCreatedAt(Instant createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         throw new UnsupportedOperationException("createdAt is managed automatically");
     }
 

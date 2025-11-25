@@ -5,6 +5,8 @@ import be.ahm282.QuickClock.domain.model.InviteCode;
 import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper.InviteCodeMapper;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -20,6 +22,14 @@ public class JpaInviteCodeRepositoryAdapter implements InviteCodeRepositoryPort 
     @Override
     public Optional<InviteCode> findByCode(String code) {
         return jpaInviteCodeRepository.findByCode(code).map(inviteCodeMapper::toDomain);
+    }
+
+    @Override
+    public List<InviteCode> findAllActive() {
+        return jpaInviteCodeRepository.findAllByUsedIsFalseAndRevokedIsFalseAndExpiresAtAfter(Instant.now())
+                .stream()
+                .map(inviteCodeMapper::toDomain)
+                .toList();
     }
 
     @Override

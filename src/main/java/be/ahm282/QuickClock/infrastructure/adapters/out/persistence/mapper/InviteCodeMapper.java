@@ -16,17 +16,33 @@ public class InviteCodeMapper {
                 entity.getCode(),
                 entity.getExpiresAt(),
                 entity.isUsed(),
-                entity.getUsedByUserId()
+                entity.isRevoked(),
+                entity.getRevokedByUserId(),
+                entity.getRevokedAt(),
+                entity.getUsedByUserId(),
+                entity.getCreatedByUserId(),
+                entity.getCreatedAt()
         );
     }
 
     public InviteCodeEntity toEntity(InviteCode domain) {
+        if (domain == null) {
+            return null;
+        }
+
         InviteCodeEntity entity = new InviteCodeEntity();
+
         entity.setId(domain.getId());
         entity.setCode(domain.getCode());
         entity.setExpiresAt(domain.getExpiresAt());
         entity.setUsed(domain.isUsed());
+        entity.setRevoked(domain.isRevoked());
         entity.setUsedByUserId(domain.getUsedByUserId());
+        entity.setCreatedByUserId(domain.getCreatedByUserId());
+        entity.setCreatedAt(domain.getCreatedAt());
+        entity.setRevokedByUserId(domain.getRevokedByUserId());
+        entity.setRevokedAt(domain.getRevokedAt());
+
         return entity;
     }
 }

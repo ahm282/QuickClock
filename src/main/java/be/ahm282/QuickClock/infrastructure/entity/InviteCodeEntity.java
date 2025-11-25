@@ -1,7 +1,6 @@
 package be.ahm282.QuickClock.infrastructure.entity;
 
 import jakarta.persistence.*;
-
 import java.time.Instant;
 import java.util.UUID;
 
@@ -23,8 +22,20 @@ public class InviteCodeEntity extends AuditableEntity {
     @Column(nullable = false)
     private boolean used;
 
+    @Column(nullable = false)
+    private boolean revoked;
+
     @Column(name = "used_by_user_id")
     private Long usedByUserId;
+
+    @Column(name = "created_by_user_id")
+    private Long createdByUserId;
+
+    @Column(name = "revoked_by_user_id")
+    private Long revokedByUserId;
+
+    @Column(name = "revoked_at")
+    private Instant revokedAt;
 
     public InviteCodeEntity() {}
 
@@ -32,6 +43,8 @@ public class InviteCodeEntity extends AuditableEntity {
         this.code = code;
         this.expiresAt = expiresAt;
     }
+
+    // --- GETTERS AND SETTERS ---
 
     public UUID getId() {
         return id;
@@ -65,11 +78,43 @@ public class InviteCodeEntity extends AuditableEntity {
         this.used = used;
     }
 
+    public boolean isRevoked() {
+        return revoked;
+    }
+
+    public void setRevoked(boolean revoked) {
+        this.revoked = revoked;
+    }
+
     public Long getUsedByUserId() {
         return usedByUserId;
     }
 
     public void setUsedByUserId(Long usedByUserId) {
         this.usedByUserId = usedByUserId;
+    }
+
+    public Long getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    public void setCreatedByUserId(Long createdByUserId) {
+        this.createdByUserId = createdByUserId;
+    }
+
+    public Long getRevokedByUserId() {
+        return revokedByUserId;
+    }
+
+    public void setRevokedByUserId(Long revokedByUserId) {
+        this.revokedByUserId = revokedByUserId;
+    }
+
+    public Instant getRevokedAt() {
+        return revokedAt;
+    }
+
+    public void setRevokedAt(Instant revokedAt) {
+        this.revokedAt = revokedAt;
     }
 }

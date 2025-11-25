@@ -4,5 +4,9 @@ import java.time.Instant;
 
 public record InviteCodeResponseDTO(
         String code,
-        Instant expiresAt
+        Instant expiresAt,
+        Long createdByUserId,
+        boolean isUsed,
+        boolean isRevoked,
+        Instant createdAt
 ) {}
