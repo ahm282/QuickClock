@@ -20,6 +20,8 @@ public record RegisterRequestDTO(
         String password,
 
         @NotBlank
+        @Size(max = 64)
+        @Pattern(regexp = "^[a-zA-Z0-9_-]+$", message = "Invalid invite code format")
         String inviteCode
 ) {
 }

@@ -54,7 +54,7 @@ public class AuthenticationService implements AuthUseCase {
         this.tokenProviderPort = tokenProviderPort;
         this.breachedPasswordCheckPort = breachedPasswordCheckPort;
         this.passwordEncoder = passwordEncoder;
-        this.secureRandom = SecureRandom.getInstanceStrong();
+        this.secureRandom = new SecureRandom();
         this.dummyHash = passwordEncoder.encode(UUID.randomUUID().toString());
 
         Configuration passwordConfig = new ConfigurationBuilder()

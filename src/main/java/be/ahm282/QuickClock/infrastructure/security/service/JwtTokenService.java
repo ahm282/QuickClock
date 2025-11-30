@@ -73,8 +73,8 @@ public class JwtTokenService implements TokenProviderPort {
                 .build();
 
         // Log configuration (without exposing the secret!)
-        log.info("JWT Configuration loaded - Issuer: {}, Audience: {}, Key length: {} bytes",
-                issuer, audience, keyBytes.length);
+        log.info("JWT Configuration loaded - Issuer: {}, Audience: {}",
+                issuer, audience);
     }
 
     @Override

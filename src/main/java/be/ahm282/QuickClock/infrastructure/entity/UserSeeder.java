@@ -17,7 +17,7 @@ public class UserSeeder {
 
     public UserSeeder(UserRepositoryPort userRepositoryPort) throws Exception {
         this.userRepositoryPort = userRepositoryPort;
-        this.secureRandom = SecureRandom.getInstanceStrong();
+        this.secureRandom = new SecureRandom();
     }
 
     @PostConstruct
