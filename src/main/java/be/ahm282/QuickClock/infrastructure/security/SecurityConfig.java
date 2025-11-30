@@ -4,6 +4,7 @@ import be.ahm282.QuickClock.application.ports.out.InvalidatedTokenRepositoryPort
 import be.ahm282.QuickClock.infrastructure.security.service.JwtTokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -34,17 +35,19 @@ public class SecurityConfig {
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(20, new SecureRandom());
+        return new BCryptPasswordEncoder(12, new SecureRandom());
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
                 .securityMatcher("/api/**")
+                .csrf(AbstractHttpConfigurer::disable)
+                .cors(corsConfig -> {})
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll() // Preflight requests
 //                        .requestMatchers(HttpMethod.POST, "/api/clock/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
 //                        .requestMatchers("/api/clock/history/**").authenticated()
 //                        .requestMatchers("/api/clock/qr/**").authenticated()
