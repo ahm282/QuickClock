@@ -51,16 +51,17 @@ public class ClockController {
 
     @PostMapping("/in")
     @ResponseStatus(HttpStatus.CREATED)
-    public ClockResponseDTO clockIn(@RequestBody @Valid ClockRequestDTO requestDTO) {
-        // TODO Consider restricting this to admins only, or removing once QR flow is stable
-        ClockRecord record = clockService.clockIn(requestDTO.getUserId());
+    public ClockResponseDTO clockIn(HttpServletRequest request) {
+        Long userId = securityUtil.extractUserIdFromRequestToken(request);
+        ClockRecord record = clockService.clockIn(userId);
         return responseMapper.toDTO(record);
     }
 
     @PostMapping("/out")
     @ResponseStatus(HttpStatus.CREATED)
-    public ClockResponseDTO clockOut(@RequestBody @Valid ClockRequestDTO requestDTO) {
-        ClockRecord record = clockService.clockOut(requestDTO.getUserId());
+    public ClockResponseDTO clockOut(HttpServletRequest request) {
+        Long userId = securityUtil.extractUserIdFromRequestToken(request);
+        ClockRecord record = clockService.clockOut(userId);
         return responseMapper.toDTO(record);
     }
 
@@ -70,8 +71,7 @@ public class ClockController {
     // - Others: only their own
     // -------------------------------------------------------------------------
     @GetMapping("/history/{userId}")
-    public List<ClockResponseDTO> getHistory(@PathVariable Long userId,
-                                             HttpServletRequest request) {
+    public List<ClockResponseDTO> getHistory(@PathVariable Long userId, HttpServletRequest request) {
         Authentication auth = securityUtil.getAuthenticationOrThrow();
 
         boolean isAdmin = securityUtil.hasAdminRole(auth);
