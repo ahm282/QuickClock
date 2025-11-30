@@ -88,7 +88,10 @@ public class ClockController {
     @GetMapping("/history/me")
     public List<ClockResponseDTO> getMyHistory(HttpServletRequest request) {
         Long userId = securityUtil.extractUserIdFromRequestToken(request);
-        return getHistory(userId, request);
+        return clockService.getHistory(userId)
+                .stream()
+                .map(responseMapper::toDTO)
+                .toList();
     }
 
     // -------------------------------------------------------------------------
