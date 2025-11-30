@@ -1,7 +1,8 @@
 package be.ahm282.QuickClock.domain.model;
 
 import be.ahm282.QuickClock.domain.exception.ValidationException;
-import java.time.LocalDateTime;
+
+import java.time.Instant;
 
 /**
  * Domain model for TimeEntry.
@@ -10,17 +11,19 @@ public class ClockRecord {
 
     private Long id;
     private Long userId;
-    private String type;
-    private LocalDateTime timestamp;
+    private ClockRecordType type;
+    private Instant timestamp;
+    private  String reason;
 
     // Private constructor for persistence mapping
     public ClockRecord() {}
 
-    public ClockRecord(Long id, Long userId,  String type, LocalDateTime timestamp) {
+    public ClockRecord(Long id, Long userId,  ClockRecordType type, Instant timestamp, String reason) {
         this.id = id;
         this.userId = userId;
         this.type = type;
         this.timestamp = timestamp;
+        this.reason = reason;
         this.validate();
     }
 
@@ -37,18 +40,23 @@ public class ClockRecord {
             throw new ValidationException("TimeEntry must be associated with a timestamp.");
         }
 
-        if (!type.equals("IN")  && !type.equals("OUT")) {
+        if (type != ClockRecordType.IN && type != ClockRecordType.OUT) {
             throw new ValidationException("Type must be either IN or OUT.");
         }
     }
 
-    public static ClockRecord create(Long userId, String type) {
-        ClockRecord record = new ClockRecord(null, userId, type, LocalDateTime.now());
+    public static ClockRecord create(Long userId, ClockRecordType type) {
+        ClockRecord record = new ClockRecord(null, userId, type, Instant.now(), null);
         record.validate();
         return record;
     }
 
-    public static ClockRecord fromEntity(Long id, Long userId, String type, LocalDateTime timestamp) {
+    public static ClockRecord createAt(Long userId, ClockRecordType type, Instant timestamp, String reason) {
+        Instant effectiveTimestamp = (timestamp != null) ? timestamp : Instant.now();
+        return new ClockRecord(null, userId, type, effectiveTimestamp, reason);
+    }
+
+    public static ClockRecord fromEntity(Long id, Long userId, ClockRecordType type, Instant timestamp) {
         ClockRecord record = new ClockRecord();
         record.id = id;
         record.userId = userId;
@@ -62,31 +70,15 @@ public class ClockRecord {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getType() {
+    public ClockRecordType getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+    public Instant getTimestamp() { return timestamp; }
 
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
+    public  String getReason() { return reason; }
 }

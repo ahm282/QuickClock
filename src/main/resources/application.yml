@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: QuickClock
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+# Application-specific settings with environment variable overrides
+app:
+  clocking:
+    token-expiry-seconds: ${CLOCKING_TOKEN_EXPIRY:30}
+
+  frontend:
+    base-url: ${FRONTEND_BASE_URL:http://localhost:8081}
+
+  jwt:
+    secret: ${JWT_SECRET:}
+    issuer: ${JWT_ISSUER:QuickClock-API}
+    audience: ${JWT_AUDIENCE:QuickClock-App}
+
+  cookie:
+    secure: ${COOKIE_SECURE:false}
+    domain: ${COOKIE_DOMAIN:}
+
+  password:
+      min-entropy: ${PASSWORD_MIN_ENTROPY:42}

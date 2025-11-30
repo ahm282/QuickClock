@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+app:
+  clocking:
+    token-expiry-seconds: 30
+
+  frontend:
+    base-url: http://localhost:8081
+
+  jwt:
+    # Test JWT secret (Base64 encoded, 64+ bytes for HS512)
+    secret: dGVzdC1zZWNyZXQtZm9yLWp3dC1zaWduaW5nLXRoYXQtaXMtbG9uZy1lbm91Z2gtdG8tbWVldC10aGUtcmVxdWlyZW1lbnQtb2YtNjQtYnl0ZXMtZm9yLUhTNTEyLWFsZ29yaXRobQ==
+    issuer: QuickClock-API-Test
+    audience: QuickClock-App-Test
+
+  cookie:
+    secure: false
+    domain: ""
+
+  security:
+    dummy-hash: $2a$10$dummyHashForTimingAttackMitigationInTestEnvironment
+
