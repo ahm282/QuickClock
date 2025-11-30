@@ -24,7 +24,7 @@ import static io.jsonwebtoken.Jwts.SIG.HS512;
 public class JwtTokenService implements TokenProviderPort {
     private static final Logger log = LoggerFactory.getLogger(JwtTokenService.class);
     private static final long ACCESS_TOKEN_EXPIRATION_MS = 1_800_000; // 30 minutes
-    private static final long REFRESH_TOKEN_EXPIRATION_MS = 2_592_000_000L; // 30 days
+    private static final long REFRESH_TOKEN_EXPIRATION_MS = 1_209_600_000L; // 14 days
 
     private final SecretKey signingKey;
     private final String issuer;
