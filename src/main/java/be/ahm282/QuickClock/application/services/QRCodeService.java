@@ -17,16 +17,16 @@ public class QRCodeService {
     /**
      * Generate a QR token URL for clocking IN
      */
-    public ClockQRCodeResponseDTO generateClockInQRCode(Long userId) {
-        String token = qrTokenPort.generateToken(userId);
+    public ClockQRCodeResponseDTO generateClockInQRCode(Long userId, String purpose) {
+        String token = qrTokenPort.generateToken(userId, purpose);
         return new ClockQRCodeResponseDTO(token, "/api/clock/qr/in");
     }
 
     /**
      * Generate a QR token URL for clocking OUT
      */
-    public ClockQRCodeResponseDTO generateClockOutQRCode(Long userId) {
-        String token = qrTokenPort.generateToken(userId);
+    public ClockQRCodeResponseDTO generateClockOutQRCode(Long userId, String purpose) {
+        String token = qrTokenPort.generateToken(userId, purpose);
         return new ClockQRCodeResponseDTO(token, "/api/clock/qr/out");
     }
 }

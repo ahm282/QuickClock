@@ -40,7 +40,7 @@ public class ClockService implements ClockUseCase {
 
     @Override
     public ClockRecord clockInWithQR(String qrToken, Long authenticatedUserId) {
-        Long tokenUserId = qrTokenPort.validateAndExtractUserId(qrToken);
+        Long tokenUserId = qrTokenPort.validateAndExtractUserId(qrToken, "clock-in");
 
         if (!tokenUserId.equals(authenticatedUserId)) {
             throw new BusinessRuleException("QR token does not belong to the authenticated user");
@@ -51,7 +51,7 @@ public class ClockService implements ClockUseCase {
 
     @Override
     public ClockRecord clockOutWithQR(String qrToken, Long authenticatedUserId) {
-        Long tokenUserId = qrTokenPort.validateAndExtractUserId(qrToken);
+        Long tokenUserId = qrTokenPort.validateAndExtractUserId(qrToken, "clock-out");
 
         if (!tokenUserId.equals(authenticatedUserId)) {
             throw new BusinessRuleException("QR token does not belong to the authenticated user");

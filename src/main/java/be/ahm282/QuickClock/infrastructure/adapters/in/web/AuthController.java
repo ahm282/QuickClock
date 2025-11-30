@@ -25,11 +25,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
+
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
-    private static final int REFRESH_COOKIE_MAX_AGE = 2_592_000; // 30 days
+    private static final int REFRESH_COOKIE_MAX_AGE = (int) Duration.ofDays(30).toSeconds();
 
     private final AuthUseCase authUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
@@ -146,9 +148,7 @@ public class AuthController {
         Cookie cookie = new Cookie("refreshToken", refreshToken);
 
         // Only set domain if configured (empty string means don't set domain)
-        if (cookieDomain != null && !cookieDomain.isEmpty()) {
-            cookie.setDomain(cookieDomain);
-        }
+        applyCookieDomain(cookie);
 
         cookie.setHttpOnly(true);
         cookie.setSecure(cookieSecure);
@@ -159,18 +159,15 @@ public class AuthController {
     }
 
     private void clearRefreshTokenCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie("refreshToken", null);
+        Cookie cookie = new Cookie("refreshToken", "");
 
         // Only set domain if configured
-        if (cookieDomain != null && !cookieDomain.isEmpty()) {
-            cookie.setDomain(cookieDomain);
-        }
+        applyCookieDomain(cookie);
 
         cookie.setHttpOnly(true);
         cookie.setSecure(cookieSecure);
         cookie.setPath("/");
         cookie.setMaxAge(0);
-        cookie.setValue(null);
         cookie.setAttribute("SameSite", "Strict");
         response.addCookie(cookie);
     }
@@ -194,8 +191,18 @@ public class AuthController {
         return null;
     }
 
+    private void applyCookieDomain(Cookie cookie) {
+        if (cookieDomain != null && !cookieDomain.isEmpty()) {
+            cookie.setDomain(cookieDomain);
+        }
+    }
 
     private String getClientIp(HttpServletRequest request) { // TODO Re-evaluate this method if behind a proxy
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (forwarded != null) {
+            return forwarded.split(",")[0].trim();
+        }
+
         return request.getRemoteAddr() != null ? request.getRemoteAddr() : "unknown";
     }
 }

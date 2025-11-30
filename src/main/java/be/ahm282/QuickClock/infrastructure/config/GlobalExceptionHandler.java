@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -123,11 +120,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> fallback(Exception ex) {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        String errorId = UUID.randomUUID().toString();
 
-        log.error("Unhandled exception", ex);
+        log.error("Unhandled exception [{}]", errorId, ex);
 
-        // Do NOT expose internal type/message to the client here.
         Map<String, Object> body = buildBody(status, "Internal Server Error", "InternalServerError");
+        body.put("errorId", errorId);
+
         return ResponseEntity.status(status).body(body);
     }
 }

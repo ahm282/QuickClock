@@ -19,32 +19,32 @@ public class QRTokenAdapter implements QRTokenPort {
     }
 
     @Override
-    public String generateToken(Long userId) {
+    public String generateToken(Long userId, String purpose) {
         String secret = userRepositoryPort.findById(userId)
                 .orElseThrow(() -> new BusinessRuleException("User not found"))
                 .getSecret();
 
-        return secureTokenService.generateToken(userId, secret);
+        return secureTokenService.generateToken(userId, secret, purpose, null);
     }
 
     @Override
-    public Long validateAndExtractUserId(String token) {
-        Long userId;
+    public Long validateAndExtractUserId(String token, String purpose) {
+        return secureTokenService
+                .validate(token, findUserSecretByToken(token), purpose, null)
+                .userId();
+    }
 
+    private String findUserSecretByToken(String token) {
         try {
-            userId = secureTokenService.extractUserIdUnsafe(token);
-        } catch (IllegalArgumentException e) {
+            String decoded = new String(java.util.Base64.getUrlDecoder().decode(token), java.nio.charset.StandardCharsets.UTF_8);
+            String[] parts = decoded.split("\\|", 3); // version, userId, ...
+            if (parts.length < 2) throw new IllegalArgumentException();
+            Long userId = Long.parseLong(parts[1]);
+            return userRepositoryPort.findById(userId)
+                    .orElseThrow(() -> new ValidationException("Token is expired or invalid"))
+                    .getSecret();
+        } catch (Exception e) {
             throw new ValidationException("Token is expired or invalid");
         }
-
-        String secret = userRepositoryPort.findById(userId)
-                .orElseThrow(() -> new ValidationException("Token is expired or invalid"))
-                .getSecret();
-
-        if (!secureTokenService.isValid(token, secret)) {
-            throw new ValidationException("Token is expired or invalid");
-        }
-
-        return userId;
     }
 }

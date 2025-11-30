@@ -2,9 +2,7 @@ package be.ahm282.QuickClock.infrastructure.adapters.in.web;
 
 import be.ahm282.QuickClock.application.ports.in.dto.ClockQRCodeRequestDTO;
 import be.ahm282.QuickClock.application.ports.in.dto.ClockQRCodeResponseDTO;
-import be.ahm282.QuickClock.application.ports.in.dto.ClockRequestDTO;
 import be.ahm282.QuickClock.application.ports.in.dto.ClockResponseDTO;
-import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
 import be.ahm282.QuickClock.application.services.ClockService;
 import be.ahm282.QuickClock.application.services.QRCodeService;
 import be.ahm282.QuickClock.domain.exception.RateLimitException;
@@ -36,7 +34,6 @@ public class ClockController {
                            QRCodeService qrCodeService,
                            ClockResponseDTOMapper responseMapper,
                            RateLimitService rateLimitService,
-                           TokenProviderPort tokenProviderPort,
                            SecurityUtil securityUtil) {
         this.clockService = clockService;
         this.qrCodeService = qrCodeService;
@@ -101,13 +98,13 @@ public class ClockController {
     @GetMapping("/qr/generate/in/{userId}")
     public ClockQRCodeResponseDTO generateClockInQRCode(@PathVariable Long userId) {
         securityUtil.requireAdmin();
-        return qrCodeService.generateClockInQRCode(userId);
+        return qrCodeService.generateClockInQRCode(userId, "clock-in");
     }
 
     @GetMapping("/qr/generate/out/{userId}")
     public ClockQRCodeResponseDTO generateClockOutQRCode(@PathVariable Long userId) {
         securityUtil.requireAdmin();
-        return qrCodeService.generateClockOutQRCode(userId);
+        return qrCodeService.generateClockOutQRCode(userId, "clock-out");
     }
 
     @PostMapping("/qr/in")
