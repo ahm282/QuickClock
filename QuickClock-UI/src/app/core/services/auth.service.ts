@@ -126,11 +126,6 @@ export class AuthService {
         return this.http
             .post<void>(`${environment.apiUrl}/auth/register`, data)
             .pipe(
-                tap({
-                    next: () => {
-                        this.router.navigate(['/login']);
-                    },
-                }),
                 catchError((error) => {
                     console.error(
                         'AuthService: Registration failed for user:',
