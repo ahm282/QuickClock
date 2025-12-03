@@ -20,10 +20,17 @@ export interface AccessTokenResponse {
     accessToken: string;
 }
 
+interface QuickClockJwtPayload extends JwtPayload {
+    exp: number;
+    sub: string;
+    roles?: string[];
+}
+
 @Injectable({
     providedIn: 'root',
 })
 export class AuthService {
+    private channel?: BroadcastChannel;
     private http = inject(HttpClient);
     private router = inject(Router);
 
@@ -45,6 +52,13 @@ export class AuthService {
 
         return Date.now() / 1000 < expiry; // Compare in seconds
     });
+
+    constructor() {
+        if (typeof BroadcastChannel !== 'undefined') {
+            this.channel = new BroadcastChannel('quickclock-auth');
+            this.channel.onmessage = this.handleChannelMessage.bind(this);
+        }
+    }
 
     // ---- Public API ----
 
@@ -148,9 +162,27 @@ export class AuthService {
 
     // ---- Private helpers ----
 
+    private handleChannelMessage(event: MessageEvent): void {
+        const data = event.data;
+        if (!data || typeof data !== 'object') {
+            return;
+        }
+
+        if (data.type === 'token' && data.token && data.exp) {
+            this.accessTokenSignal.set(data.token);
+            this.tokenExpirySignal.set(data.exp);
+        }
+
+        if (data.type === 'logout') {
+            this.clearAuth();
+            this.router.navigate(['/login']);
+        }
+    }
+
     private setSession(token: string): void {
         try {
-            const decoded: any = jwtDecode<JwtPayload>(token);
+            const decoded: QuickClockJwtPayload =
+                jwtDecode<QuickClockJwtPayload>(token);
 
             if (!decoded.exp) {
                 throw new Error('Invalid or malformed token!');
@@ -159,12 +191,15 @@ export class AuthService {
             this.accessTokenSignal.set(token);
             this.tokenExpirySignal.set(decoded.exp);
 
-            if (!environment.production) {
-                console.log('AuthService: User logged in, token set.');
-                console.log('Token expires at (unix epoch):', decoded.exp);
-                console.log('Token decoded:', decoded);
-                console.log('Full token:', token);
+            this.channel?.postMessage({
+                type: 'token',
+                token,
+                exp: decoded.exp,
+            });
 
+            if (!environment.production) {
+                console.debug('Token decoded:', decoded);
+                console.debug('Full token:', token);
                 console.debug('AuthService: token exp:', decoded.exp);
             }
         } catch (error) {
@@ -174,7 +209,14 @@ export class AuthService {
 
     doLogout(): void {
         this.clearAuth();
-        this.router.navigate(['/login']);
+
+        if (this.channel) {
+            // Broadcast to other tabs as well
+            this.channel?.postMessage({ type: 'logout' });
+        } else {
+            // Fallback if BroadcastChannel is not supported
+            this.router.navigate(['/login']);
+        }
     }
 
     clearAuth(): void {
