@@ -67,7 +67,11 @@ export class AuthService {
 
     refresh(): Observable<AccessTokenResponse> {
         return this.http
-            .post<AccessTokenResponse>(`${environment.apiUrl}/auth/refresh`, {})
+            .post<AccessTokenResponse>(
+                `${environment.apiUrl}/auth/refresh`,
+                {},
+                { withCredentials: true }
+            )
             .pipe(
                 tap({
                     next: (response) => {
@@ -81,26 +85,46 @@ export class AuthService {
             );
     }
 
-    logout(): void {
-        this.http.post(`${environment.apiUrl}/auth/logout`, {}).pipe(
-            tap({
-                next: () => {
+    logout(): Observable<void> {
+        return this.http
+            .post<void>(
+                `${environment.apiUrl}/auth/logout`,
+                {},
+                { withCredentials: true }
+            )
+            .pipe(
+                tap({
+                    next: () => {
+                        this.doLogout();
+                    },
+                }),
+                catchError(() => {
                     this.doLogout();
-                },
-            }),
-            catchError(() => {
-                this.doLogout();
-                return of(null);
-            })
-        );
+                    return of(void 0);
+                })
+            );
     }
 
-    // register(data: RegisterRequest): Observable<void> {
-    //     return this.http.post<void>(
-    //         `${environment.apiUrl}/auth/register`,
-    //         data
-    //     );
-    // }
+    register(data: RegisterRequest): Observable<void> {
+        return this.http
+            .post<void>(`${environment.apiUrl}/auth/register`, data)
+            .pipe(
+                tap({
+                    next: () => {
+                        this.router.navigate(['/login']);
+                    },
+                }),
+                catchError((error) => {
+                    console.error(
+                        'AuthService: Registration failed for user:',
+                        data.username,
+                        'Error:',
+                        error
+                    );
+                    return throwError(() => error);
+                })
+            );
+    }
 
     private setSession(token: string): void {
         try {
@@ -125,5 +149,6 @@ export class AuthService {
     clearAuth(): void {
         this.accessTokenSignal.set(null);
         this.tokenExpirySignal.set(null);
+        localStorage.removeItem('accessToken');
     }
 }

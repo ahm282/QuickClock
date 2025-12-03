@@ -20,6 +20,9 @@ import {
 let isRefreshing = false;
 const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
+const isAuthEndpoint = (url: string): boolean =>
+    /\/auth\/(login|register|refresh|logout)\b/.test(url);
+
 export const authInterceptor: HttpInterceptorFn = (
     req: HttpRequest<unknown>,
     next: HttpHandlerFn
@@ -27,19 +30,19 @@ export const authInterceptor: HttpInterceptorFn = (
     const authService = inject(AuthService);
     const token = authService.accessToken();
 
-    let authReq = req;
-    if (token) {
-        authReq = req.clone({
-            setHeaders: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-    }
+    const shouldAttach = token && !isAuthEndpoint(req.url);
+    const authRequest = shouldAttach
+        ? req.clone({
+              setHeaders: {
+                  Authorization: `Bearer ${token}`,
+              },
+          })
+        : req;
 
-    return next(authReq).pipe(
+    return next(authRequest).pipe(
         catchError((error: unknown) => {
             if (error instanceof HttpErrorResponse && error.status === 401) {
-                return handle401Error(authReq, next, authService);
+                return handle401Error(authRequest, next, authService);
             }
             return throwError(() => error);
         })
