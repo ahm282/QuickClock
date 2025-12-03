@@ -2,7 +2,8 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
-import { Observable, tap, catchError, of } from 'rxjs';
+import { catchError, Observable, of, tap, throwError } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 
 export interface LoginRequest {
     username: string;
@@ -26,27 +27,24 @@ export class AuthService {
     private http = inject(HttpClient);
     private router = inject(Router);
 
+    // State
     private accessTokenSignal = signal<string | null>(null);
-
     public accessToken = this.accessTokenSignal.asReadonly();
-    public isAuthenticated = computed(() => !!this.accessTokenSignal());
 
-    constructor() {
-        this.initializeAuth();
-    }
+    // Expiry time (unix epoch)
+    private tokenExpirySignal = signal<number | null>(null);
 
-    private initializeAuth(): void {
-        this.refresh().subscribe({
-            next: () => {
-                if (this.isAuthenticated()) {
-                    this.router.navigate(['/dashboard']);
-                }
-            },
-            error: () => {
-                // Silent failure
-            },
-        });
-    }
+    // Computed: Is token present and valid?
+    public isAccessTokenValid = computed((): boolean => {
+        const token = this.accessTokenSignal();
+        const expiry = this.tokenExpirySignal();
+
+        if (!token || !expiry) {
+            return false;
+        }
+
+        return Date.now() / 1000 < expiry; // Compare in seconds
+    });
 
     login(credentials: LoginRequest): Observable<AccessTokenResponse> {
         return this.http
@@ -55,8 +53,14 @@ export class AuthService {
                 credentials
             )
             .pipe(
-                tap((response) => {
-                    this.accessTokenSignal.set(response.accessToken);
+                tap({
+                    next: (response) => {
+                        this.setSession(response.accessToken);
+                    },
+                }),
+                catchError((error) => {
+                    this.clearAuth();
+                    return throwError(() => error);
                 })
             );
     }
@@ -65,38 +69,61 @@ export class AuthService {
         return this.http
             .post<AccessTokenResponse>(`${environment.apiUrl}/auth/refresh`, {})
             .pipe(
-                tap((response) => {
-                    this.accessTokenSignal.set(response.accessToken);
+                tap({
+                    next: (response) => {
+                        this.setSession(response.accessToken);
+                    },
                 }),
-                catchError(() => {
+                catchError((error) => {
                     this.clearAuth();
-                    return of({ accessToken: '' });
+                    return throwError(() => error);
                 })
             );
     }
 
-    logout(): Observable<any> {
-        return this.http.post(`${environment.apiUrl}/auth/logout`, {}).pipe(
-            tap(() => {
-                this.clearAuth();
-                this.router.navigate(['/login']);
+    logout(): void {
+        this.http.post(`${environment.apiUrl}/auth/logout`, {}).pipe(
+            tap({
+                next: () => {
+                    this.doLogout();
+                },
             }),
             catchError(() => {
-                this.clearAuth();
-                this.router.navigate(['/login']);
+                this.doLogout();
                 return of(null);
             })
         );
     }
 
-    register(data: RegisterRequest): Observable<void> {
-        return this.http.post<void>(
-            `${environment.apiUrl}/auth/register`,
-            data
-        );
+    // register(data: RegisterRequest): Observable<void> {
+    //     return this.http.post<void>(
+    //         `${environment.apiUrl}/auth/register`,
+    //         data
+    //     );
+    // }
+
+    private setSession(token: string): void {
+        try {
+            const decoded: any = jwtDecode(token);
+            this.accessTokenSignal.set(token);
+            this.tokenExpirySignal.set(decoded.exp);
+
+            console.log('AuthService: User logged in, token set.');
+            console.log('Token expires at (unix epoch):', decoded.exp);
+            console.log('Token decoded:', decoded);
+            console.log('Full token:', token);
+        } catch (error) {
+            this.doLogout();
+        }
+    }
+
+    doLogout(): void {
+        this.clearAuth();
+        this.router.navigate(['/login']);
     }
 
     clearAuth(): void {
         this.accessTokenSignal.set(null);
+        this.tokenExpirySignal.set(null);
     }
 }
