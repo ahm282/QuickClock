@@ -170,7 +170,6 @@ export class AuthService {
 
         if (data.type === 'logout') {
             this.clearAuth();
-            this.router.navigate(['/login']);
         }
     }
 
@@ -191,12 +190,6 @@ export class AuthService {
                 token,
                 exp: decoded.exp,
             });
-
-            if (!environment.production) {
-                console.debug('Token decoded:', decoded);
-                console.debug('Full token:', token);
-                console.debug('AuthService: token exp:', decoded.exp);
-            }
         } catch (error) {
             this.doLogout();
         }
@@ -204,14 +197,8 @@ export class AuthService {
 
     doLogout(): void {
         this.clearAuth();
-
-        if (this.channel) {
-            // Broadcast to other tabs as well
-            this.channel?.postMessage({ type: 'logout' });
-        } else {
-            // Fallback if BroadcastChannel is not supported
-            this.router.navigate(['/login']);
-        }
+        this.channel?.postMessage({ type: 'logout' });
+        this.router.navigate(['/login']);
     }
 
     clearAuth(): void {
