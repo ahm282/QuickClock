@@ -143,3 +143,16 @@ spring-boot-devtools.properties
 # ============================================
 hs_err_pid*
 replay_pid*
+
+
+# ============================================
+# Others
+# ============================================
+*.instructions.md
+
+# Security and SSL
+*.p12
+*.jks
+*.crt
+*.key
+*.pem

@@ -166,3 +166,9 @@ select:-webkit-autofill:focus {
     transition: background-color 9999s ease-out, color 9999s ease-out;
     box-shadow: 0 0 0 1000px transparent inset;
 }
+input:-moz-autofill,
+textarea:-moz-autofill,
+select:-moz-autofill {
+    box-shadow: 0 0 0 1000px transparent inset;
+    -moz-text-fill-color: inherit;
+}
