@@ -31,7 +31,7 @@ import java.time.Duration;
 @RequestMapping("/api/auth")
 public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
-    private static final int REFRESH_COOKIE_MAX_AGE = (int) Duration.ofDays(30).toSeconds();
+    private static final int REFRESH_COOKIE_MAX_AGE = (int) Duration.ofDays(14).toSeconds();
 
     private final AuthUseCase authUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
@@ -145,10 +145,8 @@ public class AuthController {
 
     // --- Cookie Helpers ---
     private void addRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+        // TODO: use __Host- prefix
         Cookie cookie = new Cookie("refreshToken", refreshToken);
-
-        // Only set domain if configured (empty string means don't set domain)
-        applyCookieDomain(cookie);
 
         cookie.setHttpOnly(true);
         cookie.setSecure(cookieSecure);
@@ -160,9 +158,6 @@ public class AuthController {
 
     private void clearRefreshTokenCookie(HttpServletResponse response) {
         Cookie cookie = new Cookie("refreshToken", "");
-
-        // Only set domain if configured
-        applyCookieDomain(cookie);
 
         cookie.setHttpOnly(true);
         cookie.setSecure(cookieSecure);

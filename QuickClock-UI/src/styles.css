@@ -1,0 +1,168 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* QuickClock Light Theme */
+@plugin "daisyui/theme" {
+    name: "light-t";
+    default: true;
+    prefersdark: false;
+    color-scheme: light;
+
+    /* Base Colors */
+    --color-base-100: oklch(0.98 0 0); /* Background - Off-white */
+    --color-base-200: oklch(0.96 0 0); /* Input background */
+    --color-base-300: oklch(0.92 0.01 200); /* Border/Dividers */
+    --color-base-content: oklch(0.2 0 0); /* Main text - Dark charcoal */
+
+    /* Brand Colors */
+    --color-primary: oklch(0.42 0.15 253); /* Professional Blue */
+    --color-primary-content: oklch(0.98 0 0);
+    --color-secondary: oklch(0.93 0.01 200); /* Soft gray */
+    --color-secondary-content: oklch(0.2 0 0);
+    --color-accent: oklch(0.55 0.15 190); /* Teal */
+    --color-accent-content: oklch(0.98 0 0);
+    --color-neutral: oklch(0.5 0 0); /* Medium gray */
+    --color-neutral-content: oklch(0.98 0 0);
+
+    /* Semantic Colors */
+    --color-info: oklch(0.55 0.15 250);
+    --color-info-content: oklch(0.98 0 0);
+    --color-success: oklch(0.55 0.15 140); /* Green */
+    --color-success-content: oklch(0.98 0 0);
+    --color-warning: oklch(0.75 0.15 80); /* Orange */
+    --color-warning-content: oklch(0.2 0 0);
+    --color-error: oklch(0.577 0.245 27.325); /* Red */
+    --color-error-content: oklch(0.98 0 0);
+
+    /* Custom Tokens */
+    --foreground: oklch(0.2 0 0);
+    --muted: oklch(0.93 0 0);
+    --muted-foreground: oklch(0.5 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.2 0 0);
+    --border: oklch(0.92 0.01 200);
+    --input: oklch(0.96 0 0);
+    --ring: oklch(0.42 0.15 253);
+
+    /* Border Radius */
+    --radius-selector: 0.5rem;
+    --radius-field: 0.5rem;
+    --radius-box: 0.75rem;
+
+    /* Sizing */
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+}
+
+/* QuickClock Dark Theme */
+@plugin "daisyui/theme" {
+    name: "dark-t";
+    default: false;
+    prefersdark: false;
+    color-scheme: dark;
+
+    /* Base Colors */
+    --color-base-100: oklch(0.15 0 0); /* Background - Deep dark */
+    --color-base-200: oklch(0.22 0 0); /* Card background */
+    --color-base-300: oklch(0.3 0.01 200); /* Border/Dividers */
+    --color-base-content: oklch(0.95 0 0); /* Main text - Light */
+
+    /* Brand Colors */
+    --color-primary: oklch(0.65 0.15 253); /* Bright Blue */
+    --color-primary-content: oklch(0.15 0 0);
+    --color-secondary: oklch(0.3 0.01 200); /* Dim gray */
+    --color-secondary-content: oklch(0.95 0 0);
+    --color-accent: oklch(0.68 0.15 190); /* Bright Teal */
+    --color-accent-content: oklch(0.15 0 0);
+    --color-neutral: oklch(0.7 0 0); /* Light-medium gray */
+    --color-neutral-content: oklch(0.15 0 0);
+
+    /* Semantic Colors */
+    --color-info: oklch(0.65 0.15 250);
+    --color-info-content: oklch(0.15 0 0);
+    --color-success: oklch(0.68 0.15 140); /* Bright Green */
+    --color-success-content: oklch(0.15 0 0);
+    --color-warning: oklch(0.75 0.15 80); /* Orange */
+    --color-warning-content: oklch(0.15 0 0);
+    --color-error: oklch(0.58 0.22 25); /* Bright Red */
+    --color-error-content: oklch(0.15 0 0);
+
+    /* Custom Tokens */
+    --foreground: oklch(0.95 0 0);
+    --muted: oklch(0.3 0 0);
+    --muted-foreground: oklch(0.7 0 0);
+    --card: oklch(0.22 0 0);
+    --card-foreground: oklch(0.95 0 0);
+    --border: oklch(0.3 0.01 200);
+    --input: oklch(0.25 0 0);
+    --ring: oklch(0.65 0.15 253);
+
+    /* Border Radius */
+    --radius-selector: 0.5rem;
+    --radius-field: 0.5rem;
+    --radius-box: 0.75rem;
+
+    /* Sizing */
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+}
+
+/* Expose custom tokens to Tailwind */
+@theme {
+    --color-foreground: var(--foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --font-sans: "Geist Variable", "Inter", system-ui, sans-serif;
+}
+
+/* Base styles */
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--color-base-100);
+    color: var(--color-base-content);
+}
+
+.btn {
+    border: 0;
+    box-shadow: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+        --foreground: oklch(0.95 0 0);
+        --muted: oklch(0.3 0 0);
+        --muted-foreground: oklch(0.7 0 0);
+        --card: oklch(0.22 0 0);
+        --card-foreground: oklch(0.95 0 0);
+        --border: oklch(0.3 0.01 200);
+        --input: oklch(0.25 0 0);
+        --ring: oklch(0.65 0.15 253);
+    }
+}
+
+/* Neutralize autofill background and text color in WebKit/Blink */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+    -webkit-text-fill-color: inherit;
+    transition: background-color 9999s ease-out, color 9999s ease-out;
+    box-shadow: 0 0 0 1000px transparent inset;
+}

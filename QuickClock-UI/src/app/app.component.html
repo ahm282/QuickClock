@@ -1,0 +1,63 @@
+<div class="min-h-screen bg-background flex flex-col dir='ltr'">
+    <header class="flex items-center justify-between p-6 md:p-10">
+        <div class="flex items-center gap-3">
+            <div
+                class="size-10 rounded-xl bg-primary/10 flex items-center justify-center"
+            >
+                <lucide-icon
+                    [img]="clock"
+                    class="text-primary size-5"
+                ></lucide-icon>
+            </div>
+            <span class="text-sm font-medium text-muted-foreground">
+                QuickClock
+            </span>
+        </div>
+        <div class="flex items-center gap-2">
+            <button
+                type="button"
+                (click)="switchTheme()"
+                title="toggle-theme"
+                class="inline-flex items-center justify-center whitespace-nowrap cursor-pointer text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive border shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 h-8 rounded-md px-3 gap-2 bg-transparent"
+            >
+                <span
+                    class="relative inline-flex h-4 w-4 items-center justify-center overflow-hidden"
+                >
+                    <!-- Sun -->
+                    <lucide-icon
+                        [img]="sunMedium"
+                        class="absolute size-5 transition-all duration-150 ease-in-out will-change-transform"
+                        [class]="
+                            currentTheme === 'dark-t'
+                                ? 'opacity-0 -rotate-180 translate-y-3 scale-50'
+                                : 'opacity-100 rotate-0 translate-y-0 scale-100'
+                        "
+                    ></lucide-icon>
+
+                    <!-- Moon -->
+                    <lucide-icon
+                        [img]="moon"
+                        class="absolute size-5 transition-all duration-150 ease-in-out will-change-transform"
+                        [class]="
+                            currentTheme === 'dark-t'
+                                ? 'opacity-100 rotate-0 translate-y-0 scale-100'
+                                : 'opacity-0 rotate-180 -translate-y-3 scale-50'
+                        "
+                    ></lucide-icon>
+                </span>
+            </button>
+
+            <button
+                class="inline-flex items-center justify-center rounded-md px-3 has-[>svg]:px-2.5 gap-2 bg-transparent"
+            ></button>
+        </div>
+    </header>
+    <main class="flex-1 flex items-center justify-center px-6 pb-20">
+        <router-outlet></router-outlet>
+    </main>
+    <footer class="p-6 md:p-10 md:pt-0">
+        <div class="text-center text-sm text-muted-foreground/60">
+            <p>© {{ getYear() }} QuickClock. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
