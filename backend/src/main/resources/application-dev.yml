@@ -3,6 +3,17 @@ spring:
     activate:
       on-profile: dev
 
+  ssl:
+    bundle:
+      jks:
+        web-server-bundle:
+          key:
+            alias: "springboot"
+          keystore:
+            location: "classpath:keystore.p12"
+            password: ${SSL_KEYSTORE_PASSWORD}
+            type: "PKCS12"
+
   datasource:
     url: jdbc:h2:mem:quickclock;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
     driver-class-name: org.h2.Driver
@@ -28,6 +39,8 @@ spring:
 
 server:
   port: 8081
+  ssl:
+    bundle: web-server-bundle
 
 # Detailed logging for development
 logging:
@@ -40,6 +53,6 @@ logging:
 # Development-specific settings
 app:
   frontend:
-    base-url: http://localhost:8081
+    base-url: https://localhost:8081
   cookie:
-    secure: false
+    secure: true

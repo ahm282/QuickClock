@@ -2,6 +2,30 @@ spring:
   config:
     activate:
       on-profile: prod
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
 
 server:
   port: 8081
@@ -9,32 +33,6 @@ server:
     enabled: true
   http2:
     enabled: true
-
-datasource:
-  url: ${DB_URL}
-  username: ${DB_USERNAME}
-  password: ${DB_PASSWORD}
-  driver-class-name: org.postgresql.Driver
-  hikari:
-    maximum-pool-size: 20
-    minimum-idle: 10
-    connection-timeout: 30000
-    idle-timeout: 600000
-    max-lifetime: 1800000
-    leak-detection-threshold: 60000
-
-jpa:
-  hibernate:
-    ddl-auto: validate
-  show-sql: false
-  properties:
-    hibernate:
-      dialect: org.hibernate.dialect.PostgreSQLDialect
-      format_sql: false
-      jdbc:
-        batch_size: 20
-      order_inserts: true
-      order_updates: true
 
 h2:
   console:
