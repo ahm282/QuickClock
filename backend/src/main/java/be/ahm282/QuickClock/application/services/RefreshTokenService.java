@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.application.services;
 
-import be.ahm282.QuickClock.application.dto.TokenPair;
+import be.ahm282.QuickClock.application.dto.TokenPairDTO;
 import be.ahm282.QuickClock.application.ports.in.RefreshTokenUseCase;
 import be.ahm282.QuickClock.application.ports.out.InvalidatedTokenRepositoryPort;
 import be.ahm282.QuickClock.application.ports.out.RefreshTokenRepositoryPort;
@@ -44,7 +44,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
 
     @Override
     @Transactional
-    public TokenPair rotateRefreshTokenByToken(String refreshToken) {
+    public TokenPairDTO rotateRefreshTokenByToken(String refreshToken) {
         if (!tokenProviderPort.isRefreshToken(refreshToken)) {
             throw new JwtException("Not a refresh token");
         }
@@ -162,7 +162,7 @@ public class RefreshTokenService implements RefreshTokenUseCase {
         return List.copyOf(user.getRoles());
     }
 
-    private TokenPair createNewTokenFamily(User user, List<Role> roles) {
+    private TokenPairDTO createNewTokenFamily(User user, List<Role> roles) {
         UUID rootFamilyId = UUID.randomUUID();
         return issueTokensInFamily(user, roles, rootFamilyId, null);
     }
@@ -173,10 +173,10 @@ public class RefreshTokenService implements RefreshTokenUseCase {
      * - Parses refresh JTI/expiry
      * - Persists refresh token with family/parent linkage
      */
-    private TokenPair issueTokensInFamily(User user,
-                                          List<Role> roles,
-                                          UUID rootFamilyId,
-                                          UUID parentId) {
+    private TokenPairDTO issueTokensInFamily(User user,
+                                             List<Role> roles,
+                                             UUID rootFamilyId,
+                                             UUID parentId) {
 
         Long userId = user.getId();
         String username = user.getUsername();
@@ -204,6 +204,6 @@ public class RefreshTokenService implements RefreshTokenUseCase {
         log.debug("Issued new tokens for user {} - Family: {}, parent: {}",
                 userId, rootFamilyId, parentId);
 
-        return new TokenPair(accessToken, refreshTokenJwt);
+        return new TokenPairDTO(accessToken, refreshTokenJwt);
     }
 }

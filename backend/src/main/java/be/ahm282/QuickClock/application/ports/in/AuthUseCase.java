@@ -1,8 +1,8 @@
 package be.ahm282.QuickClock.application.ports.in;
 
-import be.ahm282.QuickClock.application.dto.TokenPair;
+import be.ahm282.QuickClock.application.dto.TokenPairDTO;
 
 public interface AuthUseCase {
-    TokenPair login(String username, String password);
+    TokenPairDTO login(String username, String password);
     Long register(String username, String password, String inviteCode);
 }

@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.application.services;
 
-import be.ahm282.QuickClock.application.dto.TokenPair;
+import be.ahm282.QuickClock.application.dto.TokenPairDTO;
 import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
 import be.ahm282.QuickClock.application.ports.out.*;
 import be.ahm282.QuickClock.domain.exception.AuthenticationException;
@@ -65,7 +65,7 @@ public class AuthenticationService implements AuthUseCase {
     }
 
     @Override
-    public TokenPair login(String username, String password) {
+    public TokenPairDTO login(String username, String password) {
         Optional<User> maybeUser = userRepositoryPort.findByUsername(username);
 
         String hashToCheck = maybeUser.map(User::getPasswordHash).orElse(dummyHash);
@@ -110,7 +110,7 @@ public class AuthenticationService implements AuthUseCase {
      * Issues an access/refresh pair and stores the root refresh token in DB.
      * Used for initial login; refresh rotation is handled in RefreshTokenService.
      */
-    private TokenPair issueInitialTokens(User user, List<Role> roles) {
+    private TokenPairDTO issueInitialTokens(User user, List<Role> roles) {
         String username = user.getUsername();
         Long userId = user.getId();
 
@@ -120,7 +120,7 @@ public class AuthenticationService implements AuthUseCase {
         UUID rootFamilyId = UUID.randomUUID();
         persistRefreshTokenAsRoot(refreshToken, rootFamilyId, userId);
 
-        return new TokenPair(accessToken, refreshToken);
+        return new TokenPairDTO(accessToken, refreshToken);
     }
 
     private void persistRefreshTokenAsRoot(String refreshToken, UUID rootFamilyId, Long userId) {

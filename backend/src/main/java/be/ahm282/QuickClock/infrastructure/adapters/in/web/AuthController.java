@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.infrastructure.adapters.in.web;
 
-import be.ahm282.QuickClock.application.dto.TokenPair;
+import be.ahm282.QuickClock.application.dto.TokenPairDTO;
 import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
 import be.ahm282.QuickClock.application.ports.in.RefreshTokenUseCase;
 import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
@@ -41,9 +41,6 @@ public class AuthController {
     @org.springframework.beans.factory.annotation.Value("${app.cookie.secure:false}")
     private boolean cookieSecure;
 
-    @org.springframework.beans.factory.annotation.Value("${app.cookie.domain:}")
-    private String cookieDomain;
-
     public AuthController(AuthUseCase authUseCase,
                           RefreshTokenUseCase refreshTokenUseCase,
                           TokenProviderPort tokenProviderPort,
@@ -77,7 +74,7 @@ public class AuthController {
             throw new RateLimitException("Too many login attempts. Please try again later.");
         }
 
-        TokenPair pair = authUseCase.login(request.username(), request.password());
+        TokenPairDTO pair = authUseCase.login(request.username(), request.password());
 
         // Reset rate limit on successful login
         rateLimitService.resetLoginLimit(rateLimitKey);
@@ -105,7 +102,7 @@ public class AuthController {
         }
 
         try {
-            TokenPair pair = refreshTokenUseCase.rotateRefreshTokenByToken(refreshToken);
+            TokenPairDTO pair = refreshTokenUseCase.rotateRefreshTokenByToken(refreshToken);
 
             // Reset rate limit on successful refresh
             rateLimitService.resetRefreshLimit(rateLimitKey);
@@ -184,12 +181,6 @@ public class AuthController {
             if ("refreshToken".equals(cookie.getName())) return cookie.getValue();
         }
         return null;
-    }
-
-    private void applyCookieDomain(Cookie cookie) {
-        if (cookieDomain != null && !cookieDomain.isEmpty()) {
-            cookie.setDomain(cookieDomain);
-        }
     }
 
     private String getClientIp(HttpServletRequest request) { // TODO Re-evaluate this method if behind a proxy
