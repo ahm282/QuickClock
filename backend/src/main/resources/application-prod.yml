@@ -55,7 +55,14 @@ app:
   frontend:
     base-url: ${FRONTEND_BASE_URL:https://quickclock.com}
   cookie:
-    secure: true  # HTTPS required in production
+    secure: true
+  bootstrap:
+    super-admin:
+      username: ${SUPER_ADMIN_USERNAME:}
+      password: ${SUPER_ADMIN_PASSWORD:}
+    kiosk:
+      username: ${KIOSK_USERNAME:}
+      password: ${KIOSK_PASSWORD:}
 
 # Production security settings
 management:

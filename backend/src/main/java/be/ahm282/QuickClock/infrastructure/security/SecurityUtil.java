@@ -31,10 +31,29 @@ public class SecurityUtil {
                 .anyMatch(a -> "ROLE_ADMIN".equals(a) || "ROLE_SUPER_ADMIN".equals(a));
     }
 
+    public boolean hasKioskRole(Authentication auth) {
+        return auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch("ROLE_KIOSK"::equals);
+    }
+
+    public boolean hasSuperAdminRole(Authentication auth) {
+        return auth.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch("ROLE_SUPER_ADMIN"::equals);
+    }
+
     public void requireAdmin() {
         Authentication auth = getAuthenticationOrThrow();
         if (!hasAdminRole(auth)) {
             throw new AccessDeniedException("Admin privileges are required for this operation.");
+        }
+    }
+
+    public void requireKioskOrAdmin() {
+        Authentication auth = getAuthenticationOrThrow();
+        if (!(hasKioskRole(auth) || hasAdminRole(auth))) {
+            throw new AccessDeniedException("Kiosk or admin privileges are required for this operation.");
         }
     }
 

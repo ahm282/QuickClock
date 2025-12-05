@@ -1,7 +1,5 @@
 package be.ahm282.QuickClock.infrastructure.security;
 
-import be.ahm282.QuickClock.application.ports.out.InvalidatedTokenRepositoryPort;
-import be.ahm282.QuickClock.infrastructure.security.service.JwtTokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,16 +20,10 @@ import java.security.SecureRandom;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final JwtTokenService jwtTokenService;
     private final JwtAuthFilter jwtAuthFilter;
-    private final InvalidatedTokenRepositoryPort invalidatedTokenRepository;
 
-    public SecurityConfig(JwtTokenService jwtTokenService,
-                          JwtAuthFilter jwtAuthFilter,
-                          InvalidatedTokenRepositoryPort invalidatedTokenRepository) {
-        this.jwtTokenService = jwtTokenService;
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
-        this.invalidatedTokenRepository = invalidatedTokenRepository;
     }
 
     @Bean
@@ -40,19 +32,23 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
                 .securityMatcher("/api/**")
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(corsConfig -> {})
+                .cors(corsConfig -> {
+                })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll() // Preflight requests
-//                        .requestMatchers(HttpMethod.POST, "/api/clock/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
-//                        .requestMatchers("/api/clock/history/**").authenticated()
-//                        .requestMatchers("/api/clock/qr/**").authenticated()
-                                .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll() // Preflight requests
+
+                        // Kiosk-specific endpoints
+                        .requestMatchers("/api/clock/qr/generate/**").hasAnyRole("KIOSK", "SUPER_ADMIN")
+                        .requestMatchers("/api/users/**").hasAnyRole("KIOSK", "SUPER_ADMIN")
+                        .requestMatchers("/api/clock/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
+
+                        .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
                         .contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'none'"))

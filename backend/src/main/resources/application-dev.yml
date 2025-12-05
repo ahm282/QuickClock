@@ -56,3 +56,10 @@ app:
     base-url: https://localhost:8081
   cookie:
     secure: true
+  bootstrap:
+    super-admin:
+      username: ${SUPER_ADMIN_USERNAME:}
+      password: ${SUPER_ADMIN_PASSWORD:}
+    kiosk:
+      username: ${KIOSK_USERNAME:}
+      password: ${KIOSK_PASSWORD:}
