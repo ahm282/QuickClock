@@ -36,10 +36,15 @@ public class QRTokenAdapter implements QRTokenPort {
 
     private String findUserSecretByToken(String token) {
         try {
-            String decoded = new String(java.util.Base64.getUrlDecoder().decode(token), java.nio.charset.StandardCharsets.UTF_8);
+            String decoded = secureTokenService.decodeToken(token);
             String[] parts = decoded.split("\\|", 3); // version, userId, ...
-            if (parts.length < 2) throw new IllegalArgumentException();
+
+            if (parts.length < 2) {
+                throw new IllegalArgumentException();
+            }
+
             Long userId = Long.parseLong(parts[1]);
+
             return userRepositoryPort.findById(userId)
                     .orElseThrow(() -> new ValidationException("Token is expired or invalid"))
                     .getSecret();

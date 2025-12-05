@@ -14,8 +14,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.lang.Long.parseLong;
-
 @Service
 public class SecureTokenService {
 
@@ -110,7 +108,7 @@ public class SecureTokenService {
 
     // ----------------------- helpers -----------------------
 
-    private String decodeToken(String token) {
+    public String decodeToken(String token) {
         byte[] raw = Base64.getUrlDecoder().decode(token);
 
         if (raw.length > MAX_TOKEN_BYTES) {
