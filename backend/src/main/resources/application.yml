@@ -6,6 +6,11 @@ spring:
 
 # Application-specific settings with environment variable overrides
 app:
+  bootstrap:
+    enabled: false
+  seed:
+    enabled: false
+
   clocking:
     token-expiry-seconds: ${CLOCKING_TOKEN_EXPIRY:30}
 

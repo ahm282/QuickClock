@@ -14,10 +14,18 @@ public class UserMapper {
 
         return new User(
                 entity.getId(),
+                entity.getPublicId(),
                 entity.getUsername(),
+                entity.getDisplayName(),
                 entity.getPasswordHash(),
                 entity.getSecret(),
-                entity.getRoles()
+                entity.getRoles(),
+                entity.getAccountType(),
+                entity.isActive(),
+                entity.getLastLogin(),
+                entity.getLastPasswordChange(),
+                entity.getFailedLoginAttempts(),
+                entity.getLockedUntil()
         );
     }
 
@@ -27,11 +35,27 @@ public class UserMapper {
         }
 
         UserEntity entity = new UserEntity();
+
         entity.setId(user.getId());
+        entity.setPublicId(user.getPublicId());
+
         entity.setUsername(user.getUsername());
+        entity.setDisplayName(user.getDisplayName());
+
         entity.setPasswordHash(user.getPasswordHash());
         entity.setSecret(user.getSecret());
+
         entity.setRoles(user.getRoles());
+        entity.setAccountType(user.getAccountType());
+
+        entity.setActive(user.isActive());
+
+        entity.setLastLogin(user.getLastLogin());
+        entity.setLastPasswordChange(user.getLastPasswordChange());
+
+        entity.setFailedLoginAttempts(user.getFailedLoginAttempts());
+        entity.setLockedUntil(user.getLockedUntil());
+
         return entity;
     }
 }

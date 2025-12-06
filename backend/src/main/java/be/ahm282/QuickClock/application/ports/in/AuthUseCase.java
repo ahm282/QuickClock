@@ -4,5 +4,5 @@ import be.ahm282.QuickClock.application.dto.TokenPairDTO;
 
 public interface AuthUseCase {
     TokenPairDTO login(String username, String password);
-    Long register(String username, String password, String inviteCode);
+    void register(String username, String displayName, String password, String inviteCode);
 }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -17,18 +18,22 @@ import java.util.Optional;
 import java.util.Set;
 
 @Component
+@ConditionalOnProperty(name = "app.bootstrap.enabled", havingValue = "true")
 public class InitialAdminAndKioskBootstrap implements ApplicationRunner {
     private static final Logger log = LoggerFactory.getLogger(InitialAdminAndKioskBootstrap.class);
 
     private final UserRepositoryPort userRepositoryPort;
     private final PasswordEncoder passwordEncoder;
-    private final SecureRandom secureRandom;
+    private final SecureRandom secureRandom = new SecureRandom();
 
     @Value("${app.bootstrap.super-admin.username:}")
     private String superAdminUsername;
 
     @Value("${app.bootstrap.super-admin.password:}")
     private String superAdminPassword;
+
+    @Value("${app.bootstrap.super-admin.displayName:}")
+    private String superAdminDisplayName;
 
     @Value("${app.bootstrap.kiosk.username:}")
     private String kioskUsername;
@@ -40,17 +45,16 @@ public class InitialAdminAndKioskBootstrap implements ApplicationRunner {
                                          PasswordEncoder passwordEncoder) {
         this.userRepositoryPort = userRepositoryPort;
         this.passwordEncoder = passwordEncoder;
-        this.secureRandom = new SecureRandom();
     }
 
     @Override
     public void run(ApplicationArguments args) {
-        bootstraSuperAdmin();
+        bootstrapSuperAdmin();
         bootstrapKioskUser();
     }
 
-    private void bootstraSuperAdmin() {
-        if (superAdminUsername == null || superAdminPassword.isBlank()) {
+    private void bootstrapSuperAdmin() {
+        if (isBlank(superAdminUsername)) {
             log.info("Super admin bootstrap username not configured; skipping super admin creation");
             return;
         }
@@ -61,25 +65,28 @@ public class InitialAdminAndKioskBootstrap implements ApplicationRunner {
             return;
         }
 
-        if (superAdminPassword == null || superAdminPassword.isBlank()) {
+        if (isBlank(superAdminPassword)) {
             log.warn("Super admin user '{}' does not exist but no bootstrap password is configured; NOT creating user", superAdminUsername);
             return;
         }
 
-        User user = new User(
-                null,
+        String displayName = isBlank(superAdminDisplayName) ? "Super Admin" : superAdminDisplayName;
+        String secret = generateSecret();
+        User user = User.bootstrapServiceAccount(
                 superAdminUsername,
+                displayName,
                 passwordEncoder.encode(superAdminPassword),
-                generateSecret(),
+                secret,
                 Set.of(Role.SUPER_ADMIN)
         );
+
         userRepositoryPort.save(user);
-        // TODO: add last login audit entry
-        log.warn("Super admin user '{}' created on startup. MAKE SURE to rotate this password after first login.", superAdminUsername);
+
+        log.warn("Super admin user '{}' created on startup. Rotate this password after first login.", superAdminUsername);
     }
 
     private void bootstrapKioskUser() {
-        if (kioskUsername == null || kioskUsername.isBlank()) {
+        if (isBlank(kioskUsername)) {
             log.info("Kiosk bootstrap username not configured; skipping kiosk user creation");
             return;
         }
@@ -90,18 +97,21 @@ public class InitialAdminAndKioskBootstrap implements ApplicationRunner {
             return;
         }
 
-        if (kioskPassword == null || kioskPassword.isBlank()) {
+        if (isBlank(kioskPassword)) {
             log.warn("Kiosk user '{}' does not exist but no bootstrap password is configured; NOT creating user", kioskUsername);
             return;
         }
 
-        User user = new User(
-                null,
+        String secret = generateSecret();
+
+        User user = User.bootstrapServiceAccount(
                 kioskUsername,
+                "Kiosk",
                 passwordEncoder.encode(kioskPassword),
-                generateSecret(),
+                secret,
                 Set.of(Role.KIOSK)
         );
+
         userRepositoryPort.save(user);
         log.warn("Kiosk user '{}' created on startup. Lock credentials down on the kiosk device.", kioskUsername);
     }
@@ -111,4 +121,9 @@ public class InitialAdminAndKioskBootstrap implements ApplicationRunner {
         secureRandom.nextBytes(bytes);
         return Base64.getEncoder().encodeToString(bytes);
     }
+
+    private static boolean isBlank(String s) {
+        return s == null || s.isBlank();
+    }
 }
+

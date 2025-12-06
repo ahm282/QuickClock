@@ -57,9 +57,12 @@ app:
   cookie:
     secure: true
   bootstrap:
+    enabled: true
     super-admin:
       username: ${SUPER_ADMIN_USERNAME:}
       password: ${SUPER_ADMIN_PASSWORD:}
     kiosk:
       username: ${KIOSK_USERNAME:}
       password: ${KIOSK_PASSWORD:}
+  seed:
+    enabled: ${SEED_ENABLED:true}

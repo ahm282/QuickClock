@@ -82,18 +82,17 @@ public class AuthenticationService implements AuthUseCase {
     }
 
     @Override
-    public Long register(String username, String password, String inviteCode) {
+    public void register(String username, String displayName, String password, String inviteCode) {
         validatePassword(username, password);
         validateInviteCode(inviteCode);
 
         String passwordHash = passwordEncoder.encode(password);
         String secret = generateSecret();
 
-        User toSave = new User(null, username, passwordHash, secret, Set.of(Role.EMPLOYEE));
+        User toSave = User.newEmployee(username, displayName, passwordHash, secret, Set.of(Role.EMPLOYEE));
         User savedUser = userRepositoryPort.save(toSave);
 
         markInviteCodeUsed(inviteCode, savedUser.getId());
-        return savedUser.getId();
     }
 
     // ====================
