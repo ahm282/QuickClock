@@ -79,6 +79,11 @@ export class AuthService {
         return roles.includes('employee');
     });
 
+    public hasRole(role: string): boolean {
+        const roles = this.rolesSignal();
+        return roles.includes(role);
+    }
+
     constructor() {
         if (typeof BroadcastChannel !== 'undefined') {
             this.channel = new BroadcastChannel('quickclock-auth');
