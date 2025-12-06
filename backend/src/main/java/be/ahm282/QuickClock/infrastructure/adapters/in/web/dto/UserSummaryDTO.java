@@ -1,3 +1,5 @@
 package be.ahm282.QuickClock.infrastructure.adapters.in.web.dto;
 
-public record UserSummaryDTO(Long id, String displayName) {}
+import java.util.UUID;
+
+public record UserSummaryDTO(UUID publicId, String displayName) {}

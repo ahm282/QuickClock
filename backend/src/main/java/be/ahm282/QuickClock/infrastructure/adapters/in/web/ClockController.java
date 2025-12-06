@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/clock")
@@ -98,17 +99,21 @@ public class ClockController {
     // QR-based endpoints (employee flow, initiated from kiosk)
     // -------------------------------------------------------------------------
 
-    @GetMapping("/qr/generate/in/{userId}")
-    public ClockQRCodeResponseDTO generateClockInQRCode(@PathVariable Long userId) {
-        securityUtil.requireAdmin();
-        return qrCodeService.generateClockInQRCode(userId, "clock-in");
+    @GetMapping("/qr/generate/in/{publicId}")
+    public ClockQRCodeResponseDTO generateClockInQRCode(@PathVariable UUID publicId) {
+        securityUtil.requireKioskOrAdmin();
+        return qrCodeService.generateClockInQRCode(publicId, "clock-in");
     }
 
-    @GetMapping("/qr/generate/out/{userId}")
-    public ClockQRCodeResponseDTO generateClockOutQRCode(@PathVariable Long userId) {
-        securityUtil.requireAdmin();
-        return qrCodeService.generateClockOutQRCode(userId, "clock-out");
+    @GetMapping("/qr/generate/out/{publicId}")
+    public ClockQRCodeResponseDTO generateClockOutQRCode(@PathVariable UUID publicId) {
+        securityUtil.requireKioskOrAdmin();
+        return qrCodeService.generateClockOutQRCode(publicId, "clock-out");
     }
+
+    // -------------------------------------------------------------------------
+    // Clock in/out endpoints (employee flow, initiated from user device)
+    // -------------------------------------------------------------------------
 
     @PostMapping("/qr/in")
     @ResponseStatus(HttpStatus.CREATED)
@@ -139,8 +144,8 @@ public class ClockController {
     }
 
     // -------------------------------------------------------------------------
-// Admin manual clocking: timestamp + reason
-// -------------------------------------------------------------------------
+    // Admin manual clocking: timestamp + reason
+    // -------------------------------------------------------------------------
 
     @PostMapping("/admin/in")
     @ResponseStatus(HttpStatus.CREATED)
