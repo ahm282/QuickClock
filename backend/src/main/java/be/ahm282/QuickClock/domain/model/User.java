@@ -66,7 +66,7 @@ public class User {
 
         this.roles = roles == null
                 ? Collections.emptySet()
-                : Collections.unmodifiableSet(Set.copyOf(roles));
+                : Set.copyOf(roles);
 
         this.accountType = accountType == null ? AccountType.EMPLOYEE : accountType;
         this.active = active;

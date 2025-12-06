@@ -47,7 +47,7 @@ public class AuthenticationService implements AuthUseCase {
                                  PasswordEncoder passwordEncoder,
                                  BreachedPasswordCheckPort breachedPasswordCheckPort,
                                  @Value("${app.password.min-entropy:42}")
-                                 double minimumPasswordEntropy) throws NoSuchAlgorithmException {
+                                 double minimumPasswordEntropy) {
         this.userRepositoryPort = userRepositoryPort;
         this.inviteCodeRepositoryPort = inviteCodeRepositoryPort;
         this.refreshTokenRepositoryPort = refreshTokenRepositoryPort;
