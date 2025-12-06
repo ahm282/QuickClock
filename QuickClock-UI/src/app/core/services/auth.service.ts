@@ -13,6 +13,7 @@ export interface LoginRequest {
 export interface RegisterRequest {
     username: string;
     password: string;
+    displayName: string;
     inviteCode: string;
 }
 
@@ -41,6 +42,10 @@ export class AuthService {
     // Expiry time (unix epoch)
     private tokenExpirySignal = signal<number | null>(null);
 
+    // Roles signal
+    private rolesSignal = signal<string[]>([]);
+    public roles = this.rolesSignal.asReadonly();
+
     // Computed: Is token present and valid?
     public isAccessTokenValid = computed((): boolean => {
         const token = this.accessTokenSignal();
@@ -51,6 +56,27 @@ export class AuthService {
         }
 
         return Date.now() / 1000 < expiry; // Compare in seconds
+    });
+
+    // Computed: User roles
+    public isKiosk = computed((): boolean => {
+        const roles = this.rolesSignal();
+        return roles.includes('kiosk');
+    });
+
+    public isAdmin = computed((): boolean => {
+        const roles = this.rolesSignal();
+        return roles.includes('admin');
+    });
+
+    public isSuperAdmin = computed((): boolean => {
+        const roles = this.rolesSignal();
+        return roles.includes('superadmin');
+    });
+
+    public isEmployee = computed((): boolean => {
+        const roles = this.rolesSignal();
+        return roles.includes('employee');
     });
 
     constructor() {
@@ -166,6 +192,9 @@ export class AuthService {
         if (data.type === 'token' && data.token && data.exp) {
             this.accessTokenSignal.set(data.token);
             this.tokenExpirySignal.set(data.exp);
+            if (Array.isArray(data.roles)) {
+                this.rolesSignal.set(data.roles);
+            }
         }
 
         if (data.type === 'logout') {
@@ -184,11 +213,13 @@ export class AuthService {
 
             this.accessTokenSignal.set(token);
             this.tokenExpirySignal.set(decoded.exp);
+            this.rolesSignal.set(decoded.roles ?? []);
 
             this.channel?.postMessage({
                 type: 'token',
                 token,
                 exp: decoded.exp,
+                roles: decoded.roles ?? [],
             });
         } catch (error) {
             this.doLogout();
@@ -204,5 +235,6 @@ export class AuthService {
     clearAuth(): void {
         this.accessTokenSignal.set(null);
         this.tokenExpirySignal.set(null);
+        this.rolesSignal.set([]);
     }
 }
