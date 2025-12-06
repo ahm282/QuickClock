@@ -55,7 +55,7 @@ public class UserEntity extends AuditableEntity {
     @Column(name = "last_login")
     private Instant lastLogin;
     @Column(name = "last_password_change", nullable = false)
-    private Instant lastPasswordChange = Instant.EPOCH;
+    private Instant lastPasswordChange = Instant.now();
     @Column(name = "failed_login_attempts", nullable = false)
     private int failedLoginAttempts = 0;
     @Column(name = "locked_until")

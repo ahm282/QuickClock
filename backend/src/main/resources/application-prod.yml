@@ -61,6 +61,7 @@ app:
     super-admin:
       username: ${SUPER_ADMIN_USERNAME:}
       password: ${SUPER_ADMIN_PASSWORD:}
+      displayName: ${SUPER_ADMIN_DISPLAYNAME:Super Admin}
     kiosk:
       username: ${KIOSK_USERNAME:}
       password: ${KIOSK_PASSWORD:}
