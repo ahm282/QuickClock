@@ -9,11 +9,17 @@ import {
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { LucideAngularModule, Hand } from 'lucide-angular';
+import { AppHeaderComponent } from '../../../shared/components/app-header/app-header.component';
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        LucideAngularModule,
+        AppHeaderComponent,
+    ],
     templateUrl: './login.component.html',
     styleUrl: './login.component.css',
 })
@@ -50,7 +56,13 @@ export class LoginComponent {
         this.authService.login({ username, password }).subscribe({
             next: () => {
                 this.isLoading = false;
-                this.router.navigate(['/dashboard']);
+                console.log('Login successful');
+                console.log('User roles:', this.authService.roles());
+                if (this.authService.isKiosk()) {
+                    this.router.navigate(['/kiosk']);
+                } else {
+                    this.router.navigate(['/dashboard']);
+                }
             },
             error: (err) => {
                 this.isLoading = false;
@@ -59,5 +71,9 @@ export class LoginComponent {
                 console.error(err);
             },
         });
+    }
+
+    getYear(): number {
+        return new Date().getFullYear();
     }
 }

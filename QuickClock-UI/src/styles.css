@@ -65,10 +65,10 @@
     color-scheme: dark;
 
     /* Base Colors */
-    --color-base-100: oklch(0.15 0 0); /* Background - Deep dark */
+    --color-base-100: #0b0c0f; /* Background - Deep dark */
     --color-base-200: oklch(0.22 0 0); /* Card background */
     --color-base-300: oklch(0.3 0.01 200); /* Border/Dividers */
-    --color-base-content: oklch(0.95 0 0); /* Main text - Light */
+    --color-base-content: oklch(0.9 0 0); /* Main text - Light */
 
     /* Brand Colors */
     --color-primary: oklch(0.65 0.15 253); /* Bright Blue */
@@ -171,4 +171,21 @@ textarea:-moz-autofill,
 select:-moz-autofill {
     box-shadow: 0 0 0 1000px transparent inset;
     -moz-text-fill-color: inherit;
+}
+
+/* Kiosk utility classes */
+.kiosk-title {
+    font-size: clamp(2rem, 3vw, 3rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+}
+
+.kiosk-muted {
+    color: var(--color-muted-foreground);
+}
+
+.kiosk-card {
+    background: var(--color-base-200);
+    border: 1px solid var(--color-base-300);
+    border-radius: 1rem;
 }

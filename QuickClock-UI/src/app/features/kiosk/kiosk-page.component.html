@@ -1,0 +1,82 @@
+<!-- SUCCESS view -->
+@if (scanSuccess() && selectedEmployee()) {
+<div class="kiosk-full center">
+    <div class="success-card">
+        <div class="success-dot">✓</div>
+        <h1>Success</h1>
+        <p class="muted">{{ selectedEmployee()?.displayName }}</p>
+        <p class="tiny muted">{{ today() | date : "fullDate" }}</p>
+    </div>
+</div>
+}
+
+<!-- QR view -->
+@else if (selectedEmployee()) {
+<div class="kiosk-full">
+    <header class="kiosk-header">
+        <button class="ghost" (click)="back()">Back</button>
+        <span class="brand">QuickClock</span>
+    </header>
+
+    <main class="kiosk-center">
+        <h1 class="employee-name">{{ selectedEmployee()?.displayName }}</h1>
+        <p class="muted">Scan with your phone</p>
+
+        <div class="qr-box" (click)="simulateScanSuccess()">
+            @if (qrLoading()) {
+            <div class="muted">Generating...</div>
+            } @else if (qrToken()) {
+            <qrcode
+                [qrdata]="qrToken()!"
+                [width]="240"
+                [errorCorrectionLevel]="'M'"
+            ></qrcode>
+            }
+        </div>
+
+        <div class="timer-pill">
+            <span class="muted">Refreshes in</span>
+            <span class="mono">{{ timeRemaining() }}s</span>
+        </div>
+
+        <div class="actions">
+            <button (click)="generateIn()">Clock In QR</button>
+            <button (click)="generateOut()">Clock Out QR</button>
+        </div>
+
+        @if (error()) {
+        <p class="error">{{ error() }}</p>
+        }
+    </main>
+</div>
+}
+
+<!-- SELECTION view -->
+@else {
+<div class="kiosk-full">
+    <header class="kiosk-header wide">
+        <div>
+            <div class="tiny muted">QuickClock</div>
+            <h1>Select your name</h1>
+        </div>
+        <div class="muted">{{ today() | date : "fullDate" }}</div>
+    </header>
+
+    <main class="kiosk-grid">
+        @if (loading()) {
+        <div class="muted">Loading employees...</div>
+        } @else if (error()) {
+        <div class="error">{{ error() }}</div>
+        } @else {
+        <div class="grid">
+            @for (u of employees(); track u.publicId) {
+            <button class="employee-card kiosk-card" (click)="select(u)">
+                <div class="avatar">{{ u.displayName.charAt(0) }}</div>
+                <div class="name">{{ u.displayName }}</div>
+            </button>
+            }
+        </div>
+        }
+    </main>
+</div>
+}

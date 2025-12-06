@@ -61,22 +61,22 @@ export class AuthService {
     // Computed: User roles
     public isKiosk = computed((): boolean => {
         const roles = this.rolesSignal();
-        return roles.includes('kiosk');
+        return roles.includes('kiosk'.toUpperCase());
     });
 
     public isAdmin = computed((): boolean => {
         const roles = this.rolesSignal();
-        return roles.includes('admin');
+        return roles.includes('admin'.toUpperCase());
     });
 
     public isSuperAdmin = computed((): boolean => {
         const roles = this.rolesSignal();
-        return roles.includes('superadmin');
+        return roles.includes('super_admin'.toUpperCase());
     });
 
     public isEmployee = computed((): boolean => {
         const roles = this.rolesSignal();
-        return roles.includes('employee');
+        return roles.includes('employee'.toUpperCase());
     });
 
     public hasRole(role: string): boolean {

@@ -20,7 +20,7 @@ public class KioskController {
         this.securityUtil = securityUtil;
     }
 
-    @GetMapping("/users")
+    @GetMapping("/employees")
     public List<UserSummaryDTO> listEmployees() {
         securityUtil.requireKioskOrAdmin();
 
