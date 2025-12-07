@@ -22,7 +22,8 @@
             class="btn btn-secondary flex items-center gap-2 text-muted-foreground hover:text-muted-foreground transition-colors"
             (click)="back()"
         >
-            <span>← Back</span>
+            <lucide-icon [img]="ArrowLeft" [size]="18"></lucide-icon>
+            <span>Back</span>
         </button>
         <span class="text-sm text-muted-foreground">QuickClock</span>
     </header>
@@ -43,7 +44,6 @@
                 [qrdata]="qrToken()!"
                 [width]="250"
                 [errorCorrectionLevel]="'H'"
-                [imageSrc]="'/assets/img/clock.png'"
                 [imageWidth]="50"
                 [imageHeight]="50"
                 [colorDark]="'#004b9b'"
@@ -62,6 +62,7 @@
         </div>
 
         <div class="timer-pill">
+            <lucide-angular [img]="QrCode" [size]="18"></lucide-angular>
             <span class="text-sm text-muted-foreground-foreground"
                 >QR Code refreshes in</span
             >
@@ -81,16 +82,16 @@
 @else {
 <div class="kiosk-full">
     <header class="kiosk-header-wide">
-        <div>
-            <p class="text-sm text-muted-foreground mb-4">QuickClock</p>
-            <h1 class="text-4xl md:text-5xl font-light">Clock In/Out</h1>
+        <div class="flex justify-between gap-4">
+            <app-logo />
+            <div class="flex items-center gap-4">
+                <p class="text-sm text-muted-foreground-foreground/60">
+                    {{ today() | date : "fullDate" }}
+                </p>
+                <app-logout-button />
+            </div>
         </div>
-        <div class="flex items-center gap-4">
-            <p class="text-sm text-muted-foreground-foreground/60">
-                {{ today() | date : "fullDate" }}
-            </p>
-            <app-logout-button />
-        </div>
+        <h1 class="text-4xl md:text-5xl font-light">Clock In/Out</h1>
     </header>
 
     <main class="kiosk-grid">

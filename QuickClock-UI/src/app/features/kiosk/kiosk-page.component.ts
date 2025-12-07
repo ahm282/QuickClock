@@ -13,17 +13,28 @@ import {
     UserSummaryDTO,
 } from '../../core/services/kiosk-api.service';
 import { LogoutButtonComponent } from '../../shared/components/logout-button/logout-button.component';
+import { LucideAngularModule, ArrowLeft, QrCode, Clock } from 'lucide-angular';
+import { AppLogoComponent } from '../../shared/components/app-logo/app-logo.component';
 
 @Component({
     selector: 'app-kiosk-page',
     standalone: true,
-    imports: [CommonModule, QRCodeComponent, LogoutButtonComponent],
+    imports: [
+        CommonModule,
+        QRCodeComponent,
+        LogoutButtonComponent,
+        LucideAngularModule,
+        AppLogoComponent
+    ],
     templateUrl: './kiosk-page.component.html',
     styleUrl: './kiosk-page.component.css',
 })
 export class KioskPageComponent {
     private api = inject(KioskApiService);
     private destroyRef = inject(DestroyRef);
+    readonly clock = Clock;
+    readonly ArrowLeft = ArrowLeft;
+    readonly QrCode = QrCode;
 
     employees = signal<UserSummaryDTO[]>([]);
     loading = signal(true);
