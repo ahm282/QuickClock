@@ -1,0 +1,142 @@
+<div class="grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 space-y-6">
+        <div class="p-6 md:p-8 rounded-2xl border border-border bg-card">
+            <div class="flex items-start justify-between mb-6">
+                <div>
+                    <p class="text-sm text-muted-foreground opacity-70 mb-1">
+                        Current Status
+                    </p>
+
+                    <p
+                        class="text-3xl md:text-4xl font-light"
+                        [class.text-emerald-600]="isClockedIn()"
+                        [class.text-amber-600]="!isClockedIn()"
+                    >
+                        @if (isClockedIn()) { Clocked In } @else { Clocked Out }
+                    </p>
+
+                    <p class="text-sm text-muted-foreground opacity-70 mt-2">
+                        Since 09:30 AM
+                    </p>
+                </div>
+
+                <div
+                    class="w-16 h-16 rounded-2xl flex items-center justify-center transition-colors"
+                    [class.bg-emerald-500-10]="isClockedIn()"
+                    [class.bg-amber-500-10]="!isClockedIn()"
+                >
+                    <lucide-icon
+                        [name]="Clock"
+                        class="w-8 h-8"
+                        [class.text-emerald-600]="isClockedIn()"
+                        [class.text-amber-600]="!isClockedIn()"
+                    >
+                    </lucide-icon>
+                </div>
+            </div>
+
+            <div
+                class="p-8 rounded-2xl border transition-colors"
+                [class.border-primary]="scannerActive()"
+                [class.bg-primary-5]="scannerActive()"
+                [class.border-dashed]="!scannerActive()"
+                [class.border-border]="!scannerActive()"
+                [class.bg-muted-30]="!scannerActive()"
+            >
+                @if (scannerActive() && !cameraError()) {
+                <div class="flex flex-col items-center gap-4">
+                    <video
+                        #videoElement
+                        autoplay
+                        playsinline
+                        class="w-full max-w-md rounded-xl"
+                    ></video>
+                    <p class="text-sm text-muted-foreground opacity-70">
+                        Scan ready. Point your camera at a QR code to log your
+                        attendance.
+                    </p>
+                </div>
+                } @else if (cameraError()) {
+                <div class="flex flex-col items-center gap-4 py-4">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center"
+                    >
+                        <lucide-icon
+                            [name]="CircleAlert"
+                            class="w-8 h-8 text-muted-foreground"
+                        ></lucide-icon>
+                    </div>
+                    <div class="text-center">
+                        <p class="font-medium text-foreground">
+                            Unable to Access Camera
+                        </p>
+                        <p
+                            class="text-sm text-muted-foreground opacity-70 mt-1"
+                        >
+                            {{ cameraError() }}
+                        </p>
+                    </div>
+                </div>
+                } @else {
+                <div class="flex flex-col items-center gap-4 py-4">
+                    <div
+                        class="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center"
+                    >
+                        <lucide-icon
+                            [name]="QrCode"
+                            class="w-8 h-8 text-muted-foreground"
+                        ></lucide-icon>
+                    </div>
+                    <div class="text-center">
+                        <p class="font-medium text-foreground">
+                            Scan QR to Clock In/Out
+                        </p>
+                        <p
+                            class="text-sm text-muted-foreground opacity-70 mt-1"
+                        >
+                            Camera Instructions
+                        </p>
+                    </div>
+                </div>
+                }
+            </div>
+
+            @if (cameraError()) {
+            <div
+                class="mt-4 p-4 rounded-xl bg-destructive/10 flex items-center gap-3"
+            >
+                <lucide-icon
+                    [name]="CircleAlert"
+                    class="w-5 h-5 text-destructive shrink-0 mt-0.5"
+                ></lucide-icon>
+                <p class="text-sm text-destructive">{{ cameraError() }}</p>
+            </div>
+            }
+
+            <button
+                (click)="toggleScanner()"
+                class="btn btn-primary w-full h-12 rounded-2xl mt-6 font-medium flex items-center justify-center transition-all"
+                [class.bg-red-600]="scannerActive()"
+                [class.hover:bg-red-700]="scannerActive()"
+                [class.text-white]="scannerActive()"
+                [class.bg-primary]="!scannerActive()"
+                [class.text-primary-foreground]="!scannerActive()"
+            >
+                <lucide-icon [name]="QrCode" class="w-5 h-5 mr-2"></lucide-icon>
+
+                @if (scannerActive()) { Stop Scanner } @else { Start Scanner }
+            </button>
+
+            @if (lastScanTime()) {
+            <p
+                class="text-center text-sm text-muted-foreground opacity-70 mt-4"
+            >
+                Last Scan
+                <span class="font-medium text-foreground">{{
+                    lastScanTime()
+                }}</span>
+            </p>
+            }
+        </div>
+    </div>
+</div>
