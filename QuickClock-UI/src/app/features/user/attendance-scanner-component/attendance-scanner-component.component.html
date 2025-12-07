@@ -36,7 +36,7 @@
             </div>
 
             <div
-                class="p-8 rounded-2xl border transition-colors"
+                class="p-4 rounded-2xl border transition-colors"
                 [class.border-primary]="scannerActive()"
                 [class.bg-primary-5]="scannerActive()"
                 [class.border-dashed]="!scannerActive()"
@@ -49,7 +49,7 @@
                         #videoElement
                         autoplay
                         playsinline
-                        class="w-full max-w-md rounded-xl"
+                        class="w-full max-w-lg rounded-xl max-h-320 object-cover border border-border"
                     ></video>
                     <p class="text-sm text-muted-foreground opacity-70">
                         Scan ready. Point your camera at a QR code to log your

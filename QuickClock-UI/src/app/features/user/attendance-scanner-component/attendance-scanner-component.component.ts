@@ -43,6 +43,7 @@ export class AttendanceScannerComponentComponent {
 
     async startCamera(): Promise<void> {
         this.cameraError.set(null);
+        this.scannerActive.set(true);
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
@@ -54,9 +55,8 @@ export class AttendanceScannerComponentComponent {
             setTimeout(() => {
                 if (this.videoElement?.nativeElement) {
                     this.videoElement.nativeElement.srcObject = stream;
-                    // this.videoElement.nativeElement.play();
                 }
-            });
+            }, 50);
         } catch (err) {
             console.error('Error accessing camera:', err);
             this.cameraError.set(
