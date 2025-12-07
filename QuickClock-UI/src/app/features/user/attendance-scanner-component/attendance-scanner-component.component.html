@@ -35,6 +35,39 @@
                 </div>
             </div>
 
+            @if (!selectedDeviceId()) {
+            <div class="flex items-center gap-2 mb-4 overflow-hidden">
+                <select
+                    #cameraSel
+                    class="h-10 px-3 w-5/12 rounded-xl border border-border bg-card text-sm"
+                    [disabled]="
+                        loadingDevices() || availableCameras().length === 0
+                    "
+                    [value]="selectedDeviceId() ?? ''"
+                    (change)="onSelectCamera(cameraSel.value)"
+                >
+                    @for (cam of availableCameras(); track cam.deviceId) {
+                    <option [value]="cam.deviceId">
+                        {{ cam.label || "Camera " + cam.deviceId.slice(-4) }}
+                    </option>
+                    }
+                </select>
+
+                <button
+                    class="h-10 px-3 rounded-xl border border-border bg-muted/50 text-sm flex items-center gap-2"
+                    type="button"
+                    (click)="refreshCameras(true)"
+                    [disabled]="loadingDevices()"
+                    title="Refresh cameras"
+                >
+                    <lucide-icon
+                        [name]="RefreshCcw"
+                        class="w-4 h-4"
+                    ></lucide-icon>
+                    Refresh
+                </button>
+            </div>
+            }
             <div
                 class="p-4 rounded-2xl border transition-colors"
                 [class.border-primary]="scannerActive()"

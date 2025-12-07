@@ -28,7 +28,8 @@ public class CorsConfig {
                 "https://localhost:4200",
                 "https://127.0.0.1:4200",
                 "https://192.168.0.62:8081",
-                "https://192.168.0.62:4200"));
+                "https://192.168.0.62:4200",
+                "https://192.168.0.62:5173"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization", "Content-Type"));
