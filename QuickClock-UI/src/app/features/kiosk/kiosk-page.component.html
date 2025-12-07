@@ -85,9 +85,12 @@
             <p class="text-sm text-muted-foreground mb-4">QuickClock</p>
             <h1 class="text-4xl md:text-5xl font-light">Clock In/Out</h1>
         </div>
-        <p class="text-sm text-muted-foreground-foreground/60">
-            {{ today() | date : "fullDate" }}
-        </p>
+        <div class="flex items-center gap-4">
+            <p class="text-sm text-muted-foreground-foreground/60">
+                {{ today() | date : "fullDate" }}
+            </p>
+            <app-logout-button />
+        </div>
     </header>
 
     <main class="kiosk-grid">

@@ -3,11 +3,18 @@ import { RouterOutlet, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { AppHeaderComponent } from '../../shared/components/app-header/app-header.component';
+import { LogoutButtonComponent } from '../../shared/components/logout-button/logout-button.component';
 
 @Component({
     selector: 'app-main-layout',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, RouterLink, AppHeaderComponent],
+    imports: [
+        CommonModule,
+        RouterOutlet,
+        RouterLink,
+        AppHeaderComponent,
+        LogoutButtonComponent,
+    ],
     templateUrl: './main-layout.component.html',
     styleUrls: ['./main-layout.component.css'],
 })

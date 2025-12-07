@@ -12,11 +12,12 @@ import {
     KioskApiService,
     UserSummaryDTO,
 } from '../../core/services/kiosk-api.service';
+import { LogoutButtonComponent } from '../../shared/components/logout-button/logout-button.component';
 
 @Component({
     selector: 'app-kiosk-page',
     standalone: true,
-    imports: [CommonModule, QRCodeComponent],
+    imports: [CommonModule, QRCodeComponent, LogoutButtonComponent],
     templateUrl: './kiosk-page.component.html',
     styleUrl: './kiosk-page.component.css',
 })

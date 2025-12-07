@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { LucideAngularModule, Clock, Moon, SunMedium } from 'lucide-angular';
+import { LogoutButtonComponent } from '../logout-button/logout-button.component';
 
 @Component({
     selector: 'app-header',
     standalone: true,
-    imports: [LucideAngularModule],
+    imports: [LucideAngularModule, LogoutButtonComponent],
     templateUrl: './app-header.component.html',
     styleUrl: './app-header.component.css',
 })
