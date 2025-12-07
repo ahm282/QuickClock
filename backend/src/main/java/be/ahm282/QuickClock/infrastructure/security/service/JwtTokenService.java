@@ -80,16 +80,16 @@ public class JwtTokenService implements TokenProviderPort {
     }
 
     @Override
-    public String generateAccessToken(String username, Long userId, List<Role> roles) {
-        return buildToken(username, userId, ACCESS_TOKEN_EXPIRATION_MS, "access", roles);
+    public String generateAccessToken(String username, String displayName, Long userId, List<Role> roles) {
+        return buildToken(username, displayName, userId, ACCESS_TOKEN_EXPIRATION_MS, "access", roles);
     }
 
     @Override
-    public String generateRefreshToken(String username, Long userId) {
-        return buildToken(username, userId, REFRESH_TOKEN_EXPIRATION_MS, "refresh", null);
+    public String generateRefreshToken(String username, String displayName, Long userId) {
+        return buildToken(username, displayName, userId, REFRESH_TOKEN_EXPIRATION_MS, "refresh", null);
     }
 
-    private String buildToken(String username, Long userId, long validityMs, String type, List<Role> roles) {
+    private String buildToken(String username, String displayName, Long userId, long validityMs, String type, List<Role> roles) {
         long now = System.currentTimeMillis();
 
         var builder = Jwts.builder()
@@ -97,6 +97,7 @@ public class JwtTokenService implements TokenProviderPort {
                 .issuer(issuer)
                 .audience().add(audience).and()
                 .claim("userId", userId)
+                .claim("displayName", displayName)
                 .claim("type", type)
                 .id(UUID.randomUUID().toString())
                 .issuedAt(new Date(now))

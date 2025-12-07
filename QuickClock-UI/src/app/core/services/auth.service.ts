@@ -21,7 +21,16 @@ export interface AccessTokenResponse {
     accessToken: string;
 }
 
+export interface User {
+    id: string;
+    username: string;
+    displayName: string;
+    roles: string[];
+}
+
 interface QuickClockJwtPayload extends JwtPayload {
+    username?: string;
+    displayName?: string;
     exp: number;
     sub: string;
     roles?: string[];
@@ -42,6 +51,10 @@ export class AuthService {
     // Expiry time (unix epoch)
     private tokenExpirySignal = signal<number | null>(null);
 
+    // Current User signal
+    private currentUserSignal = signal<User | null>(null);
+    public currentUser = this.currentUserSignal.asReadonly();
+
     // Roles signal
     private rolesSignal = signal<string[]>([]);
     public roles = this.rolesSignal.asReadonly();
@@ -56,6 +69,12 @@ export class AuthService {
         }
 
         return Date.now() / 1000 < expiry; // Compare in seconds
+    });
+
+    // Computed: Display Name
+    public userDisplayName = computed((): string | null => {
+        const user = this.currentUserSignal();
+        return user ? user.displayName || user.username || 'Guest' : null;
     });
 
     // Computed: User roles
@@ -197,8 +216,13 @@ export class AuthService {
         if (data.type === 'token' && data.token && data.exp) {
             this.accessTokenSignal.set(data.token);
             this.tokenExpirySignal.set(data.exp);
+
             if (Array.isArray(data.roles)) {
                 this.rolesSignal.set(data.roles);
+            }
+
+            if (data.user) {
+                this.currentUserSignal.set(data.user);
             }
         }
 
@@ -216,15 +240,24 @@ export class AuthService {
                 throw new Error('Invalid or malformed token!');
             }
 
+            const user: User = {
+                id: decoded.sub,
+                username: decoded.username || '',
+                displayName: decoded.displayName || decoded.sub || '',
+                roles: decoded.roles ?? [],
+            };
+
             this.accessTokenSignal.set(token);
             this.tokenExpirySignal.set(decoded.exp);
             this.rolesSignal.set(decoded.roles ?? []);
+            this.currentUserSignal.set(user);
 
             this.channel?.postMessage({
                 type: 'token',
                 token,
                 exp: decoded.exp,
                 roles: decoded.roles ?? [],
+                user,
             });
         } catch (error) {
             this.doLogout();
@@ -241,5 +274,6 @@ export class AuthService {
         this.accessTokenSignal.set(null);
         this.tokenExpirySignal.set(null);
         this.rolesSignal.set([]);
+        this.currentUserSignal.set(null);
     }
 }

@@ -110,10 +110,11 @@ public class AuthenticationService implements AuthUseCase {
      */
     private TokenPairDTO issueInitialTokens(User user, List<Role> roles) {
         String username = user.getUsername();
+        String displayName = user.getDisplayName();
         Long userId = user.getId();
 
-        String accessToken = tokenProviderPort.generateAccessToken(username, userId, roles);
-        String refreshToken = tokenProviderPort.generateRefreshToken(username, userId);
+        String accessToken = tokenProviderPort.generateAccessToken(username, displayName, userId, roles);
+        String refreshToken = tokenProviderPort.generateRefreshToken(username, displayName, userId);
 
         UUID rootFamilyId = UUID.randomUUID();
         persistRefreshTokenAsRoot(refreshToken, rootFamilyId, userId);

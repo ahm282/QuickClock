@@ -180,9 +180,10 @@ public class RefreshTokenService implements RefreshTokenUseCase {
 
         Long userId = user.getId();
         String username = user.getUsername();
+        String displayName = user.getDisplayName();
 
-        String accessToken = tokenProviderPort.generateAccessToken(username, userId, roles);
-        String refreshTokenJwt = tokenProviderPort.generateRefreshToken(username, userId);
+        String accessToken = tokenProviderPort.generateAccessToken(username, displayName, userId, roles);
+        String refreshTokenJwt = tokenProviderPort.generateRefreshToken(username, displayName, userId);
 
         Claims claims = tokenProviderPort.parseClaims(refreshTokenJwt);
         String jti = claims.getId();
