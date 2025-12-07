@@ -1,0 +1,21 @@
+/* kiosk-layout.component.css */
+.kiosk-root {
+    min-height: 100vh;
+    background: var(--color-base-100);
+    color: var(--color-base-content);
+    font-family: "Geist Variable", sans-serif;
+}
+
+/* Kiosk-specific button style */
+.kiosk-root .btn {
+    border: 1px solid
+        color-mix(in oklab, var(--color-base-content) 10%, transparent);
+    box-shadow: none;
+}
+
+/* Touch-friendly sizing */
+.kiosk-root .btn,
+.kiosk-root .input,
+.kiosk-root .card {
+    border-radius: 1rem;
+}

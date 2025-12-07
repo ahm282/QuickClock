@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.application.services;
 
-import be.ahm282.QuickClock.application.dto.TokenPair;
+import be.ahm282.QuickClock.application.dto.TokenPairDTO;
 import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
 import be.ahm282.QuickClock.application.ports.out.*;
 import be.ahm282.QuickClock.domain.exception.AuthenticationException;
@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.*;
@@ -47,7 +46,7 @@ public class AuthenticationService implements AuthUseCase {
                                  PasswordEncoder passwordEncoder,
                                  BreachedPasswordCheckPort breachedPasswordCheckPort,
                                  @Value("${app.password.min-entropy:42}")
-                                 double minimumPasswordEntropy) throws NoSuchAlgorithmException {
+                                 double minimumPasswordEntropy) {
         this.userRepositoryPort = userRepositoryPort;
         this.inviteCodeRepositoryPort = inviteCodeRepositoryPort;
         this.refreshTokenRepositoryPort = refreshTokenRepositoryPort;
@@ -65,7 +64,7 @@ public class AuthenticationService implements AuthUseCase {
     }
 
     @Override
-    public TokenPair login(String username, String password) {
+    public TokenPairDTO login(String username, String password) {
         Optional<User> maybeUser = userRepositoryPort.findByUsername(username);
 
         String hashToCheck = maybeUser.map(User::getPasswordHash).orElse(dummyHash);
@@ -82,18 +81,17 @@ public class AuthenticationService implements AuthUseCase {
     }
 
     @Override
-    public Long register(String username, String password, String inviteCode) {
+    public void register(String username, String displayName, String password, String inviteCode) {
         validatePassword(username, password);
         validateInviteCode(inviteCode);
 
         String passwordHash = passwordEncoder.encode(password);
         String secret = generateSecret();
 
-        User toSave = new User(null, username, passwordHash, secret, Set.of(Role.EMPLOYEE));
+        User toSave = User.newEmployee(username, displayName, passwordHash, secret, Set.of(Role.EMPLOYEE));
         User savedUser = userRepositoryPort.save(toSave);
 
         markInviteCodeUsed(inviteCode, savedUser.getId());
-        return savedUser.getId();
     }
 
     // ====================
@@ -110,17 +108,18 @@ public class AuthenticationService implements AuthUseCase {
      * Issues an access/refresh pair and stores the root refresh token in DB.
      * Used for initial login; refresh rotation is handled in RefreshTokenService.
      */
-    private TokenPair issueInitialTokens(User user, List<Role> roles) {
+    private TokenPairDTO issueInitialTokens(User user, List<Role> roles) {
         String username = user.getUsername();
+        String displayName = user.getDisplayName();
         Long userId = user.getId();
 
-        String accessToken = tokenProviderPort.generateAccessToken(username, userId, roles);
-        String refreshToken = tokenProviderPort.generateRefreshToken(username, userId);
+        String accessToken = tokenProviderPort.generateAccessToken(username, displayName, userId, roles);
+        String refreshToken = tokenProviderPort.generateRefreshToken(username, displayName, userId);
 
         UUID rootFamilyId = UUID.randomUUID();
         persistRefreshTokenAsRoot(refreshToken, rootFamilyId, userId);
 
-        return new TokenPair(accessToken, refreshToken);
+        return new TokenPairDTO(accessToken, refreshToken);
     }
 
     private void persistRefreshTokenAsRoot(String refreshToken, UUID rootFamilyId, Long userId) {

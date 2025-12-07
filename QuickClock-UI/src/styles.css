@@ -8,53 +8,77 @@
     prefersdark: false;
     color-scheme: light;
 
-    /* Base Colors */
-    --color-base-100: oklch(0.98 0 0); /* Background - Off-white */
-    --color-base-200: oklch(0.96 0 0); /* Input background */
-    --color-base-300: oklch(0.92 0.01 200); /* Border/Dividers */
-    --color-base-content: oklch(0.2 0 0); /* Main text - Dark charcoal */
+    /* --- Base Layer (Mapped from :root) --- */
+    --color-base-100: oklch(0.98 0 0); /* var(--background) */
+    --color-base-200: oklch(
+        0.96 0 0
+    ); /* var(--input) used as secondary surface */
+    --color-base-300: oklch(0.93 0 0); /* var(--muted) used as tertiary */
+    --color-base-content: oklch(0.2 0 0); /* var(--foreground) */
 
-    /* Brand Colors */
-    --color-primary: oklch(0.42 0.15 253); /* Professional Blue */
-    --color-primary-content: oklch(0.98 0 0);
-    --color-secondary: oklch(0.93 0.01 200); /* Soft gray */
+    /* --- Brand Colors --- */
+    --color-primary: oklch(0.42 0.15 253);
+    --color-primary-content: oklch(1 0 0);
+
+    --color-secondary: oklch(0.93 0.01 200);
     --color-secondary-content: oklch(0.2 0 0);
-    --color-accent: oklch(0.55 0.15 190); /* Teal */
-    --color-accent-content: oklch(0.98 0 0);
-    --color-neutral: oklch(0.5 0 0); /* Medium gray */
-    --color-neutral-content: oklch(0.98 0 0);
 
-    /* Semantic Colors */
-    --color-info: oklch(0.55 0.15 250);
-    --color-info-content: oklch(0.98 0 0);
-    --color-success: oklch(0.55 0.15 140); /* Green */
-    --color-success-content: oklch(0.98 0 0);
-    --color-warning: oklch(0.75 0.15 80); /* Orange */
+    --color-accent: oklch(0.55 0.15 190);
+    --color-accent-content: oklch(1 0 0);
+
+    --color-neutral: oklch(0.93 0 0); /* Mapped to muted */
+    --color-neutral-content: oklch(0.5 0 0);
+
+    /* --- Semantic Colors --- */
+    /* Destructive mapped to Error */
+    --color-error: oklch(0.577 0.245 27.325);
+    --color-error-content: oklch(1 0 0);
+
+    --color-info: oklch(0.42 0.15 253); /* Using primary as base for info */
+    --color-info-content: oklch(1 0 0);
+    --color-success: oklch(0.55 0.15 140);
+    --color-success-content: oklch(1 0 0);
+    --color-warning: oklch(0.75 0.15 80);
     --color-warning-content: oklch(0.2 0 0);
-    --color-error: oklch(0.577 0.245 27.325); /* Red */
-    --color-error-content: oklch(0.98 0 0);
 
-    /* Custom Tokens */
+    /* --- Custom Shadcn/Tailwind Tokens (Exact Match) --- */
+    --background: oklch(0.98 0 0);
     --foreground: oklch(0.2 0 0);
-    --muted: oklch(0.93 0 0);
-    --muted-foreground: oklch(0.5 0 0);
     --card: oklch(1 0 0);
     --card-foreground: oklch(0.2 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.2 0 0);
+    --muted: oklch(0.93 0 0);
+    --muted-foreground: oklch(0.5 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(1 0 0);
     --border: oklch(0.92 0.01 200);
     --input: oklch(0.96 0 0);
     --ring: oklch(0.42 0.15 253);
 
-    /* Border Radius */
-    --radius-selector: 0.5rem;
-    --radius-field: 0.5rem;
-    --radius-box: 0.75rem;
+    /* --- Charts --- */
+    --chart-1: oklch(0.42 0.15 253);
+    --chart-2: oklch(0.55 0.15 190);
+    --chart-3: oklch(0.65 0.12 35);
+    --chart-4: oklch(0.75 0.1 100);
+    --chart-5: oklch(0.5 0.08 280);
 
-    /* Sizing */
-    --size-selector: 0.25rem;
-    --size-field: 0.25rem;
+    /* --- Sidebar --- */
+    --sidebar: oklch(0.96 0.01 200);
+    --sidebar-foreground: oklch(0.2 0 0);
+    --sidebar-primary: oklch(0.42 0.15 253);
+    --sidebar-primary-foreground: oklch(1 0 0);
+    --sidebar-accent: oklch(0.55 0.15 190);
+    --sidebar-accent-foreground: oklch(1 0 0);
+    --sidebar-border: oklch(0.9 0.01 200);
+    --sidebar-ring: oklch(0.42 0.15 253);
+
+    /* --- Settings --- */
+    --radius: 0.375rem;
+    --radius-selector: 0.375rem;
+    --radius-field: 0.375rem;
+    --radius-box: 0.375rem;
     --border: 1px;
-    --depth: 1;
-    --noise: 0;
 }
 
 /* QuickClock Dark Theme */
@@ -64,95 +88,142 @@
     prefersdark: false;
     color-scheme: dark;
 
-    /* Base Colors */
-    --color-base-100: oklch(0.15 0 0); /* Background - Deep dark */
-    --color-base-200: oklch(0.22 0 0); /* Card background */
-    --color-base-300: oklch(0.3 0.01 200); /* Border/Dividers */
-    --color-base-content: oklch(0.95 0 0); /* Main text - Light */
+    /* --- Base Layer (Mapped from .dark) --- */
+    --color-base-100: oklch(0.15 0 0); /* var(--background) */
+    --color-base-200: oklch(0.22 0 0); /* var(--card) */
+    --color-base-300: oklch(0.3 0 0); /* var(--muted) */
+    --color-base-content: oklch(0.95 0 0); /* var(--foreground) */
 
-    /* Brand Colors */
-    --color-primary: oklch(0.65 0.15 253); /* Bright Blue */
+    /* --- Brand Colors --- */
+    --color-primary: oklch(0.65 0.15 253);
     --color-primary-content: oklch(0.15 0 0);
-    --color-secondary: oklch(0.3 0.01 200); /* Dim gray */
+
+    --color-secondary: oklch(0.3 0.01 200);
     --color-secondary-content: oklch(0.95 0 0);
-    --color-accent: oklch(0.68 0.15 190); /* Bright Teal */
+
+    --color-accent: oklch(0.68 0.15 190);
     --color-accent-content: oklch(0.15 0 0);
-    --color-neutral: oklch(0.7 0 0); /* Light-medium gray */
-    --color-neutral-content: oklch(0.15 0 0);
 
-    /* Semantic Colors */
-    --color-info: oklch(0.65 0.15 250);
+    --color-neutral: oklch(0.3 0 0);
+    --color-neutral-content: oklch(0.7 0 0);
+
+    /* --- Semantic Colors --- */
+    --color-error: oklch(0.58 0.22 25);
+    --color-error-content: oklch(0.9 0 0);
+
+    --color-info: oklch(0.65 0.15 253);
     --color-info-content: oklch(0.15 0 0);
-    --color-success: oklch(0.68 0.15 140); /* Bright Green */
+    --color-success: oklch(0.68 0.15 140);
     --color-success-content: oklch(0.15 0 0);
-    --color-warning: oklch(0.75 0.15 80); /* Orange */
+    --color-warning: oklch(0.75 0.15 80);
     --color-warning-content: oklch(0.15 0 0);
-    --color-error: oklch(0.58 0.22 25); /* Bright Red */
-    --color-error-content: oklch(0.15 0 0);
 
-    /* Custom Tokens */
+    /* --- Custom Shadcn/Tailwind Tokens (Exact Match) --- */
+    --background: oklch(0.15 0 0);
     --foreground: oklch(0.95 0 0);
-    --muted: oklch(0.3 0 0);
-    --muted-foreground: oklch(0.7 0 0);
     --card: oklch(0.22 0 0);
     --card-foreground: oklch(0.95 0 0);
+    --popover: oklch(0.22 0 0);
+    --popover-foreground: oklch(0.95 0 0);
+    --muted: oklch(0.3 0 0);
+    --muted-foreground: oklch(0.7 0 0);
+    --destructive: oklch(0.58 0.22 25);
+    --destructive-foreground: oklch(0.9 0 0);
     --border: oklch(0.3 0.01 200);
     --input: oklch(0.25 0 0);
     --ring: oklch(0.65 0.15 253);
 
-    /* Border Radius */
-    --radius-selector: 0.5rem;
-    --radius-field: 0.5rem;
-    --radius-box: 0.75rem;
+    /* --- Charts --- */
+    --chart-1: oklch(0.65 0.15 253);
+    --chart-2: oklch(0.68 0.15 190);
+    --chart-3: oklch(0.75 0.12 35);
+    --chart-4: oklch(0.8 0.1 100);
+    --chart-5: oklch(0.65 0.08 280);
 
-    /* Sizing */
-    --size-selector: 0.25rem;
-    --size-field: 0.25rem;
+    /* --- Sidebar --- */
+    --sidebar: oklch(0.2 0.01 200);
+    --sidebar-foreground: oklch(0.95 0 0);
+    --sidebar-primary: oklch(0.65 0.15 253);
+    --sidebar-primary-foreground: oklch(0.15 0 0);
+    --sidebar-accent: oklch(0.68 0.15 190);
+    --sidebar-accent-foreground: oklch(0.15 0 0);
+    --sidebar-border: oklch(0.3 0.01 200);
+    --sidebar-ring: oklch(0.65 0.15 253);
+
+    /* --- Settings --- */
+    --radius: 0.375rem;
+    --radius-selector: 0.375rem;
+    --radius-field: 0.375rem;
+    --radius-box: 0.375rem;
     --border: 1px;
-    --depth: 1;
-    --noise: 0;
 }
 
 /* Expose custom tokens to Tailwind */
-@theme {
+@theme inline {
+    --font-sans: "Geist Variable", "Geist Fallback", "Inter", sans-serif;
+    --font-mono: "Geist Mono Variable", "Geist Mono Fallback";
+
+    /* Map the custom vars defined in the Daisy theme blocks above */
+    --color-background: var(--background);
     --color-foreground: var(--foreground);
-    --color-muted: var(--muted);
-    --color-muted-foreground: var(--muted-foreground);
+
     --color-card: var(--card);
     --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
-    --font-sans: "Geist Variable", "Inter", system-ui, sans-serif;
+
+    /* Charts */
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    /* Sidebar */
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+
+    /* Radius */
+    --radius-sm: calc(var(--radius) - 2px);
+    --radius-md: calc(var(--radius));
+    --radius-lg: calc(var(--radius) + 4px);
 }
 
 /* Base styles */
-
-body {
-    font-family: var(--font-sans);
-    background-color: var(--color-base-100);
-    color: var(--color-base-content);
-}
-
-.btn {
-    border: 0;
-    box-shadow: none;
-}
-
-@media (prefers-color-scheme: dark) {
-    :root:not([data-theme]) {
-        --foreground: oklch(0.95 0 0);
-        --muted: oklch(0.3 0 0);
-        --muted-foreground: oklch(0.7 0 0);
-        --card: oklch(0.22 0 0);
-        --card-foreground: oklch(0.95 0 0);
-        --border: oklch(0.3 0.01 200);
-        --input: oklch(0.25 0 0);
-        --ring: oklch(0.65 0.15 253);
+@layer base {
+    * {
+        border-color: var(--border);
+        outline-color: color-mix(in oklch, var(--ring), transparent 50%);
+        font-family: "Geist Variable", sans-serif;
+    }
+    body {
+        background-color: var(--background);
+        color: var(--foreground);
+    }
+    .btn {
+        border: 0;
+        box-shadow: none;
     }
 }
 
-/* Neutralize autofill background and text color in WebKit/Blink */
+/* Neutralize autofill background */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -162,13 +233,7 @@ textarea:-webkit-autofill:focus,
 select:-webkit-autofill,
 select:-webkit-autofill:hover,
 select:-webkit-autofill:focus {
-    -webkit-text-fill-color: inherit;
+    -webkit-text-fill-color: var(--foreground);
     transition: background-color 9999s ease-out, color 9999s ease-out;
-    box-shadow: 0 0 0 1000px transparent inset;
-}
-input:-moz-autofill,
-textarea:-moz-autofill,
-select:-moz-autofill {
-    box-shadow: 0 0 0 1000px transparent inset;
-    -moz-text-fill-color: inherit;
+    box-shadow: 0 0 0 1000px var(--background) inset;
 }

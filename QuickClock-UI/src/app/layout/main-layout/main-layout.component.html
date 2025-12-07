@@ -1,0 +1,16 @@
+<div
+    class="min-h-screen bg-background flex flex-col font-sans lg:max-w-[80vw] mx-auto"
+>
+    <app-header />
+    <div class="layout-container flex-1">
+        <main class="main-content">
+            <router-outlet />
+        </main>
+    </div>
+
+    <footer class="p-6 md:p-10 md:pt-0">
+        <div class="text-center text-sm text-muted-foreground/60">
+            <p>© {{ getYear() }} QuickClock. All rights reserved.</p>
+        </div>
+    </footer>
+</div>

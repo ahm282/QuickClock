@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.List;
 
 public interface TokenProviderPort {
-    String generateAccessToken(String username, Long userId, List<Role> roles);
-    String generateRefreshToken(String username, Long userId);
+    String generateAccessToken(String username, String displayName, Long userId, List<Role> roles);
+    String generateRefreshToken(String username, String displayName, Long userId);
 
     boolean isRefreshToken(String token);
     void validateToken(String token) throws JwtException;

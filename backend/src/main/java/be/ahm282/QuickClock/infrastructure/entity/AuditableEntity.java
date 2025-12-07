@@ -21,12 +21,17 @@ public abstract class AuditableEntity {
         Instant now = Instant.now();
         this.createdAt = now;
         this.updatedAt = now;
+        prePersist();
     }
 
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = Instant.now();
+        preUpdate();
     }
+
+    protected void prePersist() {}
+    protected void preUpdate() {}
 
     public Instant getCreatedAt() {
         return createdAt;

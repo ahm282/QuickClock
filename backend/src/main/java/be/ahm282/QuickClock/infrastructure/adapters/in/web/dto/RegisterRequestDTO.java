@@ -13,6 +13,10 @@ public record RegisterRequestDTO(
         String username,
 
         @NotBlank
+        @Size(min = 3, max = 32, message = "Display name must be between 3 and 32 characters")
+        String displayName,
+
+        @NotBlank
         @Size(min = 10, max = 72, message = "Password must be between 10 and 72 characters")
         @Pattern(
                 regexp = "^[\\x21-\\x7E]+$",
