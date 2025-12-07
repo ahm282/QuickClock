@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { AppHeaderComponent } from '../../shared/components/app-header/app-header.component';
@@ -7,7 +7,7 @@ import { AppHeaderComponent } from '../../shared/components/app-header/app-heade
 @Component({
     selector: 'app-main-layout',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, RouterLink, AppHeaderComponent],
+    imports: [CommonModule, RouterOutlet, AppHeaderComponent],
     templateUrl: './main-layout.component.html',
     styleUrls: ['./main-layout.component.css'],
 })
