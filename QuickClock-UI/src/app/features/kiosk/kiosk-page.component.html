@@ -3,9 +3,13 @@
 <div class="kiosk-full center">
     <div class="success-card">
         <div class="success-dot">✓</div>
-        <h1>Success</h1>
-        <p class="muted">{{ selectedEmployee()?.displayName }}</p>
-        <p class="tiny muted">{{ today() | date : "fullDate" }}</p>
+        <h1 class="text-4xl font-light">Success</h1>
+        <p class="text-muted-foreground">
+            {{ selectedEmployee()?.displayName }}
+        </p>
+        <p class="text-sm text-muted-foreground/60">
+            {{ today() | date : "fullDate" }}
+        </p>
     </div>
 </div>
 }
@@ -14,38 +18,60 @@
 @else if (selectedEmployee()) {
 <div class="kiosk-full">
     <header class="kiosk-header">
-        <button class="ghost" (click)="back()">Back</button>
-        <span class="brand">QuickClock</span>
+        <button
+            class="btn btn-secondary flex items-center gap-2 text-muted-foreground hover:text-muted-foreground transition-colors"
+            (click)="back()"
+        >
+            <span>← Back</span>
+        </button>
+        <span class="text-sm text-muted-foreground">QuickClock</span>
     </header>
 
     <main class="kiosk-center">
-        <h1 class="employee-name">{{ selectedEmployee()?.displayName }}</h1>
-        <p class="muted">Scan with your phone</p>
+        <h1 class="text-3xl md:text-4xl font-light mb-2">
+            {{ selectedEmployee()?.displayName }}
+        </h1>
+        <p class="text-muted-foreground-foreground mb-12">
+            Scan with your phone
+        </p>
 
         <div class="qr-box" (click)="simulateScanSuccess()">
             @if (qrLoading()) {
-            <div class="muted">Generating...</div>
+            <div class="text-muted-foreground-foreground">Generating...</div>
             } @else if (qrToken()) {
             <qrcode
                 [qrdata]="qrToken()!"
-                [width]="240"
-                [errorCorrectionLevel]="'M'"
+                [width]="250"
+                [errorCorrectionLevel]="'H'"
+                [imageSrc]="'/assets/img/clock.png'"
+                [imageWidth]="50"
+                [imageHeight]="50"
+                [colorDark]="'#004b9b'"
+                [colorLight]="'#ffffff'"
+                [margin]="2"
             ></qrcode>
             }
         </div>
 
-        <div class="timer-pill">
-            <span class="muted">Refreshes in</span>
-            <span class="mono">{{ timeRemaining() }}s</span>
+        <div>
+            <progress
+                class="progress w-56"
+                [value]="timeRemaining()"
+                [max]="30"
+            ></progress>
         </div>
 
-        <div class="actions">
-            <button (click)="generateIn()">Clock In QR</button>
-            <button (click)="generateOut()">Clock Out QR</button>
+        <div class="timer-pill">
+            <span class="text-sm text-muted-foreground-foreground"
+                >QR Code refreshes in</span
+            >
+            <span class="font-mono text-lg font-semibold"
+                >{{ timeRemaining() }}s</span
+            >
         </div>
 
         @if (error()) {
-        <p class="error">{{ error() }}</p>
+        <p class="text-destructive text-sm mt-6">{{ error() }}</p>
         }
     </main>
 </div>
@@ -54,27 +80,47 @@
 <!-- SELECTION view -->
 @else {
 <div class="kiosk-full">
-    <header class="kiosk-header wide">
+    <header class="kiosk-header-wide">
         <div>
-            <div class="tiny muted">QuickClock</div>
-            <h1>Select your name</h1>
+            <p class="text-sm text-muted-foreground mb-4">QuickClock</p>
+            <h1 class="text-4xl md:text-5xl font-light">Clock In/Out</h1>
         </div>
-        <div class="muted">{{ today() | date : "fullDate" }}</div>
+        <p class="text-sm text-muted-foreground-foreground/60">
+            {{ today() | date : "fullDate" }}
+        </p>
     </header>
 
     <main class="kiosk-grid">
         @if (loading()) {
-        <div class="muted">Loading employees...</div>
+        <div class="text-muted-foreground">Loading employees...</div>
         } @else if (error()) {
-        <div class="error">{{ error() }}</div>
+        <div class="text-destructive">{{ error() }}</div>
         } @else {
-        <div class="grid">
-            @for (u of employees(); track u.publicId) {
-            <button class="employee-card kiosk-card" (click)="select(u)">
-                <div class="avatar">{{ u.displayName.charAt(0) }}</div>
-                <div class="name">{{ u.displayName }}</div>
-            </button>
-            }
+        <div>
+            <h2 class="text-lg font-light text-muted-foreground mb-8">
+                Select your name
+            </h2>
+            <div
+                class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+            >
+                @for (u of employees(); track u.publicId) {
+                <button
+                    class="cursor-pointer group relative p-6 rounded-2xl border border-border bg-card hover:border-primary/50 hover:bg-accent/5 transition-all duration-200 text-left"
+                    (click)="select(u)"
+                >
+                    <div
+                        class="w-14 h-14 rounded-full bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-4 group-hover:from-primary/30 group-hover:to-primary/10 transition-colors"
+                    >
+                        <span class="text-lg font-semibold text-primary">{{
+                            u.displayName.charAt(0)
+                        }}</span>
+                    </div>
+                    <h3 class="font-medium text mb-1">
+                        {{ u.displayName }}
+                    </h3>
+                </button>
+                }
+            </div>
         </div>
         }
     </main>
