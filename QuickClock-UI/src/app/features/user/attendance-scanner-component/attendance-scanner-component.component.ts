@@ -91,6 +91,10 @@ export class AttendanceScannerComponentComponent {
 
     handleScanResult(result: string): void {
         console.log('Result:', result);
+        // Decode result and determine clock-in or clock-out
+        var decoded = atob(result);
+        console.log('Decoded:', decoded);
+
         this.stopCamera();
         this.lastScanTime.set(new Date().toLocaleTimeString());
         this.isClockedIn.update((v) => !v);
