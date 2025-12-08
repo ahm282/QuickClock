@@ -8,6 +8,8 @@ import {
     QrCode,
     CircleAlert,
     RefreshCcw,
+    X,
+    Camera,
 } from 'lucide-angular';
 import { from } from 'rxjs';
 
@@ -19,9 +21,11 @@ import { from } from 'rxjs';
 })
 export class AttendanceScannerComponentComponent {
     readonly Clock = Clock;
+    readonly Camera = Camera;
     readonly QrCode = QrCode;
     readonly CircleAlert = CircleAlert;
     readonly RefreshCcw = RefreshCcw;
+    readonly X = X;
 
     isClockedIn = signal<boolean>(false);
     scannerActive = signal<boolean>(false);

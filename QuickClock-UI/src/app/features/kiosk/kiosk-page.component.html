@@ -18,6 +18,7 @@
 @else if (selectedEmployee()) {
 <div class="kiosk-full">
     <header class="kiosk-header">
+        <app-logo />
         <button
             class="btn btn-secondary flex items-center gap-2 text-muted-foreground hover:text-muted-foreground transition-colors"
             (click)="back()"
@@ -25,7 +26,6 @@
             <lucide-icon [img]="ArrowLeft" [size]="18"></lucide-icon>
             <span>Back</span>
         </button>
-        <span class="text-sm text-muted-foreground">QuickClock</span>
     </header>
 
     <main class="kiosk-center">
