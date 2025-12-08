@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { LucideAngularModule, Clock, Moon, SunMedium } from 'lucide-angular';
 import { LogoutButtonComponent } from '../logout-button/logout-button.component';
 import { AppLogoComponent } from '../app-logo/app-logo.component';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
     selector: 'app-header',
@@ -11,6 +12,8 @@ import { AppLogoComponent } from '../app-logo/app-logo.component';
     styleUrl: './app-header.component.css',
 })
 export class AppHeaderComponent {
+    authService = inject(AuthService);
+
     readonly clock = Clock;
     readonly sunMedium = SunMedium;
     readonly moon = Moon;

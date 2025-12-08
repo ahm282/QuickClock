@@ -20,6 +20,8 @@
         "@fontsource-variable/geist": "^5.2.8",
         "@fontsource-variable/geist-mono": "^5.2.7",
         "@tailwindcss/postcss": "^4.1.17",
+        "@zxing/browser": "^0.1.5",
+        "@zxing/library": "^0.21.3",
         "angularx-qrcode": "^21.0.4",
         "jwt-decode": "^4.0.0",
         "lucide-angular": "^0.555.0",

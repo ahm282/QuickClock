@@ -33,6 +33,8 @@
                 ></lucide-icon>
             </span>
         </button>
+        @if (authService.currentUser()) {
         <app-logout-button />
+        }
     </div>
 </header>
