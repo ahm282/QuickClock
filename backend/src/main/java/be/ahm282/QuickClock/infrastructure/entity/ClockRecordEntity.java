@@ -10,7 +10,7 @@ import java.time.Instant;
         name = "clock_records",
         indexes = {
             @Index(name = "idx_clock_user", columnList = "user_id"),
-            @Index(name = "idx_clock_user_ts", columnList = "user_id, timestamp")
+            @Index(name = "idx_clock_user_ts", columnList = "user_id, recorded_at")
         }
 )
 public class ClockRecordEntity extends AuditableEntity {
@@ -25,9 +25,9 @@ public class ClockRecordEntity extends AuditableEntity {
     @Enumerated(EnumType.STRING)
     private ClockRecordType type;
 
-    @Column(name = "timestamp", nullable = false)
-    private Instant timestamp;
-    @Column(name = "reason", length = 255)
+    @Column(name = "recorded_at", nullable = false)
+    private Instant recordedAt;
+    @Column(name = "reason")
     private String reason;
 
     public Long getId() {
@@ -54,12 +54,12 @@ public class ClockRecordEntity extends AuditableEntity {
         this.type = type;
     }
 
-    public Instant getTimestamp() {
-        return timestamp;
+    public Instant getRecordedAt() {
+        return recordedAt;
     }
 
-    public void setTimestamp(Instant timestamp) {
-        this.timestamp = timestamp;
+    public void setRecordedAt(Instant recordedAt) {
+        this.recordedAt = recordedAt;
     }
 
     public String getReason() {

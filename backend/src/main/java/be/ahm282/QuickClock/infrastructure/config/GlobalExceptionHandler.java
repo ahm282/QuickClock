@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     /**
      * Common error body:
      * {
-     *   "timestamp": "...",
+     *   "recordedAtTimestamp": "...",
      *   "status": 400,
      *   "error": "Bad Request",
      *   "message": "...",
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
      */
     private Map<String, Object> buildBody(HttpStatus status, String message, String type) {
         Map<String, Object> body = new HashMap<>();
-        body.put("timestamp", Instant.now().toString());
+        body.put("recordedAtTimestamp", Instant.now().toString());
         body.put("status", status.value());
         body.put("error", status.getReasonPhrase());
         body.put("message", message);
@@ -64,10 +64,8 @@ public class GlobalExceptionHandler {
 
         Map<String, List<String>> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors()
-                .forEach(e -> {
-                    errors.computeIfAbsent(e.getField(), k -> new ArrayList<>())
-                            .add(e.getDefaultMessage());
-                });
+                .forEach(e -> errors.computeIfAbsent(e.getField(), k -> new ArrayList<>())
+                        .add(e.getDefaultMessage()));
 
         Map<String, Object> body = buildBody(status, "Validation failed", ex.getClass().getSimpleName());
         body.put("validationErrors", errors);

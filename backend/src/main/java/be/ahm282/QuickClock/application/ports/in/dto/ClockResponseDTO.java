@@ -8,7 +8,7 @@ public record ClockResponseDTO(
         Long id,
         Long userId,
         ClockRecordType type,
-        Instant timestamp,
+        Instant recordedAt,
         String reason // new
 ) {
 }

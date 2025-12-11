@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Component
 public interface JpaClockRecordRepository extends JpaRepository<ClockRecordEntity, Long> {
-        List<ClockRecordEntity> findAllByUserIdOrderByTimestampDesc(Long userId);
-        Optional<ClockRecordEntity> findTopByUserIdOrderByTimestampDesc(Long userId);
+        List<ClockRecordEntity> findAllByUserIdOrderByRecordedAtDesc(Long userId);
+        Optional<ClockRecordEntity> findTopByUserIdOrderByRecordedAtDesc(Long userId);
 }

@@ -11,7 +11,7 @@ public class ClockResponseDTOMapper {
                 record.getId(),
                 record.getUserId(),
                 record.getType(),
-                record.getTimestamp(),
+                record.getRecordedAt(),
                 record.getReason()
         );
     }

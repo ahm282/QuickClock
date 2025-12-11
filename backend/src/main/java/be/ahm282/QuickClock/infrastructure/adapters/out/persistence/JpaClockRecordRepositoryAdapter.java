@@ -28,16 +28,15 @@ public class JpaClockRecordRepositoryAdapter implements ClockRecordRepositoryPor
 
     @Override
     public List<ClockRecord> findAllByUserId(Long userId) {
-        return repository.findAllByUserIdOrderByTimestampDesc(userId)
+        return repository.findAllByUserIdOrderByRecordedAtDesc(userId)
                 .stream()
                 .map(mapper::toDomain)
-                .sorted((cr1, cr2) -> cr2.getTimestamp().compareTo(cr1.getTimestamp()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<ClockRecord> findLatestByUserId(Long userId) {
-        return repository.findTopByUserIdOrderByTimestampDesc(userId)
+        return repository.findTopByUserIdOrderByRecordedAtDesc(userId)
                 .map(mapper::toDomain);
     }
 }

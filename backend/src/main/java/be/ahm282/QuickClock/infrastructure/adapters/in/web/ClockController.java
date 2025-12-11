@@ -144,7 +144,7 @@ public class ClockController {
     }
 
     // -------------------------------------------------------------------------
-    // Admin manual clocking: timestamp + reason
+    // Admin manual clocking: recordedAtTimestamp + reason
     // -------------------------------------------------------------------------
 
     @PostMapping("/admin/in")
@@ -153,7 +153,7 @@ public class ClockController {
         securityUtil.requireAdmin();
         ClockRecord record = clockService.adminClockIn(
                 request.userId(),
-                request.timestamp(),
+                request.recordedAtTimestamp(),
                 request.reason()
         );
         return responseMapper.toDTO(record);
@@ -165,7 +165,7 @@ public class ClockController {
         securityUtil.requireAdmin();
         ClockRecord record = clockService.adminClockOut(
                 request.userId(),
-                request.timestamp(),
+                request.recordedAtTimestamp(),
                 request.reason()
         );
         return responseMapper.toDTO(record);

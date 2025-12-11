@@ -68,17 +68,17 @@ public class ClockService implements ClockUseCase {
     // ---------- Admin manual clocking ----------
 
     @Override
-    public ClockRecord adminClockIn(Long userId, Instant timestamp, String reason) {
+    public ClockRecord adminClockIn(Long userId, Instant recordedAtTimestamp, String reason) {
         // TODO: Consider enforcing time constraints (e.g., cannot clock in for a time in the future)
         checkClockInRules(userId);
-        ClockRecord record = ClockRecord.createAt(userId, ClockRecordType.IN, timestamp, reason);
+        ClockRecord record = ClockRecord.createAt(userId, ClockRecordType.IN, recordedAtTimestamp, reason);
         return clockRepo.save(record);
     }
 
     @Override
-    public ClockRecord adminClockOut(Long userId, Instant timestamp, String reason) {
+    public ClockRecord adminClockOut(Long userId, Instant recordedAtTimestamp, String reason) {
         checkClockOutRules(userId);
-        ClockRecord record = ClockRecord.createAt(userId, ClockRecordType.OUT, timestamp, reason);
+        ClockRecord record = ClockRecord.createAt(userId, ClockRecordType.OUT, recordedAtTimestamp, reason);
         return clockRepo.save(record);
     }
 

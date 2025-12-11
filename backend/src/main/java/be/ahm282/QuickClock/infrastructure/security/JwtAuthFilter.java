@@ -138,7 +138,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         response.setContentType("application/json");
         String body = """
         {
-          "timestamp": "%s",
+          "recordedAt": "%s",
           "status": 401,
           "error": "Unauthorized",
           "message": "Authentication failed. Please try again.",

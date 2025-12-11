@@ -13,6 +13,6 @@ public interface ClockUseCase {
     List<ClockRecord> getHistory(Long userId);
 
     // Admin corrections
-    ClockRecord adminClockIn(Long userId, Instant timestamp, String reason);
-    ClockRecord adminClockOut(Long userId, Instant timestamp, String reason);
+    ClockRecord adminClockIn(Long userId, Instant recordedAtTimestamp, String reason);
+    ClockRecord adminClockOut(Long userId, Instant recordedAtTimestamp, String reason);
 }

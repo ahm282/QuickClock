@@ -8,7 +8,7 @@ import java.time.Instant;
 public record AdminClockRequestDTO(
         @NotNull
         Long userId,
-        Instant timestamp,
+        Instant recordedAtTimestamp,
         @Size(max = 255, message = "Reason must be at most 255 characters")
         String reason
 ) {

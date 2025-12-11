@@ -62,11 +62,10 @@ public class JpaUserRepositoryAdapter implements UserRepositoryPort {
     }
 
     private boolean isUsernameUniqueConstraintViolation(DataIntegrityViolationException ex) {
-        // TODO: This method may need to be adapted depending on the database.
-        // 1) Inspect the root cause message/SQLState/constraint name.
-        // 2) For Postgres/MySQL, check constraint name used on the column index.
         Throwable root = ex.getMostSpecificCause();
         String msg = root.getMessage();
-        return msg != null && msg.contains("unique") && msg.contains("username");
+
+        if (msg == null) return false;
+        return msg.toLowerCase().contains("uk_users_username");
     }
 }
