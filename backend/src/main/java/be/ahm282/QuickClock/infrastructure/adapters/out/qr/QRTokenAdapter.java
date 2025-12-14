@@ -4,6 +4,8 @@ import be.ahm282.QuickClock.application.ports.out.QRTokenPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.exception.BusinessRuleException;
 import be.ahm282.QuickClock.domain.exception.ValidationException;
+import be.ahm282.QuickClock.domain.model.QrTokenValidation;
+import be.ahm282.QuickClock.domain.model.TokenValidationResult;
 import be.ahm282.QuickClock.infrastructure.security.service.SecureTokenService;
 import org.springframework.stereotype.Component;
 
@@ -28,10 +30,32 @@ public class QRTokenAdapter implements QRTokenPort {
     }
 
     @Override
+    public QrTokenValidation validate(String token, String expectedPurpose) {
+        String secret = findUserSecretByToken(token);
+        TokenValidationResult result =
+                secureTokenService.validate(token, secret, expectedPurpose, null);
+
+        return new QrTokenValidation(
+                result.userId(),
+                result.purpose(),
+                result.tokenId()
+        );
+    }
+
+    @Override
     public Long validateAndExtractUserId(String token, String purpose) {
-        return secureTokenService
-                .validate(token, findUserSecretByToken(token), purpose, null)
-                .userId();
+        return validate(token, purpose).userId();
+    }
+
+    @Override
+    public String extractTokenId(String token) {
+        String decoded = secureTokenService.decodeToken(token);
+        String[] parts = decoded.split("\\|");
+        // version | userId | purpose | kioskId | iat | exp | jti | sig
+        if (parts.length < 7) {
+            throw new IllegalArgumentException("Token form illegal - insufficient parts: " + decoded);
+        }
+        return parts[6]; // tokenId
     }
 
     private String findUserSecretByToken(String token) {

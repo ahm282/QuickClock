@@ -40,7 +40,8 @@ public class ClockService implements ClockUseCase {
 
     @Override
     public ClockRecord clockInWithQR(String qrToken, Long authenticatedUserId) {
-        Long tokenUserId = qrTokenPort.validateAndExtractUserId(qrToken, "clock-in");
+        var validation = qrTokenPort.validate(qrToken, "clock-in");
+        Long tokenUserId = validation.userId();
 
         if (!tokenUserId.equals(authenticatedUserId)) {
             throw new BusinessRuleException("QR token does not belong to the authenticated user");
@@ -51,11 +52,15 @@ public class ClockService implements ClockUseCase {
 
     @Override
     public ClockRecord clockOutWithQR(String qrToken, Long authenticatedUserId) {
-        Long tokenUserId = qrTokenPort.validateAndExtractUserId(qrToken, "clock-out");
+        var validation = qrTokenPort.validate(qrToken, "clock-out");
+        Long tokenUserId = validation.userId();
 
         if (!tokenUserId.equals(authenticatedUserId)) {
             throw new BusinessRuleException("QR token does not belong to the authenticated user");
         }
+
+        // tokenId available here soon for SSE:
+        // String tokenId = validation.tokenId();
 
         return clockOut(tokenUserId);
     }
@@ -90,6 +95,7 @@ public class ClockService implements ClockUseCase {
             }
         });
     }
+
     private void checkClockOutRules(Long userId) {
         clockRepo.findLatestByUserId(userId).ifPresent(lastRecord -> {
             if (ClockRecordType.OUT.equals(lastRecord.getType())) {
