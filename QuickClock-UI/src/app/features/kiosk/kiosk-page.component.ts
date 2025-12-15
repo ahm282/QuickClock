@@ -19,7 +19,7 @@ import {
     ArrowLeft,
     QrCode,
     Clock,
-    Loader2,
+    LoaderCircle,
 } from 'lucide-angular';
 import { AppLogoComponent } from '../../shared/components/app-logo/app-logo.component';
 import { QrScanStatusDTO } from '../../core/models/qr-scan-status.model';
@@ -46,7 +46,7 @@ export class KioskPageComponent {
     readonly clock = Clock;
     readonly ArrowLeft = ArrowLeft;
     readonly QrCode = QrCode;
-    readonly Loader2 = Loader2;
+    readonly LoaderCircle = LoaderCircle;
 
     employees = signal<UserSummaryDTO[]>([]);
     loading = signal(true);
