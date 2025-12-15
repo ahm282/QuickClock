@@ -117,7 +117,6 @@ export class KioskPageComponent {
                 return;
             }
 
-            // reset
             this.timeRemaining.set(30);
 
             // Optimization: Run timer outside Angular zone
@@ -128,7 +127,8 @@ export class KioskPageComponent {
                     if (current <= 1) {
                         // Back to zone for updates
                         this.ngZone.run(() => {
-                            this.refreshQrForSelected('clock-in');
+                            const purpose = this.currentPurpose();
+                            this.refreshQrForSelected(purpose);
                             this.timeRemaining.set(30);
                         });
                     } else {
@@ -143,10 +143,19 @@ export class KioskPageComponent {
 
     select(u: UserSummaryDTO) {
         this.selectedPublicId.set(u.publicId);
-        this.currentPurpose.set('clock-in');
+
+        const latestEmployee = this.employees().find(
+            (e) => e.publicId === u.publicId
+        );
+        if (!latestEmployee) return;
+
+        const nextPurpose =
+            latestEmployee.lastClockType === 'IN' ? 'clock-out' : 'clock-in';
+
+        this.currentPurpose.set(nextPurpose);
         this.resetQrState();
         this.error.set(null);
-        this.refreshQrForSelected('clock-in');
+        this.refreshQrForSelected(nextPurpose);
     }
 
     back() {
@@ -207,13 +216,14 @@ export class KioskPageComponent {
         this.scanSub = this.api.listenForQrScan(tokenId).subscribe({
             next: (event) => {
                 if (event === 'connected') {
-                    // The stream is open, Safe to show QR now
                     this.sseConnected.set(true);
                 } else {
-                    // It is a real scan object
                     this.scanStatus.set(event);
                     this.scanSuccess.set(true);
                     this.stopTimer();
+
+                    this.updateEmployeeStatus(event);
+                    this.refreshEmployeeList();
 
                     window.setTimeout(() => {
                         this.scanSuccess.set(false);
@@ -225,6 +235,33 @@ export class KioskPageComponent {
             error: (error) => {
                 this.error.set('Connection lost. Please try again.');
                 this.sseConnected.set(false);
+            },
+        });
+    }
+
+    private updateEmployeeStatus(scanStatus: QrScanStatusDTO): void {
+        const currentEmployees = this.employees();
+        const updatedEmployees = currentEmployees.map((emp) => {
+            // Match by publicId (we need to find the user by their display name from scan status)
+            // Since scanStatus has userDisplayName, we match by that
+            if (emp.displayName === scanStatus.userDisplayName) {
+                return {
+                    ...emp,
+                    lastClockType: scanStatus.direction, // 'IN' or 'OUT'
+                };
+            }
+            return emp;
+        });
+        this.employees.set(updatedEmployees);
+    }
+
+    private refreshEmployeeList(): void {
+        this.api.listEmployees().subscribe({
+            next: (users) => {
+                this.employees.set(users);
+            },
+            error: (err) => {
+                console.error('Failed to refresh employee list:', err);
             },
         });
     }
@@ -241,14 +278,5 @@ export class KioskPageComponent {
             clearInterval(this.timerId);
             this.timerId = null;
         }
-    }
-
-    simulateScanSuccess() {
-        if (!this.selectedEmployee()) return;
-        this.scanSuccess.set(true);
-        window.setTimeout(() => {
-            this.scanSuccess.set(false);
-            this.back();
-        }, 5000);
     }
 }

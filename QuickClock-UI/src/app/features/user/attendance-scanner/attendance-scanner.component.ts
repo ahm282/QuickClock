@@ -57,8 +57,35 @@ export class AttendanceScannerComponent {
     private codeReader = new BrowserMultiFormatReader();
     private activeScanControls: IScannerControls | null = null;
 
+    ngOnInit(): void {
+        this.loadCurrentStatus();
+    }
+
     ngOnDestroy(): void {
         this.stopCamera();
+    }
+
+    private loadCurrentStatus(): void {
+        this.http
+            .get<{
+                isClockedIn: boolean;
+                lastClockType: string | null;
+                lastClockTime: string | null;
+            }>(`${environment.apiUrl}/clock/status/me`)
+            .subscribe({
+                next: (status) => {
+                    this.isClockedIn.set(status.isClockedIn);
+                    if (status.lastClockTime) {
+                        const date = new Date(status.lastClockTime);
+                        this.lastScanTime.set(date.toLocaleTimeString());
+                    }
+                },
+                error: (error) => {
+                    console.error('Failed to load current status:', error);
+                    // Default to false if we can't determine status
+                    this.isClockedIn.set(false);
+                },
+            });
     }
 
     toggleScanner(): void {
@@ -109,7 +136,6 @@ export class AttendanceScannerComponent {
     }
 
     handleScanResult(result: string): void {
-        console.log('QR Code Result:', result);
         this.stopCamera();
         this.processingRequest.set(true);
         this.requestError.set(null);
@@ -126,9 +152,11 @@ export class AttendanceScannerComponent {
 
             this.http.post(url, { token: qrData.token }).subscribe({
                 next: (response) => {
-                    console.log('Clock in/out successful:', response);
                     this.lastScanTime.set(new Date().toLocaleTimeString());
-                    this.isClockedIn.update((v) => !v);
+
+                    const wasClockedIn = qrData.path.includes('/in');
+                    this.isClockedIn.set(wasClockedIn);
+
                     this.processingRequest.set(false);
                 },
                 error: (error) => {

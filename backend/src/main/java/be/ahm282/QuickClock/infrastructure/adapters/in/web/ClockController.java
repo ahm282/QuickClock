@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -99,6 +101,24 @@ public class ClockController {
                 .stream()
                 .map(responseMapper::toDTO)
                 .toList();
+    }
+
+    @GetMapping("/status/me")
+    public Map<String, Object> getMyCurrentStatus(HttpServletRequest request) {
+        Long userId = securityUtil.extractUserIdFromRequestToken(request);
+        var latestRecord = clockService.getHistory(userId)
+                .stream()
+                .findFirst();
+        
+        boolean isClockedIn = latestRecord
+                .map(record -> "IN".equals(record.getType().name()))
+                .orElse(false);
+        
+        return Map.of(
+            "isClockedIn", isClockedIn,
+            "lastClockType", Objects.requireNonNull(latestRecord.map(r -> r.getType().name()).orElse(null)),
+            "lastClockTime", Objects.requireNonNull(latestRecord.map(r -> r.getRecordedAt().toString()).orElse(null))
+        );
     }
 
     // -------------------------------------------------------------------------
