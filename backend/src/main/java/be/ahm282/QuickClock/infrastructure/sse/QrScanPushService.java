@@ -3,6 +3,7 @@ package be.ahm282.QuickClock.infrastructure.sse;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.QrScanStatusDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Service
 public class QrScanPushService {
     private static final Logger log = LoggerFactory.getLogger(QrScanPushService.class);
 

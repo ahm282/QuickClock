@@ -3,6 +3,7 @@ package be.ahm282.QuickClock.application.services;
 import be.ahm282.QuickClock.application.ports.in.ClockUseCase;
 import be.ahm282.QuickClock.application.ports.out.ClockRecordRepositoryPort;
 import be.ahm282.QuickClock.application.ports.out.QRTokenPort;
+import be.ahm282.QuickClock.application.ports.out.QrScanNotificationPort;
 import be.ahm282.QuickClock.domain.exception.BusinessRuleException;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
 import be.ahm282.QuickClock.domain.model.ClockRecordType;
@@ -18,10 +19,12 @@ public class ClockService implements ClockUseCase {
 
     private final ClockRecordRepositoryPort clockRepo;
     private final QRTokenPort qrTokenPort;
+    private final QrScanNotificationPort qrScanNotificationPort;
 
-    public ClockService(ClockRecordRepositoryPort clockRepo, QRTokenPort qrTokenPort) {
+    public ClockService(ClockRecordRepositoryPort clockRepo, QRTokenPort qrTokenPort, QrScanNotificationPort qrScanNotificationPort) {
         this.clockRepo = clockRepo;
         this.qrTokenPort = qrTokenPort;
+        this.qrScanNotificationPort = qrScanNotificationPort;
     }
 
     @Override
@@ -47,7 +50,16 @@ public class ClockService implements ClockUseCase {
             throw new BusinessRuleException("QR token does not belong to the authenticated user");
         }
 
-        return clockIn(tokenUserId);
+        ClockRecord record = clockIn(tokenUserId);
+
+        qrScanNotificationPort.notifyScanned(
+                validation.tokenId(),
+                tokenUserId,
+                "IN",
+                record.getRecordedAt()
+        );
+
+        return record;
     }
 
     @Override
@@ -59,10 +71,16 @@ public class ClockService implements ClockUseCase {
             throw new BusinessRuleException("QR token does not belong to the authenticated user");
         }
 
-        // tokenId available here soon for SSE:
-        // String tokenId = validation.tokenId();
+        ClockRecord record = clockOut(tokenUserId);
 
-        return clockOut(tokenUserId);
+        qrScanNotificationPort.notifyScanned(
+                validation.tokenId(),
+                tokenUserId,
+                "OUT",
+                record.getRecordedAt()
+        );
+
+        return record;
     }
 
     @Override
