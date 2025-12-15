@@ -10,8 +10,8 @@ import {
     RefreshCcw,
     X,
     Camera,
+    History,
 } from 'lucide-angular';
-import { from } from 'rxjs';
 
 @Component({
     selector: 'app-attendance-scanner-component',
@@ -26,6 +26,7 @@ export class AttendanceScannerComponentComponent {
     readonly CircleAlert = CircleAlert;
     readonly RefreshCcw = RefreshCcw;
     readonly X = X;
+    readonly History = History;
 
     isClockedIn = signal<boolean>(false);
     scannerActive = signal<boolean>(false);

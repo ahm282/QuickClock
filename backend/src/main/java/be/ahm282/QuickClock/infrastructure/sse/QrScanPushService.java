@@ -3,6 +3,7 @@ package be.ahm282.QuickClock.infrastructure.sse;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.QrScanStatusDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -40,7 +41,7 @@ public class QrScanPushService {
                     .name("init")
                     .data("connected"));
         } catch (Exception ex) {
-            emitters.remove(tokenId, emitter);
+            emitters.remove(tokenId);
             emitter.completeWithError(ex);
         }
 
@@ -63,5 +64,29 @@ public class QrScanPushService {
             log.debug("Failed to push scanned event for tokenId {}: {}", tokenId, ex.toString());
             emitter.completeWithError(ex);
         }
+    }
+
+    /**
+     * Sends a heartbeat every 15 seconds to keep connections alive
+     * and prevent proxy timeouts.
+     */
+    @Scheduled(fixedRate = 15000)
+    public void sendHeartbeat() {
+        if (emitters.isEmpty()) return;
+
+        log.trace("Sending heartbeat to {} active emitters", emitters.size());
+
+        emitters.forEach((tokenId, emitter) -> {
+            try {
+                emitter.send(SseEmitter.event()
+                        .name("ping")
+                        .data("keep-alive"));
+            } catch (IOException e) {
+                // If heartbeat fails, the connection is likely dead.
+                // onCompletion/onError will handle cleanup, but we can remove it here too.
+                emitters.remove(tokenId);
+                emitter.completeWithError(e);
+            }
+        });
     }
 }
