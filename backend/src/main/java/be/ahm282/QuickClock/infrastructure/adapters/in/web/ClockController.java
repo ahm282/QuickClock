@@ -11,12 +11,15 @@ import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.AdminClockRequest
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.mapper.ClockResponseDTOMapper;
 import be.ahm282.QuickClock.infrastructure.security.SecurityUtil;
 import be.ahm282.QuickClock.infrastructure.security.service.RateLimitService;
+import be.ahm282.QuickClock.infrastructure.sse.QrScanPushService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,17 +33,20 @@ public class ClockController {
     private final ClockResponseDTOMapper responseMapper;
     private final RateLimitService rateLimitService;
     private final SecurityUtil securityUtil;
+    private final QrScanPushService qrScanPushService;
 
     public ClockController(ClockService clockService,
                            QRCodeService qrCodeService,
                            ClockResponseDTOMapper responseMapper,
                            RateLimitService rateLimitService,
-                           SecurityUtil securityUtil) {
+                           SecurityUtil securityUtil,
+                           QrScanPushService qrScanPushService) {
         this.clockService = clockService;
         this.qrCodeService = qrCodeService;
         this.responseMapper = responseMapper;
         this.rateLimitService = rateLimitService;
         this.securityUtil = securityUtil;
+        this.qrScanPushService = qrScanPushService;
     }
 
     // -------------------------------------------------------------------------
@@ -169,5 +175,18 @@ public class ClockController {
                 request.reason()
         );
         return responseMapper.toDTO(record);
+    }
+
+
+    // -------------------------------------------------------------------------
+    // Server-Sent Events for QR Scan Notifications
+    // -------------------------------------------------------------------------
+    @GetMapping(
+            value = "/qr/stream/{tokenId}",
+            produces = MediaType.TEXT_EVENT_STREAM_VALUE
+    )
+    public SseEmitter streamQr(@PathVariable String tokenId, HttpServletRequest request) {
+        securityUtil.requireKioskOrAdmin();
+        return qrScanPushService.subscribe(tokenId);
     }
 }
