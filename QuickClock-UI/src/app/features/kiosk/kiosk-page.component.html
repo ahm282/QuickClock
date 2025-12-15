@@ -33,9 +33,7 @@
         <h1 class="text-3xl md:text-4xl font-light mb-2">
             {{ selectedEmployee()?.displayName }}
         </h1>
-        <p class="text-muted-foreground-foreground mb-4">
-            Scan with your phone
-        </p>
+        <p class="text-muted-foreground mb-4">Scan with your phone</p>
 
         <div class="qr-box">
             @if (qrLoading() || !isQrVisible()) {

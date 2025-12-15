@@ -235,6 +235,7 @@ export class KioskPageComponent {
             error: (error) => {
                 this.error.set('Connection lost. Please try again.');
                 this.sseConnected.set(false);
+                this.resetQrState();
             },
         });
     }
@@ -242,12 +243,11 @@ export class KioskPageComponent {
     private updateEmployeeStatus(scanStatus: QrScanStatusDTO): void {
         const currentEmployees = this.employees();
         const updatedEmployees = currentEmployees.map((emp) => {
-            // Match by publicId (we need to find the user by their display name from scan status)
-            // Since scanStatus has userDisplayName, we match by that
-            if (emp.displayName === scanStatus.userDisplayName) {
+            if (emp.publicId === scanStatus.userPublicId) {
                 return {
                     ...emp,
                     lastClockType: scanStatus.direction, // 'IN' or 'OUT'
+                    lastClockTime: scanStatus.clockedAt, // ISO date string
                 };
             }
             return emp;

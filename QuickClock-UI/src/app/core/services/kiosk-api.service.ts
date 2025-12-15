@@ -12,7 +12,8 @@ import { QrScanStatusDTO } from '../models/qr-scan-status.model';
 export interface UserSummaryDTO {
     publicId: string;
     displayName: string;
-    lastClockType: 'IN' | 'OUT' | null; // Last clock record type
+    lastClockType: 'IN' | 'OUT' | null;
+    lastClockTime: string | null;
 }
 
 export interface ClockQRCodeResponseDTO {
@@ -51,7 +52,7 @@ export class KioskApiService {
     ): Observable<QrScanStatusDTO | 'connected'> {
         const apiUrl = environment.apiUrl;
 
-        return new Observable((subscriber) => {
+        return new Observable<QrScanStatusDTO | 'connected'>((subscriber) => {
             const accessToken = this.authService.accessToken();
 
             if (!accessToken) {
@@ -102,9 +103,9 @@ export class KioskApiService {
                             ) as QrScanStatusDTO;
                             subscriber.next(data);
                             subscriber.complete();
-                            controller.abort();
                         } catch (error) {
                             subscriber.error(error);
+                        } finally {
                             controller.abort();
                         }
                     }

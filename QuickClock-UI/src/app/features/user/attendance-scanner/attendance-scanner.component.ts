@@ -48,6 +48,13 @@ export class AttendanceScannerComponent {
     selectedDeviceId = signal<string | null>(null);
     loadingDevices = signal<boolean>(false);
 
+    lastClockType = signal<string | null>(null); // "IN" or "OUT"
+    lastClockTime = signal<string | null>(null); // e.g. "09:30 AM"
+    hm = new Intl.DateTimeFormat(undefined, {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+
     private http = inject(HttpClient);
     private authService = inject(AuthService);
 
@@ -77,7 +84,7 @@ export class AttendanceScannerComponent {
                     this.isClockedIn.set(status.isClockedIn);
                     if (status.lastClockTime) {
                         const date = new Date(status.lastClockTime);
-                        this.lastScanTime.set(date.toLocaleTimeString());
+                        this.lastClockTime.set(date.toLocaleTimeString());
                     }
                 },
                 error: (error) => {
@@ -152,7 +159,10 @@ export class AttendanceScannerComponent {
 
             this.http.post(url, { token: qrData.token }).subscribe({
                 next: (response) => {
-                    this.lastScanTime.set(new Date().toLocaleTimeString());
+                    this.lastClockTime.set(this.hm.format(new Date()));
+                    this.lastClockType.set(
+                        qrData.path.includes('/in') ? 'IN' : 'OUT'
+                    );
 
                     const wasClockedIn = qrData.path.includes('/in');
                     this.isClockedIn.set(wasClockedIn);

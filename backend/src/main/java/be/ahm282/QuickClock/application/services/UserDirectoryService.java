@@ -19,7 +19,12 @@ public class UserDirectoryService implements UserDirectoryUseCase {
     public List<UserSummaryView> listEmployeesForKiosk() {
         return userRepositoryPort.findAllActiveEmployees()
                 .stream()
-                .map(u -> new UserSummaryView(u.getPublicId(), u.getDisplayName()))
+                .map(u -> new UserSummaryView(
+                    u.getPublicId(), 
+                    u.getDisplayName(),
+                    null,  // Will be populated by controller
+                    null   // Will be populated by controller
+                ))
                 .toList();
     }
 }
