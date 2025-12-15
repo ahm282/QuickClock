@@ -20,6 +20,7 @@ import {
     History,
 } from 'lucide-angular';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
     selector: 'app-attendance-scanner',
@@ -48,6 +49,7 @@ export class AttendanceScannerComponent {
     loadingDevices = signal<boolean>(false);
 
     private http = inject(HttpClient);
+    private authService = inject(AuthService);
 
     // Refs
     @ViewChild('videoElement') videoElement?: ElementRef<HTMLVideoElement>;
@@ -118,8 +120,6 @@ export class AttendanceScannerComponent {
                 token: string;
                 path: string;
             };
-
-            console.log('Parsed QR Data:', qrData);
 
             // Send the clock in/out request
             const url = `${environment.apiUrl}${qrData.path}`;

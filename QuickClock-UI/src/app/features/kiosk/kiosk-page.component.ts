@@ -219,7 +219,7 @@ export class KioskPageComponent {
                         this.scanSuccess.set(false);
                         this.scanStatus.set(null);
                         this.back();
-                    }, 2500);
+                    }, 5000);
                 }
             },
             error: (error) => {
@@ -249,6 +249,6 @@ export class KioskPageComponent {
         window.setTimeout(() => {
             this.scanSuccess.set(false);
             this.back();
-        }, 2500);
+        }, 5000);
     }
 }
