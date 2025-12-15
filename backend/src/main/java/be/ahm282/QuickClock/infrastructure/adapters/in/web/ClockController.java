@@ -107,13 +107,11 @@ public class ClockController {
 
     @GetMapping("/qr/generate/in/{publicId}")
     public ClockQRCodeResponseDTO generateClockInQRCode(@PathVariable UUID publicId) {
-        securityUtil.requireKioskOrAdmin();
         return qrCodeService.generateClockInQRCode(publicId, "clock-in");
     }
 
     @GetMapping("/qr/generate/out/{publicId}")
     public ClockQRCodeResponseDTO generateClockOutQRCode(@PathVariable UUID publicId) {
-        securityUtil.requireKioskOrAdmin();
         return qrCodeService.generateClockOutQRCode(publicId, "clock-out");
     }
 

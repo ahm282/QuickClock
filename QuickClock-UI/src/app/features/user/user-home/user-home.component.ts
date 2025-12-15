@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
-import { UserWelcomeComponent } from "../user-welcome/user-welcome.component";
-import { AttendanceScannerComponentComponent } from "../attendance-scanner-component/attendance-scanner-component.component";
+import { UserWelcomeComponent } from '../user-welcome/user-welcome.component';
+import { AttendanceScannerComponent } from '../attendance-scanner/attendance-scanner.component';
 
 @Component({
-  selector: 'app-user-home',
-  imports: [UserWelcomeComponent, AttendanceScannerComponentComponent],
-  templateUrl: './user-home.component.html',
-  styleUrl: './user-home.component.css',
+    selector: 'app-user-home',
+    imports: [UserWelcomeComponent, AttendanceScannerComponent],
+    templateUrl: './user-home.component.html',
+    styleUrl: './user-home.component.css',
 })
-export class UserHomeComponent {
-
-}
+export class UserHomeComponent {}

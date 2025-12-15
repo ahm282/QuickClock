@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, signal, ViewChild } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    signal,
+    ViewChild,
+    inject,
+} from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser';
 import { Result } from '@zxing/library';
 import {
@@ -12,14 +19,15 @@ import {
     Camera,
     History,
 } from 'lucide-angular';
+import { environment } from '../../../environments/environment';
 
 @Component({
-    selector: 'app-attendance-scanner-component',
+    selector: 'app-attendance-scanner',
     imports: [CommonModule, LucideAngularModule],
-    templateUrl: './attendance-scanner-component.component.html',
-    styleUrl: './attendance-scanner-component.component.css',
+    templateUrl: './attendance-scanner.component.html',
+    styleUrl: './attendance-scanner.component.css',
 })
-export class AttendanceScannerComponentComponent {
+export class AttendanceScannerComponent {
     readonly Clock = Clock;
     readonly Camera = Camera;
     readonly QrCode = QrCode;
@@ -32,10 +40,14 @@ export class AttendanceScannerComponentComponent {
     scannerActive = signal<boolean>(false);
     cameraError = signal<string | null>(null);
     lastScanTime = signal<string | null>(null);
+    processingRequest = signal<boolean>(false);
+    requestError = signal<string | null>(null);
 
     availableCameras = signal<MediaDeviceInfo[]>([]);
     selectedDeviceId = signal<string | null>(null);
     loadingDevices = signal<boolean>(false);
+
+    private http = inject(HttpClient);
 
     // Refs
     @ViewChild('videoElement') videoElement?: ElementRef<HTMLVideoElement>;
@@ -95,13 +107,43 @@ export class AttendanceScannerComponentComponent {
     }
 
     handleScanResult(result: string): void {
-        console.log('Result:', result);
-        // Decode result and determine clock-in or clock-out
-        var decoded = atob(result);
-        console.log('Decoded:', decoded);
-
+        console.log('QR Code Result:', result);
         this.stopCamera();
-        this.lastScanTime.set(new Date().toLocaleTimeString());
-        this.isClockedIn.update((v) => !v);
+        this.processingRequest.set(true);
+        this.requestError.set(null);
+
+        try {
+            // Parse the QR code JSON directly (not base64 encoded)
+            const qrData = JSON.parse(result) as {
+                token: string;
+                path: string;
+            };
+
+            console.log('Parsed QR Data:', qrData);
+
+            // Send the clock in/out request
+            const url = `${environment.apiUrl}${qrData.path}`;
+
+            this.http.post(url, { token: qrData.token }).subscribe({
+                next: (response) => {
+                    console.log('Clock in/out successful:', response);
+                    this.lastScanTime.set(new Date().toLocaleTimeString());
+                    this.isClockedIn.update((v) => !v);
+                    this.processingRequest.set(false);
+                },
+                error: (error) => {
+                    console.error('Clock in/out failed:', error);
+                    this.requestError.set(
+                        error.error?.message ||
+                            'Failed to process attendance. Please try again.'
+                    );
+                    this.processingRequest.set(false);
+                },
+            });
+        } catch (error) {
+            console.error('Failed to parse QR code:', error);
+            this.requestError.set('Invalid QR code. Please try again.');
+            this.processingRequest.set(false);
+        }
     }
 }

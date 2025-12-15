@@ -122,6 +122,27 @@
             </div>
 
             <div class="mt-6 space-y-4">
+                @if (requestError()) {
+                <div role="alert" class="alert alert-error alert-soft">
+                    <lucide-icon
+                        [name]="CircleAlert"
+                        class="w-5 h-5"
+                    ></lucide-icon>
+                    <span>{{ requestError() }}</span>
+                </div>
+                } @if (processingRequest()) {
+                <div
+                    class="flex items-center justify-center gap-3 p-4 rounded-xl bg-primary/10 border border-primary/20"
+                >
+                    <span
+                        class="loading loading-spinner loading-sm text-primary"
+                    ></span>
+                    <span class="text-sm font-medium text-primary"
+                        >Processing attendance...</span
+                    >
+                </div>
+                }
+
                 <button
                     (click)="toggleScanner()"
                     class="btn btn-primary w-full h-12 rounded-xl font-medium flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
@@ -131,6 +152,7 @@
                     [class.bg-primary]="!scannerActive()"
                     [class.text-primary-foreground]="!scannerActive()"
                     [class.hover:bg-primary-90]="!scannerActive()"
+                    [disabled]="processingRequest()"
                 >
                     @if (scannerActive()) {
                     <lucide-icon [img]="X" class="w-5 h-5"></lucide-icon>
