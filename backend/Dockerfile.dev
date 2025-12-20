@@ -1,0 +1,10 @@
+FROM eclipse-temurin:21-jdk-alpine
+
+RUN apk add --no-cache bash curl
+
+ENV GRADLE_USER_HOME=/home/gradle/.gradle
+WORKDIR /workspace
+
+EXPOSE 8081
+
+CMD ["./gradlew", "bootRun", "--no-daemon", "-x", "test"]
