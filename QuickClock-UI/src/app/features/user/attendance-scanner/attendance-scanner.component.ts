@@ -121,12 +121,12 @@ export class AttendanceScannerComponent {
                             if (result) {
                                 this.handleScanResult(result.getText());
                             }
-                        }
+                        },
                     );
             } catch (err) {
                 console.error('Error starting scanner:', err);
                 this.cameraError.set(
-                    'Could not access camera. Please check permissions.'
+                    'Could not access camera. Please check permissions.',
                 );
                 this.scannerActive.set(false);
             }
@@ -161,7 +161,7 @@ export class AttendanceScannerComponent {
                 next: (response) => {
                     this.lastClockTime.set(this.hm.format(new Date()));
                     this.lastClockType.set(
-                        qrData.path.includes('/in') ? 'IN' : 'OUT'
+                        qrData.path.includes('/in') ? 'IN' : 'OUT',
                     );
 
                     const wasClockedIn = qrData.path.includes('/in');
@@ -173,7 +173,7 @@ export class AttendanceScannerComponent {
                     console.error('Clock in/out failed:', error);
                     this.requestError.set(
                         error.error?.message ||
-                            'Failed to process attendance. Please try again.'
+                            'Failed to process attendance. Please try again.',
                     );
                     this.processingRequest.set(false);
                 },

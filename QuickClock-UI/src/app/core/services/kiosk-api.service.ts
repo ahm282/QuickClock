@@ -31,24 +31,24 @@ export class KioskApiService {
 
     listEmployees(): Observable<UserSummaryDTO[]> {
         return this.http.get<UserSummaryDTO[]>(
-            `${environment.apiUrl}/kiosk/employees`
+            `${environment.apiUrl}/kiosk/employees`,
         );
     }
 
     generateInQRCode(publicId: string): Observable<ClockQRCodeResponseDTO> {
         return this.http.get<ClockQRCodeResponseDTO>(
-            `${environment.apiUrl}/clock/qr/generate/in/${publicId}`
+            `${environment.apiUrl}/clock/qr/generate/in/${publicId}`,
         );
     }
 
     generateOutQRCode(publicId: string): Observable<ClockQRCodeResponseDTO> {
         return this.http.get<ClockQRCodeResponseDTO>(
-            `${environment.apiUrl}/clock/qr/generate/out/${publicId}`
+            `${environment.apiUrl}/clock/qr/generate/out/${publicId}`,
         );
     }
 
     listenForQrScan(
-        tokenId: string
+        tokenId: string,
     ): Observable<QrScanStatusDTO | 'connected'> {
         const apiUrl = environment.apiUrl;
 
@@ -57,7 +57,7 @@ export class KioskApiService {
 
             if (!accessToken) {
                 subscriber.error(
-                    new Error('No access token available for Kiosk')
+                    new Error('No access token available for Kiosk'),
                 );
                 return;
             }
@@ -99,7 +99,7 @@ export class KioskApiService {
                     if (message.event === 'scanned') {
                         try {
                             const data = JSON.parse(
-                                message.data
+                                message.data,
                             ) as QrScanStatusDTO;
                             subscriber.next(data);
                             subscriber.complete();

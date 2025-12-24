@@ -117,7 +117,7 @@ export class AuthService {
             .post<AccessTokenResponse>(
                 `${environment.apiUrl}/auth/login`,
                 credentials,
-                { withCredentials: true }
+                { withCredentials: true },
             )
             .pipe(
                 tap({
@@ -128,7 +128,7 @@ export class AuthService {
                 catchError((error) => {
                     this.clearAuth();
                     return throwError(() => error);
-                })
+                }),
             );
     }
 
@@ -137,7 +137,7 @@ export class AuthService {
             .post<AccessTokenResponse>(
                 `${environment.apiUrl}/auth/refresh`,
                 {},
-                { withCredentials: true }
+                { withCredentials: true },
             )
             .pipe(
                 tap({
@@ -148,7 +148,7 @@ export class AuthService {
                 catchError((error) => {
                     this.clearAuth();
                     return throwError(() => error);
-                })
+                }),
             );
     }
 
@@ -157,7 +157,7 @@ export class AuthService {
             .post<void>(
                 `${environment.apiUrl}/auth/logout`,
                 {},
-                { withCredentials: true }
+                { withCredentials: true },
             )
             .pipe(
                 tap({
@@ -168,7 +168,7 @@ export class AuthService {
                 catchError(() => {
                     this.doLogout();
                     return of(void 0);
-                })
+                }),
             );
     }
 
@@ -181,10 +181,10 @@ export class AuthService {
                         'AuthService: Registration failed for user:',
                         data.username,
                         'Error:',
-                        error
+                        error,
                     );
                     return throwError(() => error);
-                })
+                }),
             );
     }
 
@@ -201,7 +201,7 @@ export class AuthService {
             catchError(() => {
                 this.clearAuth();
                 return of(void 0);
-            })
+            }),
         );
     }
 

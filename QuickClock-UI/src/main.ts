@@ -5,5 +5,5 @@ import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
 
 bootstrapApplication(AppComponent, appConfig).catch((err) =>
-    console.error(err)
+    console.error(err),
 );

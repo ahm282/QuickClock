@@ -25,7 +25,7 @@ const isAuthEndpoint = (url: string): boolean =>
 
 export const authInterceptor: HttpInterceptorFn = (
     req: HttpRequest<unknown>,
-    next: HttpHandlerFn
+    next: HttpHandlerFn,
 ): Observable<HttpEvent<unknown>> => {
     const authService = inject(AuthService);
     const token = authService.accessToken();
@@ -49,14 +49,14 @@ export const authInterceptor: HttpInterceptorFn = (
                 return handle401Error(authRequest, next, authService);
             }
             return throwError(() => error);
-        })
+        }),
     );
 };
 
 const handle401Error = (
     request: HttpRequest<unknown>,
     next: HttpHandlerFn,
-    authService: AuthService
+    authService: AuthService,
 ) => {
     if (!isRefreshing) {
         isRefreshing = true;
@@ -71,13 +71,13 @@ const handle401Error = (
             catchError((err) => {
                 isRefreshing = false;
                 return throwError(() => err);
-            })
+            }),
         );
     } else {
         return refreshTokenSubject.pipe(
             filter((token) => token != null),
             take(1),
-            switchMap((token) => next(addToken(request, token!)))
+            switchMap((token) => next(addToken(request, token!))),
         );
     }
 };

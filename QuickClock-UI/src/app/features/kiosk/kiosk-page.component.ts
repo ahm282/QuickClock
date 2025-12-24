@@ -56,8 +56,8 @@ export class KioskPageComponent {
     selectedEmployee = computed(
         () =>
             this.employees().find(
-                (e) => e.publicId === this.selectedPublicId()
-            ) ?? null
+                (e) => e.publicId === this.selectedPublicId(),
+            ) ?? null,
     );
 
     timeRemaining = signal(30);
@@ -145,7 +145,7 @@ export class KioskPageComponent {
         this.selectedPublicId.set(u.publicId);
 
         const latestEmployee = this.employees().find(
-            (e) => e.publicId === u.publicId
+            (e) => e.publicId === u.publicId,
         );
         if (!latestEmployee) return;
 
