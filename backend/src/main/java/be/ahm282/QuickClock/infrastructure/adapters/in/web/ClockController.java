@@ -7,6 +7,7 @@ import be.ahm282.QuickClock.application.services.ClockService;
 import be.ahm282.QuickClock.application.services.QRCodeService;
 import be.ahm282.QuickClock.domain.exception.RateLimitException;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
+import be.ahm282.QuickClock.domain.model.ClockRecordType;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.AdminClockRequestDTO;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.mapper.ClockResponseDTOMapper;
 import be.ahm282.QuickClock.infrastructure.security.SecurityUtil;
@@ -21,10 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/clock")
@@ -111,14 +109,18 @@ public class ClockController {
                 .findFirst();
         
         boolean isClockedIn = latestRecord
-                .map(record -> "IN".equals(record.getType().name()))
+                .map(record -> record.getType() == ClockRecordType.IN)
                 .orElse(false);
-        
-        return Map.of(
-            "isClockedIn", isClockedIn,
-            "lastClockType", Objects.requireNonNull(latestRecord.map(r -> r.getType().name()).orElse(null)),
-            "lastClockTime", Objects.requireNonNull(latestRecord.map(r -> r.getRecordedAt().toString()).orElse(null))
-        );
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("isClockedIn", isClockedIn);
+
+        latestRecord.ifPresent(record -> {
+            response.put("lastClockType", record.getType().toString());
+            response.put("lastClockTime", record.getRecordedAt().toString());
+        });
+
+        return response;
     }
 
     // -------------------------------------------------------------------------
