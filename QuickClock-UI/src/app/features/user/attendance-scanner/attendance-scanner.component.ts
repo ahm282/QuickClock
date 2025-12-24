@@ -48,15 +48,14 @@ export class AttendanceScannerComponent {
     selectedDeviceId = signal<string | null>(null);
     loadingDevices = signal<boolean>(false);
 
-    lastClockType = signal<string | null>(null); // "IN" or "OUT"
-    lastClockTime = signal<string | null>(null); // e.g. "09:30 AM"
+    lastClockType = signal<string | null>(null);
+    lastClockTime = signal<string | null>(null);
     hm = new Intl.DateTimeFormat(undefined, {
         hour: '2-digit',
         minute: '2-digit',
     });
 
     private http = inject(HttpClient);
-    private authService = inject(AuthService);
 
     // Refs
     @ViewChild('videoElement') videoElement?: ElementRef<HTMLVideoElement>;
@@ -84,7 +83,7 @@ export class AttendanceScannerComponent {
                     this.isClockedIn.set(status.isClockedIn);
                     if (status.lastClockTime) {
                         const date = new Date(status.lastClockTime);
-                        this.lastClockTime.set(date.toLocaleTimeString());
+                        this.lastClockTime.set(this.hm.format(date));
                     }
                 },
                 error: (error) => {
