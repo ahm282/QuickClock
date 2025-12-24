@@ -14,12 +14,14 @@
                     @if (isClockedIn()) { Clocked In } @else { Clocked Out }
                 </h2>
 
+                @if (lastClockTime()) {
                 <p class="text-sm text-muted-foreground pt-1">
                     Since
                     <span class="font-medium text-foreground">{{
                         lastClockTime()
                     }}</span>
                 </p>
+                }
             </div>
 
             <div
