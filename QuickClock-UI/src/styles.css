@@ -26,7 +26,12 @@
     --color-base-200: oklch(0.95 0 0); /* Light Gray Background */
     --color-base-300: oklch(0.9 0 0);
 
-    /* Border: Neutral Light Gray */
+    /* Borders */
+    --border: oklch(0.88 0.01 200);
+
+    /* Foregrounds */
+    --muted: oklch(0.9 0 0);
+    --muted-foreground: oklch(0.4 0 0);
     --border: oklch(0.88 0.01 200);
 }
 
@@ -43,16 +48,17 @@
     --color-error: oklch(0.58 0.22 25);
     --color-error-content: oklch(0.95 0 0);
 
-    /* App Background: Deep, desaturated Violet-Black (Hue 253) */
-    --color-base-200: oklch(0.14 0.02 253);
-
-    /* Card Surface: Slightly lighter "Glass" Violet-Gray */
+    /* Surfaces */
     --color-base-100: oklch(0.19 0.02 253);
-
-    /* Inputs/Secondary: Distinctly lighter for interaction */
+    --color-base-200: oklch(0.14 0.02 253);
     --color-base-300: oklch(0.24 0.02 253);
 
-    /* Border: Visible but muted (matches brand hue) */
+    /* Borders */
+    --border: oklch(0.32 0.03 253);
+
+    /* Foregrounds */
+    --muted: oklch(0.28 0.03 253);
+    --muted-foreground: oklch(0.75 0.05 253);
     --border: oklch(0.32 0.03 253);
 }
 
@@ -60,6 +66,9 @@
 @theme inline {
     --color-border: var(--border);
     --color-card: var(--color-base-100);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-ring: var(--color-primary);
 }
 
 /* --- BASE STYLES --- */
@@ -74,10 +83,22 @@
         border-color: var(--border);
     }
 
-    *,
-    ::before,
-    ::after {
-        border-color: var(--border);
+    .btn {
+        border: 1px solid transparent;
+        box-shadow: none;
+        transition: background-color 0.2s, color 0.2s, filter 0.2s;
+    }
+
+    .btn-primary:hover,
+    .btn-error:hover {
+        filter: brightness(1.15);
+        border-color: transparent;
+    }
+
+    .btn-primary:not(:hover),
+    .btn-error:not(:hover) {
+        border-color: transparent;
+        filter: brightness(1);
     }
 }
 
