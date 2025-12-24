@@ -18,14 +18,14 @@ export class AppHeaderComponent {
     readonly sunMedium = SunMedium;
     readonly moon = Moon;
 
-    currentTheme: 'light-t' | 'dark-t' = 'light-t';
+    currentTheme: 'corporate' | 'business' = 'corporate';
 
     ngOnInit(): void {
         const saved = localStorage.getItem('theme') as
-            | 'light-t'
-            | 'dark-t'
+            | 'corporate'
+            | 'business'
             | null;
-        if (saved === 'light-t' || saved === 'dark-t') {
+        if (saved === 'corporate' || saved === 'business') {
             this.currentTheme = saved;
         }
 
@@ -34,7 +34,7 @@ export class AppHeaderComponent {
 
     switchTheme(): void {
         this.currentTheme =
-            this.currentTheme === 'light-t' ? 'dark-t' : 'light-t';
+            this.currentTheme === 'corporate' ? 'business' : 'corporate';
         document.documentElement.setAttribute('data-theme', this.currentTheme);
         localStorage.setItem('theme', this.currentTheme);
     }
