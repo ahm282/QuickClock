@@ -56,6 +56,9 @@ app:
     base-url: ${FRONTEND_BASE_URL:https://quickclock.com}
   cookie:
     secure: true
+  localization:
+    timezone: ${APP_TIMEZONE:Africa/Cairo}
+    week-start-day: ${APP_WEEK_START_DAY:SATURDAY}
   bootstrap:
     enabled: false
     super-admin:

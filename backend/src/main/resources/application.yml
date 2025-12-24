@@ -28,3 +28,8 @@ app:
 
   password:
       min-entropy: ${PASSWORD_MIN_ENTROPY:42}
+
+  # Localization settings for Egyptian users
+  localization:
+    timezone: ${APP_TIMEZONE:Africa/Cairo}
+    week-start-day: ${APP_WEEK_START_DAY:SATURDAY}

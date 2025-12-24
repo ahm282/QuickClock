@@ -1,10 +1,12 @@
 package be.ahm282.QuickClock.infrastructure.adapters.in.web;
 
+import be.ahm282.QuickClock.application.dto.WorkHoursDTO;
 import be.ahm282.QuickClock.application.ports.in.dto.ClockQRCodeRequestDTO;
 import be.ahm282.QuickClock.application.ports.in.dto.ClockQRCodeResponseDTO;
 import be.ahm282.QuickClock.application.ports.in.dto.ClockResponseDTO;
 import be.ahm282.QuickClock.application.services.ClockService;
 import be.ahm282.QuickClock.application.services.QRCodeService;
+import be.ahm282.QuickClock.application.services.WorkHoursService;
 import be.ahm282.QuickClock.domain.exception.RateLimitException;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
 import be.ahm282.QuickClock.domain.model.ClockRecordType;
@@ -34,19 +36,22 @@ public class ClockController {
     private final RateLimitService rateLimitService;
     private final SecurityUtil securityUtil;
     private final QrScanPushService qrScanPushService;
+    private final WorkHoursService workHoursService;
 
     public ClockController(ClockService clockService,
                            QRCodeService qrCodeService,
                            ClockResponseDTOMapper responseMapper,
                            RateLimitService rateLimitService,
                            SecurityUtil securityUtil,
-                           QrScanPushService qrScanPushService) {
+                           QrScanPushService qrScanPushService,
+                           WorkHoursService workHoursService) {
         this.clockService = clockService;
         this.qrCodeService = qrCodeService;
         this.responseMapper = responseMapper;
         this.rateLimitService = rateLimitService;
         this.securityUtil = securityUtil;
         this.qrScanPushService = qrScanPushService;
+        this.workHoursService = workHoursService;
     }
 
     // -------------------------------------------------------------------------
@@ -121,6 +126,12 @@ public class ClockController {
         });
 
         return response;
+    }
+
+    @GetMapping("/hours/me")
+    public WorkHoursDTO getMyWorkHours(HttpServletRequest request) {
+        Long userId = securityUtil.extractUserIdFromRequestToken(request);
+        return workHoursService.calculateWorkHours(userId);
     }
 
     // -------------------------------------------------------------------------

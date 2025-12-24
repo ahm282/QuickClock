@@ -26,8 +26,23 @@ public class UserSeeder {
 
     @PostConstruct
     public void seed() {
+        // Admin users
         seedUser("alice", "Alice", Set.of(Role.EMPLOYEE));
         seedUser("bob", "Bob", Set.of(Role.ADMIN));
+        seedUser("ahmed.hassan", "Ahmed Hassan", Set.of(Role.ADMIN, Role.EMPLOYEE));
+        seedUser("fatima.ali", "Fatima Ali", Set.of(Role.ADMIN));
+
+        // Regular employees
+        seedUser("mohamed.salah", "Mohamed Salah", Set.of(Role.EMPLOYEE));
+        seedUser("nour.ibrahim", "Nour Ibrahim", Set.of(Role.EMPLOYEE));
+        seedUser("omar.khaled", "Omar Khaled", Set.of(Role.EMPLOYEE));
+        seedUser("layla.mahmoud", "Layla Mahmoud", Set.of(Role.EMPLOYEE));
+        seedUser("youssef.ahmed", "Youssef Ahmed", Set.of(Role.EMPLOYEE));
+        seedUser("sarah.mostafa", "Sarah Mostafa", Set.of(Role.EMPLOYEE));
+        seedUser("karim.hassan", "Karim Hassan", Set.of(Role.EMPLOYEE));
+        seedUser("mariam.said", "Mariam Said", Set.of(Role.EMPLOYEE));
+
+        System.out.println("✅ Seeded 10 users successfully");
     }
 
     private void seedUser(String username, String displayName, Set<Role> roles) {
