@@ -6,7 +6,6 @@ import {
     ViewChild,
     inject,
 } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser';
 import { Result } from '@zxing/library';
 import {
@@ -19,7 +18,7 @@ import {
     Camera,
     History,
 } from 'lucide-angular';
-import { environment } from '../../../environments/environment';
+import { ClockService } from '../../../core/services/clock.service';
 
 @Component({
     selector: 'app-attendance-scanner',
@@ -36,7 +35,8 @@ export class AttendanceScannerComponent {
     readonly X = X;
     readonly History = History;
 
-    isClockedIn = signal<boolean>(false);
+    clockService = inject(ClockService);
+
     scannerActive = signal<boolean>(false);
     cameraError = signal<string | null>(null);
     lastScanTime = signal<string | null>(null);
@@ -47,14 +47,10 @@ export class AttendanceScannerComponent {
     selectedDeviceId = signal<string | null>(null);
     loadingDevices = signal<boolean>(false);
 
-    lastClockType = signal<string | null>(null);
-    lastClockTime = signal<string | null>(null);
     hm = new Intl.DateTimeFormat(undefined, {
         hour: '2-digit',
         minute: '2-digit',
     });
-
-    private http = inject(HttpClient);
 
     // Refs
     @ViewChild('videoElement') videoElement?: ElementRef<HTMLVideoElement>;
@@ -62,35 +58,8 @@ export class AttendanceScannerComponent {
     private codeReader = new BrowserMultiFormatReader();
     private activeScanControls: IScannerControls | null = null;
 
-    ngOnInit(): void {
-        this.loadCurrentStatus();
-    }
-
     ngOnDestroy(): void {
         this.stopCamera();
-    }
-
-    private loadCurrentStatus(): void {
-        this.http
-            .get<{
-                isClockedIn: boolean;
-                lastClockType: string | null;
-                lastClockTime: string | null;
-            }>(`${environment.apiUrl}/clock/status/me`)
-            .subscribe({
-                next: (status) => {
-                    this.isClockedIn.set(status.isClockedIn);
-                    if (status.lastClockTime) {
-                        const date = new Date(status.lastClockTime);
-                        this.lastClockTime.set(this.hm.format(date));
-                    }
-                },
-                error: (error) => {
-                    console.error('Failed to fetch current status:', error);
-                    // Default to false if we can't determine status
-                    this.isClockedIn.set(false);
-                },
-            });
     }
 
     toggleScanner(): void {
@@ -152,19 +121,10 @@ export class AttendanceScannerComponent {
                 path: string;
             };
 
-            // Send the clock in/out request
-            const url = `${environment.apiUrl}${qrData.path}`;
-
-            this.http.post(url, { token: qrData.token }).subscribe({
-                next: (response) => {
-                    this.lastClockTime.set(this.hm.format(new Date()));
-                    this.lastClockType.set(
-                        qrData.path.includes('/in') ? 'IN' : 'OUT',
-                    );
-
-                    const wasClockedIn = qrData.path.includes('/in');
-                    this.isClockedIn.set(wasClockedIn);
-
+            // Send the clock in/out request through the service
+            this.clockService.clockAction(qrData.path, qrData.token).subscribe({
+                next: () => {
+                    this.lastScanTime.set(this.hm.format(new Date()));
                     this.processingRequest.set(false);
                 },
                 error: (error) => {

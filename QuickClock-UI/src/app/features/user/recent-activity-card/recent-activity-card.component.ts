@@ -1,11 +1,6 @@
 import { DatePipe, NgClass } from '@angular/common';
 import { Component, input } from '@angular/core';
-
-export interface Activity {
-    id: number;
-    type: string;
-    recordedAt: string;
-}
+import type { Activity } from '../../../core/models/activity.model';
 
 @Component({
     selector: 'app-recent-activity-card',

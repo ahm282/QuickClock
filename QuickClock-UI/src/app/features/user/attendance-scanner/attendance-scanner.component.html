@@ -8,17 +8,17 @@
 
                 <h2
                     class="text-3xl md:text-4xl font-light tracking-tight"
-                    [class.text-emerald-600]="isClockedIn()"
-                    [class.text-amber-600]="!isClockedIn()"
+                    [class.text-emerald-600]="clockService.clockStatus()?.isClockedIn"
+                    [class.text-amber-600]="!clockService.clockStatus()?.isClockedIn"
                 >
-                    @if (isClockedIn()) { Clocked In } @else { Clocked Out }
+                    @if (clockService.clockStatus()?.isClockedIn) { Clocked In } @else { Clocked Out }
                 </h2>
 
-                @if (lastClockTime()) {
+                @if (clockService.clockStatus()?.lastClockTime) {
                 <p class="text-sm text-muted-foreground pt-1">
                     Since
                     <span class="font-medium text-foreground">{{
-                        lastClockTime()
+                        clockService.clockStatus()!.lastClockTime
                     }}</span>
                 </p>
                 }
@@ -26,16 +26,16 @@
 
             <div
                 class="w-16 h-16 rounded-2xl flex items-center justify-center transition-colors"
-                [class.bg-emerald-500-10]="isClockedIn()"
-                [class.border-emerald-200]="isClockedIn()"
-                [class.bg-amber-500-10]="!isClockedIn()"
-                [class.border-amber-200]="!isClockedIn()"
+                [class.bg-emerald-500-10]="clockService.clockStatus()?.isClockedIn"
+                [class.border-emerald-200]="clockService.clockStatus()?.isClockedIn"
+                [class.bg-amber-500-10]="!clockService.clockStatus()?.isClockedIn"
+                [class.border-amber-200]="!clockService.clockStatus()?.isClockedIn"
             >
                 <lucide-icon
                     [name]="Clock"
                     class="w-8 h-8"
-                    [class.text-emerald-600]="isClockedIn()"
-                    [class.text-amber-600]="!isClockedIn()"
+                    [class.text-emerald-600]="clockService.clockStatus()?.isClockedIn"
+                    [class.text-amber-600]="!clockService.clockStatus()?.isClockedIn"
                 >
                 </lucide-icon>
             </div>
