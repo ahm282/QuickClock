@@ -18,7 +18,7 @@ export class LogoutButtonComponent {
 
     openModal() {
         const modal = document.getElementById(
-            'logout_modal'
+            'logout_modal',
         ) as HTMLDialogElement;
         if (modal) {
             modal.showModal();
@@ -27,7 +27,7 @@ export class LogoutButtonComponent {
 
     closeModal() {
         const modal = document.getElementById(
-            'logout_modal'
+            'logout_modal',
         ) as HTMLDialogElement;
         if (modal) {
             modal.close();

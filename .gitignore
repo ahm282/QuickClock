@@ -5,6 +5,20 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 *.sh
+!generate-ssl-certs.sh
+!generate-local-ssl.sh
+!backend/generate-local-ssl.sh
+
+# Secrets
+.env
+.env.local
+.env.prod
+backend/.env
+certs/
+
+# Dependencies
+node_modules/
+build/
 
 ### STS ###
 .apt_generated
@@ -20,6 +34,7 @@ bin/
 
 ### IntelliJ IDEA ###
 .idea
+!.idea/runConfigurations/
 *.iws
 *.iml
 *.ipr
@@ -156,3 +171,4 @@ replay_pid*
 *.crt
 *.key
 *.pem
+QuickClock-UI/.github/instructions/daisyui.instructions.md

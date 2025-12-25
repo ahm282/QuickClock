@@ -1,0 +1,138 @@
+services:
+  certs:
+    image: alpine:3.20
+    container_name: quickclock-certs
+    working_dir: /work
+    volumes:
+      - ./certs:/work/certs
+      - ./generate-ssl-certs.sh:/work/generate-ssl-certs.sh:ro
+    environment:
+      - SSL_KEYSTORE_PASSWORD=${SSL_KEYSTORE_PASSWORD:-changeit}
+      - CERTS_DIR=/work/certs
+    command:
+      [
+        "sh",
+        "-c",
+        "apk add --no-cache openssl && sh /work/generate-ssl-certs.sh",
+      ]
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: quickclock-backend
+    depends_on:
+      certs:
+        condition: service_completed_successfully
+    working_dir: /workspace
+    volumes:
+      - ./backend:/workspace
+      - backend_gradle_cache:/home/gradle/.gradle
+      - ./certs:/certs:ro
+    env_file:
+      - ./backend/.env
+      - ./.env
+    environment:
+      # Force HTTPS
+      - SERVER_PORT=8081
+      - SPRING_PROFILES_ACTIVE=dev
+      - SSL_KEYSTORE_PATH=file:/certs/keystore.p12
+      - SERVER_SSL_BUNDLE=devtls
+      - SPRING_SSL_BUNDLE_JKS_DEVTLS_KEYSTORE_LOCATION=file:/certs/keystore.p12
+      - SPRING_SSL_BUNDLE_JKS_DEVTLS_KEYSTORE_PASSWORD=${SSL_KEYSTORE_PASSWORD}
+      - SPRING_SSL_BUNDLE_JKS_DEVTLS_KEYSTORE_TYPE=PKCS12
+      - SPRING_SSL_BUNDLE_JKS_DEVTLS_KEY_ALIAS=springboot
+      - SPRING_SSL_BUNDLE_JKS_DEVTLS_KEY_PASSWORD=${SSL_KEYSTORE_PASSWORD}
+
+      - SERVER_SSL_KEY_STORE=file:/certs/keystore.p12
+      - SERVER_SSL_KEY_STORE_PASSWORD=${SSL_KEYSTORE_PASSWORD}
+      - SERVER_SSL_KEY_PASSWORD=${SSL_KEYSTORE_PASSWORD}
+      - SERVER_SSL_KEY_STORE_TYPE=PKCS12
+      - SERVER_SSL_KEY_ALIAS=springboot
+
+      # App env
+      - FRONTEND_BASE_URL=https://localhost
+      - COOKIE_SECURE=true
+      - COOKIE_DOMAIN=${COOKIE_DOMAIN:-}
+
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ISSUER=${JWT_ISSUER:-QuickClock-API}
+      - JWT_AUDIENCE=${JWT_AUDIENCE:-QuickClock-App}
+
+      - CLOCKING_TOKEN_EXPIRY=${CLOCKING_TOKEN_EXPIRY:-30}
+      - PASSWORD_MIN_ENTROPY=${PASSWORD_MIN_ENTROPY:-42}
+      - SEED_ENABLED=${SEED_ENABLED:-true}
+
+    # Use the JWT normalizer if present; otherwise run directly
+    entrypoint:
+      [
+        "/bin/sh",
+        "-c",
+        "if [ -x ./docker-entrypoint.sh ]; then ./docker-entrypoint.sh ./gradlew bootRun --no-daemon -x test; else ./gradlew bootRun --no-daemon -x test; fi",
+      ]
+    ports:
+      - "8081:8081"
+    networks:
+      - quickclock
+
+  frontend:
+    build:
+      context: ./QuickClock-UI
+      dockerfile: Dockerfile.dev
+    container_name: quickclock-frontend
+    depends_on:
+      certs:
+        condition: service_completed_successfully
+    working_dir: /workspace
+    volumes:
+      - ./QuickClock-UI:/workspace
+      - frontend_node_modules:/workspace/node_modules
+      - ./certs:/certs:ro
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
+    command:
+      [
+        "npm",
+        "run",
+        "start",
+        "--",
+        "--host",
+        "0.0.0.0",
+        "--port",
+        "5173",
+        "--ssl",
+        "--ssl-cert",
+        "/certs/localhost.crt",
+        "--ssl-key",
+        "/certs/localhost.key",
+      ]
+    ports:
+      - "5173:5173"
+    networks:
+      - quickclock
+
+  nginx:
+    image: nginx:alpine
+    container_name: quickclock-nginx
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./certs:/etc/nginx/certs:ro
+    networks:
+      - quickclock
+    restart: unless-stopped
+
+volumes:
+  backend_gradle_cache:
+  frontend_node_modules:
+
+networks:
+  quickclock:
+    driver: bridge

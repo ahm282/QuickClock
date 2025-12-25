@@ -39,7 +39,6 @@ public class InviteCodeMapper {
         entity.setRevoked(domain.isRevoked());
         entity.setUsedByUserId(domain.getUsedByUserId());
         entity.setCreatedByUserId(domain.getCreatedByUserId());
-        entity.setCreatedAt(domain.getCreatedAt());
         entity.setRevokedByUserId(domain.getRevokedByUserId());
         entity.setRevokedAt(domain.getRevokedAt());
 

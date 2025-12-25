@@ -6,6 +6,7 @@ import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper.Clock
 import be.ahm282.QuickClock.infrastructure.entity.ClockRecordEntity;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,16 +29,23 @@ public class JpaClockRecordRepositoryAdapter implements ClockRecordRepositoryPor
 
     @Override
     public List<ClockRecord> findAllByUserId(Long userId) {
-        return repository.findAllByUserIdOrderByTimestampDesc(userId)
+        return repository.findAllByUserIdOrderByRecordedAtDesc(userId)
                 .stream()
                 .map(mapper::toDomain)
-                .sorted((cr1, cr2) -> cr2.getTimestamp().compareTo(cr1.getTimestamp()))
                 .collect(Collectors.toList());
     }
 
     @Override
     public Optional<ClockRecord> findLatestByUserId(Long userId) {
-        return repository.findTopByUserIdOrderByTimestampDesc(userId)
+        return repository.findTopByUserIdOrderByRecordedAtDesc(userId)
                 .map(mapper::toDomain);
+    }
+
+    @Override
+    public List<ClockRecord> findByUserIdAndRecordedAtBetween(Long userId, Instant startOfDay, Instant endOfDay) {
+        return repository.findByUserIdAndRecordedAtBetween(userId, startOfDay, endOfDay)
+                .stream()
+                .map(mapper::toDomain)
+                .collect(Collectors.toList());
     }
 }

@@ -44,7 +44,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll() // Preflight requests
 
                         // Kiosk-specific endpoints
+                        .requestMatchers("/api/kiosk/**").hasAnyRole("KIOSK", "SUPER_ADMIN")
                         .requestMatchers("/api/clock/qr/generate/**").hasAnyRole("KIOSK", "SUPER_ADMIN")
+                        .requestMatchers("/api/clock/qr/stream/**").hasAnyRole("KIOSK", "SUPER_ADMIN")
                         .requestMatchers("/api/users/**").hasAnyRole("KIOSK", "SUPER_ADMIN")
                         .requestMatchers("/api/clock/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
 

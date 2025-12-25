@@ -32,7 +32,7 @@ public class UserEntity extends AuditableEntity {
     private String passwordHash;
     @Column(nullable = false, length = 100)
     private String secret;
-    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = Role.class, fetch = FetchType.LAZY)
     @CollectionTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_roles_user")),
@@ -73,6 +73,7 @@ public class UserEntity extends AuditableEntity {
         this.passwordHash = passwordHash;
         this.secret = secret;
         this.displayName = displayName;
+        this.accountType = accountType;
         this.active = active;
         this.lastLogin = lastLogin;
         this.lastPasswordChange = lastPasswordChange;

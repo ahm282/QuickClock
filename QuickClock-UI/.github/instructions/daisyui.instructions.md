@@ -1,7 +1,7 @@
 ---
 description: daisyUI 5
 alwaysApply: true
-applyTo: "**"
+applyTo: '**'
 downloadedFrom: https://daisyui.com/llms.txt
 version: 5.5.x
 ---
@@ -11,10 +11,10 @@ version: 5.5.x
 daisyUI 5 is a CSS library for Tailwind CSS 4
 daisyUI 5 provides class names for common UI components
 
--   [daisyUI 5 docs](http://daisyui.com)
--   [Guide: How to use this file in LLMs and code editors](https://daisyui.com/docs/editor/)
--   [daisyUI 5 release notes](https://daisyui.com/docs/v5/)
--   [daisyUI 4 to 5 upgrade guide](https://daisyui.com/docs/upgrade/)
+- [daisyUI 5 docs](http://daisyui.com)
+- [Guide: How to use this file in LLMs and code editors](https://daisyui.com/docs/editor/)
+- [daisyUI 5 release notes](https://daisyui.com/docs/v5/)
+- [daisyUI 4 to 5 upgrade guide](https://daisyui.com/docs/upgrade/)
 
 ## daisyUI 5 install notes
 
@@ -37,7 +37,7 @@ daisyUI 5 provides class names for common UI components
 5. A CSS file with Tailwind CSS and daisyUI looks like this (if it's a node dependency)
 
 ```css
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "daisyui";
 ```
 
@@ -57,16 +57,16 @@ daisyUI 5 provides class names for common UI components
 
 daisyUI 5 class names are one of the following categories. These type names are only for reference and are not used in the actual code
 
--   `component`: the required component class
--   `part`: a child part of a component
--   `style`: sets a specific style to component or part
--   `behavior`: changes the behavior of component or part
--   `color`: sets a specific color to component or part
--   `size`: sets a specific size to component or part
--   `placement`: sets a specific placement to component or part
--   `direction`: sets a specific direction to component or part
--   `modifier`: modifies the component or part in a specific way
--   `variant`: prefixes for utility classes that conditionally apply styles. syntax is `variant:utility-class`
+- `component`: the required component class
+- `part`: a child part of a component
+- `style`: sets a specific style to component or part
+- `behavior`: changes the behavior of component or part
+- `color`: sets a specific color to component or part
+- `size`: sets a specific size to component or part
+- `placement`: sets a specific placement to component or part
+- `direction`: sets a specific direction to component or part
+- `modifier`: modifies the component or part in a specific way
+- `variant`: prefixes for utility classes that conditionally apply styles. syntax is `variant:utility-class`
 
 ## Config
 
@@ -89,11 +89,13 @@ daisyUI with all the default configs:
 
 ```css
 @plugin "daisyui" {
-    themes: light --default, dark --prefersdark;
-    root: ":root";
-    include: ;
-    exclude: ;
-    prefix: ;
+    themes:
+        light --default,
+        dark --prefersdark;
+    root: ':root';
+    include:;
+    exclude:;
+    prefix:;
     logs: true;
 }
 ```
@@ -105,13 +107,44 @@ root scrollbar gutter is excluded. `daisy-` prefix is used for all daisyUI class
 
 ```css
 @plugin "daisyui" {
-    themes: light, dark, cupcake, bumblebee --default, emerald, corporate, synthwave
-            --prefersdark, retro, cyberpunk, valentine, halloween, garden,
-        forest, aqua, lofi, pastel, fantasy, wireframe, black, luxury, dracula,
-        cmyk, autumn, business, acid, lemonade, night, coffee, winter, dim,
-        nord, sunset, caramellatte, abyss, silk;
-    root: ":root";
-    include: ;
+    themes:
+        light,
+        dark,
+        cupcake,
+        bumblebee --default,
+        emerald,
+        corporate,
+        synthwave --prefersdark,
+        retro,
+        cyberpunk,
+        valentine,
+        halloween,
+        garden,
+        forest,
+        aqua,
+        lofi,
+        pastel,
+        fantasy,
+        wireframe,
+        black,
+        luxury,
+        dracula,
+        cmyk,
+        autumn,
+        business,
+        acid,
+        lemonade,
+        night,
+        coffee,
+        winter,
+        dim,
+        nord,
+        sunset,
+        caramellatte,
+        abyss,
+        silk;
+    root: ':root';
+    include:;
     exclude: rootscrollgutter, checkbox;
     prefix: daisy-;
     logs: false;
@@ -122,26 +155,26 @@ root scrollbar gutter is excluded. `daisy-` prefix is used for all daisyUI class
 
 ### daisyUI color names
 
--   `primary`: Primary brand color, The main color of your brand
--   `primary-content`: Foreground content color to use on primary color
--   `secondary`: Secondary brand color, The optional, secondary color of your brand
--   `secondary-content`: Foreground content color to use on secondary color
--   `accent`: Accent brand color, The optional, accent color of your brand
--   `accent-content`: Foreground content color to use on accent color
--   `neutral`: Neutral dark color, For not-saturated parts of UI
--   `neutral-content`: Foreground content color to use on neutral color
--   `base-100`:-100 Base surface color of page, used for blank backgrounds
--   `base-200`:-200 Base color, darker shade, to create elevations
--   `base-300`:-300 Base color, even more darker shade, to create elevations
--   `base-content`: Foreground content color to use on base color
--   `info`: Info color, For informative/helpful messages
--   `info-content`: Foreground content color to use on info color
--   `success`: Success color, For success/safe messages
--   `success-content`: Foreground content color to use on success color
--   `warning`: Warning color, For warning/caution messages
--   `warning-content`: Foreground content color to use on warning color
--   `error`: Error color, For error/danger/destructive messages
--   `error-content`: Foreground content color to use on error color
+- `primary`: Primary brand color, The main color of your brand
+- `primary-content`: Foreground content color to use on primary color
+- `secondary`: Secondary brand color, The optional, secondary color of your brand
+- `secondary-content`: Foreground content color to use on secondary color
+- `accent`: Accent brand color, The optional, accent color of your brand
+- `accent-content`: Foreground content color to use on accent color
+- `neutral`: Neutral dark color, For not-saturated parts of UI
+- `neutral-content`: Foreground content color to use on neutral color
+- `base-100`:-100 Base surface color of page, used for blank backgrounds
+- `base-200`:-200 Base color, darker shade, to create elevations
+- `base-300`:-300 Base color, even more darker shade, to create elevations
+- `base-content`: Foreground content color to use on base color
+- `info`: Info color, For informative/helpful messages
+- `info-content`: Foreground content color to use on info color
+- `success`: Success color, For success/safe messages
+- `success-content`: Foreground content color to use on success color
+- `warning`: Warning color, For warning/caution messages
+- `warning-content`: Foreground content color to use on warning color
+- `error`: Error color, For error/danger/destructive messages
+- `error-content`: Foreground content color to use on error color
 
 ### daisyUI color rules
 
@@ -161,10 +194,10 @@ root scrollbar gutter is excluded. `daisy-` prefix is used for all daisyUI class
 A CSS file with Tailwind CSS, daisyUI and a custom daisyUI theme looks like this:
 
 ```css
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "daisyui";
 @plugin "daisyui/theme" {
-    name: "mytheme";
+    name: 'mytheme';
     default: true; /* set as default */
     prefersdark: false; /* set as default dark mode (prefers-color-scheme:dark) */
     color-scheme: light; /* color of browser-provided UI */
@@ -207,9 +240,9 @@ A CSS file with Tailwind CSS, daisyUI and a custom daisyUI theme looks like this
 
 #### Rules
 
--   All CSS variables above are required
--   Colors can be OKLCH or hex or other formats
--   If you're generating a custom theme, do not include the comments from the example above. Just provide the code.
+- All CSS variables above are required
+- Colors can be OKLCH or hex or other formats
+- If you're generating a custom theme, do not include the comments from the example above. Just provide the code.
 
 People can use https://daisyui.com/theme-generator/ visual tool to create their own theme.
 
@@ -223,9 +256,9 @@ Accordion is used for showing and hiding content but only one item can stay open
 
 #### Class names
 
--   component: `collapse`
--   part: `collapse-title`, `collapse-content`
--   modifier: `collapse-arrow`, `collapse-plus`, `collapse-open`, `collapse-close`
+- component: `collapse`
+- part: `collapse-title`, `collapse-content`
+- modifier: `collapse-arrow`, `collapse-plus`, `collapse-open`, `collapse-close`
 
 #### Syntax
 
@@ -243,11 +276,11 @@ where content is:
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier class names
--   Accordion uses radio inputs. All radio inputs with the same name work together and only one of them can be open at a time
--   If you have more than one set of accordion items on a page, use different names for the radio inputs on each set
--   Replace {name} with a unique name for the accordion group
--   replace `{checked}` with `checked="checked"` if you want the accordion to be open by default
+- {MODIFIER} is optional and can have one of the modifier class names
+- Accordion uses radio inputs. All radio inputs with the same name work together and only one of them can be open at a time
+- If you have more than one set of accordion items on a page, use different names for the radio inputs on each set
+- Replace {name} with a unique name for the accordion group
+- replace `{checked}` with `checked="checked"` if you want the accordion to be open by default
 
 ### alert
 
@@ -257,10 +290,10 @@ Alert informs users about important events
 
 #### Class names
 
--   component: `alert`
--   style: `alert-outline`, `alert-dash`, `alert-soft`
--   color: `alert-info`, `alert-success`, `alert-warning`, `alert-error`
--   direction: `alert-vertical`, `alert-horizontal`
+- component: `alert`
+- style: `alert-outline`, `alert-dash`, `alert-soft`
+- color: `alert-info`, `alert-success`, `alert-warning`, `alert-error`
+- direction: `alert-vertical`, `alert-horizontal`
 
 #### Syntax
 
@@ -270,8 +303,8 @@ Alert informs users about important events
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each style/color/direction class names
--   Add `sm:alert-horizontal` for responsive layouts
+- {MODIFIER} is optional and can have one of each style/color/direction class names
+- Add `sm:alert-horizontal` for responsive layouts
 
 ### avatar
 
@@ -281,8 +314,8 @@ Avatars are used to show a thumbnail
 
 #### Class names
 
--   component: `avatar`, `avatar-group`
--   modifier: `avatar-online`, `avatar-offline`, `avatar-placeholder`
+- component: `avatar`, `avatar-group`
+- modifier: `avatar-online`, `avatar-offline`, `avatar-placeholder`
 
 #### Syntax
 
@@ -296,10 +329,10 @@ Avatars are used to show a thumbnail
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier class names
--   Use `avatar-group` for containing multiple avatars
--   You can set custom sizes using `w-*` and `h-*`
--   You can use mask classes such as `mask-squircle`, `mask-hexagon`, `mask-triangle`
+- {MODIFIER} is optional and can have one of the modifier class names
+- Use `avatar-group` for containing multiple avatars
+- You can set custom sizes using `w-*` and `h-*`
+- You can use mask classes such as `mask-squircle`, `mask-hexagon`, `mask-triangle`
 
 ### badge
 
@@ -309,10 +342,10 @@ Badges are used to inform the user of the status of specific data
 
 #### Class names
 
--   component: `badge`
--   style: `badge-outline`, `badge-dash`, `badge-soft`, `badge-ghost`
--   color: `badge-neutral`, `badge-primary`, `badge-secondary`, `badge-accent`, `badge-info`, `badge-success`, `badge-warning`, `badge-error`
--   size: `badge-xs`, `badge-sm`, `badge-md`, `badge-lg`, `badge-xl`
+- component: `badge`
+- style: `badge-outline`, `badge-dash`, `badge-soft`, `badge-ghost`
+- color: `badge-neutral`, `badge-primary`, `badge-secondary`, `badge-accent`, `badge-info`, `badge-success`, `badge-warning`, `badge-error`
+- size: `badge-xs`, `badge-sm`, `badge-md`, `badge-lg`, `badge-xl`
 
 #### Syntax
 
@@ -322,9 +355,9 @@ Badges are used to inform the user of the status of specific data
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each style/color/size class names
--   Can be used inside text or buttons
--   To create an empty badge, just remove the text between the span tags
+- {MODIFIER} is optional and can have one of each style/color/size class names
+- Can be used inside text or buttons
+- To create an empty badge, just remove the text between the span tags
 
 ### breadcrumbs
 
@@ -334,7 +367,7 @@ Breadcrumbs helps users to navigate
 
 #### Class names
 
--   component: `breadcrumbs`
+- component: `breadcrumbs`
 
 #### Syntax
 
@@ -348,9 +381,9 @@ Breadcrumbs helps users to navigate
 
 #### Rules
 
--   breadcrumbs only has one main class name
--   Can contain icons inside the links
--   If you set `max-width` or the list gets larger than the container it will scroll
+- breadcrumbs only has one main class name
+- Can contain icons inside the links
+- If you set `max-width` or the list gets larger than the container it will scroll
 
 ### button
 
@@ -360,12 +393,12 @@ Buttons allow the user to take actions
 
 #### Class names
 
--   component: `btn`
--   color: `btn-neutral`, `btn-primary`, `btn-secondary`, `btn-accent`, `btn-info`, `btn-success`, `btn-warning`, `btn-error`
--   style: `btn-outline`, `btn-dash`, `btn-soft`, `btn-ghost`, `btn-link`
--   behavior: `btn-active`, `btn-disabled`
--   size: `btn-xs`, `btn-sm`, `btn-md`, `btn-lg`, `btn-xl`
--   modifier: `btn-wide`, `btn-block`, `btn-square`, `btn-circle`
+- component: `btn`
+- color: `btn-neutral`, `btn-primary`, `btn-secondary`, `btn-accent`, `btn-info`, `btn-success`, `btn-warning`, `btn-error`
+- style: `btn-outline`, `btn-dash`, `btn-soft`, `btn-ghost`, `btn-link`
+- behavior: `btn-active`, `btn-disabled`
+- size: `btn-xs`, `btn-sm`, `btn-md`, `btn-lg`, `btn-xl`
+- modifier: `btn-wide`, `btn-block`, `btn-square`, `btn-circle`
 
 #### Syntax
 
@@ -375,10 +408,10 @@ Buttons allow the user to take actions
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each color/style/behavior/size/modifier class names
--   btn can be used on any html tags such as `<button>`, `<a>`, `<input>`
--   btn can have an icon before or after the text
--   set `tabindex="-1" role="button" aria-disabled="true"` if you want to disable the button using a class name
+- {MODIFIER} is optional and can have one of each color/style/behavior/size/modifier class names
+- btn can be used on any html tags such as `<button>`, `<a>`, `<input>`
+- btn can have an icon before or after the text
+- set `tabindex="-1" role="button" aria-disabled="true"` if you want to disable the button using a class name
 
 ### calendar
 
@@ -388,10 +421,10 @@ Calendar includes styles for different calendar libraries
 
 #### Class names
 
--   component
-    -   `cally (for Cally web component)`
-    -   `pika-single (for the input field that opens Pikaday calendar)`
-    -   `react-day-picker (for the DayPicker component)`
+- component
+    - `cally (for Cally web component)`
+    - `pika-single (for the input field that opens Pikaday calendar)`
+    - `react-day-picker (for the DayPicker component)`
 
 #### Syntax
 
@@ -415,7 +448,7 @@ For React Day Picker:
 
 #### Rules
 
--   daisyUI supports Cally, Pikaday, React Day Picker
+- daisyUI supports Cally, Pikaday, React Day Picker
 
 ### card
 
@@ -425,11 +458,11 @@ Cards are used to group and display content
 
 #### Class names
 
--   component: `card`
--   part: `card-title`, `card-body`, `card-actions`
--   style: `card-border`, `card-dash`
--   modifier: `card-side`, `image-full`
--   size: `card-xs`, `card-sm`, `card-md`, `card-lg`, `card-xl`
+- component: `card`
+- part: `card-title`, `card-body`, `card-actions`
+- style: `card-border`, `card-dash`
+- modifier: `card-side`, `image-full`
+- size: `card-xs`, `card-sm`, `card-md`, `card-lg`, `card-xl`
 
 #### Syntax
 
@@ -446,10 +479,10 @@ Cards are used to group and display content
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier class names and one of the size class names
--   `<figure>` and `<div class="card-body">` are optional
--   can use `sm:card-horizontal` for responsive layouts
--   If image is placed after `card-body`, the image will be placed at the bottom
+- {MODIFIER} is optional and can have one of the modifier class names and one of the size class names
+- `<figure>` and `<div class="card-body">` are optional
+- can use `sm:card-horizontal` for responsive layouts
+- If image is placed after `card-body`, the image will be placed at the bottom
 
 ### carousel
 
@@ -459,10 +492,10 @@ Carousel show images or content in a scrollable area
 
 #### Class names
 
--   component: `carousel`
--   part: `carousel-item`
--   modifier: `carousel-start`, `carousel-center`, `carousel-end`
--   direction: `carousel-horizontal`, `carousel-vertical`
+- component: `carousel`
+- part: `carousel-item`
+- modifier: `carousel-start`, `carousel-center`, `carousel-end`
+- direction: `carousel-horizontal`, `carousel-vertical`
 
 #### Syntax
 
@@ -472,9 +505,9 @@ Carousel show images or content in a scrollable area
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier/direction class names
--   Content is a list of `carousel-item` divs: `<div class="carousel-item"></div>`
--   To create a full-width carousel, add `w-full` to each carousel item
+- {MODIFIER} is optional and can have one of the modifier/direction class names
+- Content is a list of `carousel-item` divs: `<div class="carousel-item"></div>`
+- To create a full-width carousel, add `w-full` to each carousel item
 
 ### chat
 
@@ -484,10 +517,10 @@ Chat bubbles are used to show one line of conversation and all its data, includi
 
 #### Class names
 
--   component: `chat`
--   part: `chat-image`, `chat-header`, `chat-footer`, `chat-bubble`
--   placement: `chat-start`, `chat-end`
--   color: `chat-bubble-neutral`, `chat-bubble-primary`, `chat-bubble-secondary`, `chat-bubble-accent`, `chat-bubble-info`, `chat-bubble-success`, `chat-bubble-warning`, `chat-bubble-error`
+- component: `chat`
+- part: `chat-image`, `chat-header`, `chat-footer`, `chat-bubble`
+- placement: `chat-start`, `chat-end`
+- color: `chat-bubble-neutral`, `chat-bubble-primary`, `chat-bubble-secondary`, `chat-bubble-accent`, `chat-bubble-info`, `chat-bubble-success`, `chat-bubble-warning`, `chat-bubble-error`
 
 #### Syntax
 
@@ -502,9 +535,9 @@ Chat bubbles are used to show one line of conversation and all its data, includi
 
 #### Rules
 
--   {PLACEMENT} is required and must be either `chat-start` or `chat-end`
--   {COLOR} is optional and can have one of the color class names
--   To add an avatar, use `<div class="chat-image avatar">` and nest the avatar content inside
+- {PLACEMENT} is required and must be either `chat-start` or `chat-end`
+- {COLOR} is optional and can have one of the color class names
+- To add an avatar, use `<div class="chat-image avatar">` and nest the avatar content inside
 
 ### checkbox
 
@@ -514,9 +547,9 @@ Checkboxes are used to select or deselect a value
 
 #### Class names
 
--   component: `checkbox`
--   color: `checkbox-primary`, `checkbox-secondary`, `checkbox-accent`, `checkbox-neutral`, `checkbox-success`, `checkbox-warning`, `checkbox-info`, `checkbox-error`
--   size: `checkbox-xs`, `checkbox-sm`, `checkbox-md`, `checkbox-lg`, `checkbox-xl`
+- component: `checkbox`
+- color: `checkbox-primary`, `checkbox-secondary`, `checkbox-accent`, `checkbox-neutral`, `checkbox-success`, `checkbox-warning`, `checkbox-info`, `checkbox-error`
+- size: `checkbox-xs`, `checkbox-sm`, `checkbox-md`, `checkbox-lg`, `checkbox-xl`
 
 #### Syntax
 
@@ -526,7 +559,7 @@ Checkboxes are used to select or deselect a value
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each color/size class names
+- {MODIFIER} is optional and can have one of each color/size class names
 
 ### collapse
 
@@ -536,9 +569,9 @@ Collapse is used for showing and hiding content
 
 #### Class names
 
--   component: `collapse`
--   part: `collapse-title`, `collapse-content`
--   modifier: `collapse-arrow`, `collapse-plus`, `collapse-open`, `collapse-close`
+- component: `collapse`
+- part: `collapse-title`, `collapse-content`
+- modifier: `collapse-arrow`, `collapse-plus`, `collapse-open`, `collapse-close`
 
 #### Syntax
 
@@ -551,9 +584,9 @@ Collapse is used for showing and hiding content
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier class names
--   instead of `tabindex="0"`, you can use `<input type="checkbox">` as a first child
--   Can also be a details/summary tag
+- {MODIFIER} is optional and can have one of the modifier class names
+- instead of `tabindex="0"`, you can use `<input type="checkbox">` as a first child
+- Can also be a details/summary tag
 
 ### countdown
 
@@ -563,7 +596,7 @@ Countdown gives you a transition effect when you change a number between 0 to 99
 
 #### Class names
 
--   component: `countdown`
+- component: `countdown`
 
 #### Syntax
 
@@ -575,9 +608,9 @@ Countdown gives you a transition effect when you change a number between 0 to 99
 
 #### Rules
 
--   The `--value` CSS variable and text must be a number between 0 and 999
--   you need to change the span text and the `--value` CSS variable using JS
--   you need to add `aria-live="polite"` and `aria-label="{number}"` so screen readers can properly read changes
+- The `--value` CSS variable and text must be a number between 0 and 999
+- you need to change the span text and the `--value` CSS variable using JS
+- you need to add `aria-live="polite"` and `aria-label="{number}"` so screen readers can properly read changes
 
 ### diff
 
@@ -587,8 +620,8 @@ Diff component shows a side-by-side comparison of two items
 
 #### Class names
 
--   component: `diff`
--   part: `diff-item-1`, `diff-item-2`, `diff-resizer`
+- component: `diff`
+- part: `diff-item-1`, `diff-item-2`, `diff-resizer`
 
 #### Syntax
 
@@ -602,7 +635,7 @@ Diff component shows a side-by-side comparison of two items
 
 #### Rules
 
--   To maintain aspect ratio, add `aspect-16/9` or other aspect ratio classes to `<figure class="diff">` element
+- To maintain aspect ratio, add `aspect-16/9` or other aspect ratio classes to `<figure class="diff">` element
 
 ### divider
 
@@ -612,10 +645,10 @@ Divider will be used to separate content vertically or horizontally
 
 #### Class names
 
--   component: `divider`
--   color: `divider-neutral`, `divider-primary`, `divider-secondary`, `divider-accent`, `divider-success`, `divider-warning`, `divider-info`, `divider-error`
--   direction: `divider-vertical`, `divider-horizontal`
--   placement: `divider-start`, `divider-end`
+- component: `divider`
+- color: `divider-neutral`, `divider-primary`, `divider-secondary`, `divider-accent`, `divider-success`, `divider-warning`, `divider-info`, `divider-error`
+- direction: `divider-vertical`, `divider-horizontal`
+- placement: `divider-start`, `divider-end`
 
 #### Syntax
 
@@ -625,8 +658,8 @@ Divider will be used to separate content vertically or horizontally
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each direction/color/placement class names
--   Omit text for a blank divider
+- {MODIFIER} is optional and can have one of each direction/color/placement class names
+- Omit text for a blank divider
 
 ### dock
 
@@ -636,10 +669,10 @@ Dock (also know as Bottom navigation or Bottom bar) is a UI element that provide
 
 #### Class names
 
--   component: `dock`
--   part: `dock-label`
--   modifier: `dock-active`
--   size: `dock-xs`, `dock-sm`, `dock-md`, `dock-lg`, `dock-xl`
+- component: `dock`
+- part: `dock-label`
+- modifier: `dock-active`
+- size: `dock-xs`, `dock-sm`, `dock-md`, `dock-lg`, `dock-xl`
 
 #### Syntax
 
@@ -658,9 +691,9 @@ where content is a list of buttons:
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the size class names
--   To make a button active, add `dock-active` class to the button
--   add `<meta name="viewport" content="viewport-fit=cover">` is required for responsivness of the dock in iOS
+- {MODIFIER} is optional and can have one of the size class names
+- To make a button active, add `dock-active` class to the button
+- add `<meta name="viewport" content="viewport-fit=cover">` is required for responsivness of the dock in iOS
 
 ### drawer
 
@@ -670,11 +703,11 @@ Drawer is a grid layout that can show/hide a sidebar on the left or right side o
 
 #### Class names
 
--   component: `drawer`
--   part: `drawer-toggle`, `drawer-content`, `drawer-side`, `drawer-overlay`
--   placement: `drawer-end`
--   modifier: `drawer-open`
--   variant: `is-drawer-open:`, `is-drawer-close:`
+- component: `drawer`
+- part: `drawer-toggle`, `drawer-content`, `drawer-side`, `drawer-overlay`
+- placement: `drawer-end`
+- modifier: `drawer-open`
+- variant: `is-drawer-open:`, `is-drawer-close:`
 
 #### Syntax
 
@@ -787,12 +820,12 @@ Example: This sidebar is always visible. When it's close we only see iocns, when
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier/placement class names
--   `id` is required for the `drawer-toggle` input. change `my-drawer` to a unique id according to your needs
--   `lg:drawer-open` can be used to make sidebar visible on larger screens
--   `drawer-toggle` is a hidden checkbox. Use label with "for" attribute to toggle state
--   if you want to open the drawer when a button is clicked, use `<label for="my-drawer" class="btn drawer-button">Open drawer</label>` where `my-drawer` is the id of the `drawer-toggle` input
--   when using drawer, every page content must be inside `drawer-content` element. for example navbar, footer, etc should not be outside of `drawer`
+- {MODIFIER} is optional and can have one of the modifier/placement class names
+- `id` is required for the `drawer-toggle` input. change `my-drawer` to a unique id according to your needs
+- `lg:drawer-open` can be used to make sidebar visible on larger screens
+- `drawer-toggle` is a hidden checkbox. Use label with "for" attribute to toggle state
+- if you want to open the drawer when a button is clicked, use `<label for="my-drawer" class="btn drawer-button">Open drawer</label>` where `my-drawer` is the id of the `drawer-toggle` input
+- when using drawer, every page content must be inside `drawer-content` element. for example navbar, footer, etc should not be outside of `drawer`
 
 ### dropdown
 
@@ -802,10 +835,10 @@ Dropdown can open a menu or any other element when the button is clicked
 
 #### Class names
 
--   component: `dropdown`
--   part: `dropdown-content`
--   placement: `dropdown-start`, `dropdown-center`, `dropdown-end`, `dropdown-top`, `dropdown-bottom`, `dropdown-left`, `dropdown-right`
--   modifier: `dropdown-hover`, `dropdown-open`, `dropdown-close`
+- component: `dropdown`
+- part: `dropdown-content`
+- placement: `dropdown-start`, `dropdown-center`, `dropdown-end`, `dropdown-top`, `dropdown-bottom`, `dropdown-left`, `dropdown-right`
+- modifier: `dropdown-hover`, `dropdown-open`, `dropdown-close`
 
 #### Syntax
 
@@ -847,10 +880,10 @@ Using CSS focus
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier/placement class names
--   replace `{id}` and `{anchor}` with a unique name
--   For CSS focus dropdowns, use `tabindex="0"` and `role="button"` on the button
--   The content can be any HTML element (not just `<ul>`)
+- {MODIFIER} is optional and can have one of the modifier/placement class names
+- replace `{id}` and `{anchor}` with a unique name
+- For CSS focus dropdowns, use `tabindex="0"` and `role="button"` on the button
+- The content can be any HTML element (not just `<ul>`)
 
 ### fab
 
@@ -860,9 +893,9 @@ FAB (Floating Action Button) stays in the bottom corner of screen. It includes a
 
 #### Class names
 
--   component: `fab`
--   part: `fab-close`, `fab-main-action`
--   modifier: `fab-flower`
+- component: `fab`
+- part: `fab-close`, `fab-main-action`
+- modifier: `fab-flower`
 
 #### Syntax
 
@@ -987,11 +1020,11 @@ FAB Flower with tooltips. There's no space for a text label in a quarter circle,
 
 #### Rules
 
--   {Icon\*} should be replaced with the appropriate icon for each button. SVG icons are recommended
--   {IconOriginal} is the icon that we see before opening the FAB
--   {IconMainAction} is the icon we see after opening the FAB
--   {Icon1}, {Icon2}, {Icon3} are the icons for the additional buttons
--   {Label\*} is the label text for each button
+- {Icon\*} should be replaced with the appropriate icon for each button. SVG icons are recommended
+- {IconOriginal} is the icon that we see before opening the FAB
+- {IconMainAction} is the icon we see after opening the FAB
+- {Icon1}, {Icon2}, {Icon3} are the icons for the additional buttons
+- {Label\*} is the label text for each button
 
 ### fieldset
 
@@ -1001,8 +1034,8 @@ Fieldset is a container for grouping related form elements. It includes fieldset
 
 #### Class names
 
--   Component: `fieldset`, `label`
--   Parts: `fieldset-legend`
+- Component: `fieldset`, `label`
+- Parts: `fieldset-legend`
 
 #### Syntax
 
@@ -1016,7 +1049,7 @@ Fieldset is a container for grouping related form elements. It includes fieldset
 
 #### Rules
 
--   You can use any element as a direct child of fieldset to add form elements
+- You can use any element as a direct child of fieldset to add form elements
 
 ### file-input
 
@@ -1026,10 +1059,10 @@ File Input is a an input field for uploading files
 
 #### Class Names:
 
--   Component: `file-input`
--   Style: `file-input-ghost`
--   Color: `file-input-neutral`, `file-input-primary`, `file-input-secondary`, `file-input-accent`, `file-input-info`, `file-input-success`, `file-input-warning`, `file-input-error`
--   Size: `file-input-xs`, `file-input-sm`, `file-input-md`, `file-input-lg`, `file-input-xl`
+- Component: `file-input`
+- Style: `file-input-ghost`
+- Color: `file-input-neutral`, `file-input-primary`, `file-input-secondary`, `file-input-accent`, `file-input-info`, `file-input-success`, `file-input-warning`, `file-input-error`
+- Size: `file-input-xs`, `file-input-sm`, `file-input-md`, `file-input-lg`, `file-input-xl`
 
 #### Syntax
 
@@ -1039,7 +1072,7 @@ File Input is a an input field for uploading files
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each style/color/size class names
+- {MODIFIER} is optional and can have one of each style/color/size class names
 
 ### filter
 
@@ -1049,8 +1082,8 @@ Filter is a group of radio buttons. Choosing one of the options will hide the ot
 
 #### Class names
 
--   component: `filter`
--   part: `filter-reset`
+- component: `filter`
+- part: `filter-reset`
 
 #### Syntax
 
@@ -1076,10 +1109,10 @@ Without HTML form
 
 #### Rules
 
--   replace `{NAME}` with proper value, according to the context of the filter
--   Each set of radio inputs must have unique `name` attributes to avoid conflicts
--   Use `<form>` tag when possible and only use `<div>` if you can't use a HTML form for some reason
--   Use `filter-reset` class for the reset button
+- replace `{NAME}` with proper value, according to the context of the filter
+- Each set of radio inputs must have unique `name` attributes to avoid conflicts
+- Use `<form>` tag when possible and only use `<div>` if you can't use a HTML form for some reason
+- Use `filter-reset` class for the reset button
 
 ### footer
 
@@ -1089,10 +1122,10 @@ Footer can contain logo, copyright notice, and links to other pages
 
 #### Class names
 
--   component: `footer`
--   part: `footer-title`
--   placement: `footer-center`
--   direction: `footer-horizontal`, `footer-vertical`
+- component: `footer`
+- part: `footer-title`
+- placement: `footer-center`
+- direction: `footer-horizontal`, `footer-vertical`
 
 #### Syntax
 
@@ -1104,9 +1137,9 @@ where content can contain several `<nav>` tags with `footer-title` and links ins
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each placement/direction class names
--   try to use `sm:footer-horizontal` to make footer responsive
--   suggestion - use `base-200` for background color
+- {MODIFIER} is optional and can have one of each placement/direction class names
+- try to use `sm:footer-horizontal` to make footer responsive
+- suggestion - use `base-200` for background color
 
 ### hero
 
@@ -1116,8 +1149,8 @@ Hero is a component for displaying a large box or image with a title and descrip
 
 #### Class names
 
--   component: `hero`
--   part: `hero-content`, `hero-overlay`
+- component: `hero`
+- part: `hero-content`, `hero-overlay`
 
 #### Syntax
 
@@ -1127,10 +1160,10 @@ Hero is a component for displaying a large box or image with a title and descrip
 
 #### Rules
 
--   {MODIFIER} is optional
--   Use `hero-content` for the text content
--   Use `hero-overlay` inside the hero to overlay the background image with a color
--   Content can contain a figure
+- {MODIFIER} is optional
+- Use `hero-content` for the text content
+- Use `hero-overlay` inside the hero to overlay the background image with a color
+- Content can contain a figure
 
 ### hover-3d
 
@@ -1144,7 +1177,7 @@ Only use non-interactive content inside the `hover-3d` wrapper. If you want to m
 
 #### Class names
 
--   component: `hover-3d`
+- component: `hover-3d`
 
 #### Syntax
 
@@ -1169,9 +1202,9 @@ Only use non-interactive content inside the `hover-3d` wrapper. If you want to m
 
 #### Rules
 
--   hover-3d can be a `<div>` or a `<a>`
--   hover-3d must have exactly 9 direct children where the first child is the main content and the other 8 children are empty `<div>`s for hover zones
--   content inside hover-3d should be non-interactive (no buttons, links, inputs, etc)
+- hover-3d can be a `<div>` or a `<a>`
+- hover-3d must have exactly 9 direct children where the first child is the main content and the other 8 children are empty `<div>`s for hover zones
+- content inside hover-3d should be non-interactive (no buttons, links, inputs, etc)
 
 ### hover-gallery
 
@@ -1181,7 +1214,7 @@ Hover Gallery is container of images. The first image is visible be default and 
 
 #### Class names
 
--   component: `hover-gallery`
+- component: `hover-gallery`
 
 #### Syntax
 
@@ -1196,10 +1229,10 @@ Hover Gallery is container of images. The first image is visible be default and 
 
 #### Rules
 
--   hover-gallery can be a `<div>` or a `<figure>`
--   hover-gallery can include up to 10 images
--   hover-gallery needs a max width otherwise if fills the container width
--   images must be same dimensions for a proper alignment
+- hover-gallery can be a `<div>` or a `<figure>`
+- hover-gallery can include up to 10 images
+- hover-gallery needs a max width otherwise if fills the container width
+- images must be same dimensions for a proper alignment
 
 ### indicator
 
@@ -1209,9 +1242,9 @@ Indicators are used to place an element on the corner of another element
 
 #### Class names
 
--   component: `indicator`
--   part: `indicator-item`
--   placement: `indicator-start`, `indicator-center`, `indicator-end`, `indicator-top`, `indicator-middle`, `indicator-bottom`
+- component: `indicator`
+- part: `indicator-item`
+- placement: `indicator-start`, `indicator-center`, `indicator-end`, `indicator-top`, `indicator-middle`, `indicator-bottom`
 
 #### Syntax
 
@@ -1224,8 +1257,8 @@ Indicators are used to place an element on the corner of another element
 
 #### Rules
 
--   Add all indicator elements (with `indicator-item` class) before the main content
--   {placement} is optional and can have one of each horizontal/vertical class names. default is `indicator-end indicator-top`
+- Add all indicator elements (with `indicator-item` class) before the main content
+- {placement} is optional and can have one of each horizontal/vertical class names. default is `indicator-end indicator-top`
 
 ### input
 
@@ -1235,10 +1268,10 @@ Text Input is a simple input field
 
 #### Class names
 
--   component: `input`
--   style: `input-ghost`
--   color: `input-neutral`, `input-primary`, `input-secondary`, `input-accent`, `input-info`, `input-success`, `input-warning`, `input-error`
--   size: `input-xs`, `input-sm`, `input-md`, `input-lg`, `input-xl`
+- component: `input`
+- style: `input-ghost`
+- color: `input-neutral`, `input-primary`, `input-secondary`, `input-accent`, `input-info`, `input-success`, `input-warning`, `input-error`
+- size: `input-xs`, `input-sm`, `input-md`, `input-lg`, `input-xl`
 
 #### Syntax
 
@@ -1248,9 +1281,9 @@ Text Input is a simple input field
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each style/color/size class names
--   Can be used with any input field type (text, password, email, etc.)
--   Use `input` class for the parent when you have more than one element inside input
+- {MODIFIER} is optional and can have one of each style/color/size class names
+- Can be used with any input field type (text, password, email, etc.)
+- Use `input` class for the parent when you have more than one element inside input
 
 ### join
 
@@ -1260,8 +1293,8 @@ Join is a container for grouping multiple items, it can be used to group buttons
 
 #### Class names
 
--   component: `join`, `join-item`
--   direction: `join-vertical`, `join-horizontal`
+- component: `join`, `join-item`
+- direction: `join-vertical`, `join-horizontal`
 
 #### Syntax
 
@@ -1271,10 +1304,10 @@ Join is a container for grouping multiple items, it can be used to group buttons
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the direction class names
--   Any direct child of the join element will get joined together
--   Any element with `join-item` will be affected
--   Use `lg:join-horizontal` for responsive layouts
+- {MODIFIER} is optional and can have one of the direction class names
+- Any direct child of the join element will get joined together
+- Any element with `join-item` will be affected
+- Use `lg:join-horizontal` for responsive layouts
 
 ### kbd
 
@@ -1284,8 +1317,8 @@ Kbd is used to display keyboard shortcuts
 
 #### Class names
 
--   component: `kbd`
--   size: `kbd-xs`, `kbd-sm`, `kbd-md`, `kbd-lg`, `kbd-xl`
+- component: `kbd`
+- size: `kbd-xs`, `kbd-sm`, `kbd-md`, `kbd-lg`, `kbd-xl`
 
 #### Syntax
 
@@ -1295,7 +1328,7 @@ Kbd is used to display keyboard shortcuts
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the size class names
+- {MODIFIER} is optional and can have one of the size class names
 
 ### label
 
@@ -1305,7 +1338,7 @@ Label is used to provide a name or title for an input field. Label can be placed
 
 #### Class names
 
--   component: `label`, `floating-label`
+- component: `label`, `floating-label`
 
 #### Syntax
 
@@ -1329,8 +1362,8 @@ For floating label:
 
 #### Rules
 
--   The `input` class is for styling the parent element which contains the input field and label, so the label does not have the 'input' class
--   Use `floating-label` for the parent of an input field and a span that floats above the input field when the field is focused
+- The `input` class is for styling the parent element which contains the input field and label, so the label does not have the 'input' class
+- Use `floating-label` for the parent of an input field and a span that floats above the input field when the field is focused
 
 ### link
 
@@ -1340,9 +1373,9 @@ Link adds the missing underline style to links
 
 #### Class names
 
--   component: `link`
--   style: `link-hover`
--   color: `link-neutral`, `link-primary`, `link-secondary`, `link-accent`, `link-success`, `link-info`, `link-warning`, `link-error`
+- component: `link`
+- style: `link-hover`
+- color: `link-neutral`, `link-primary`, `link-secondary`, `link-accent`, `link-success`, `link-info`, `link-warning`, `link-error`
 
 #### Syntax
 
@@ -1352,7 +1385,7 @@ Link adds the missing underline style to links
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier class names
+- {MODIFIER} is optional and can have one of the modifier class names
 
 ### list
 
@@ -1362,8 +1395,8 @@ List is a vertical layout to display information in rows
 
 #### Class Names:
 
--   Component: `list`, `list-row`
--   Modifier: `list-col-wrap`, `list-col-grow`
+- Component: `list`, `list-row`
+- Modifier: `list-col-wrap`, `list-col-grow`
 
 #### Syntax
 
@@ -1375,9 +1408,9 @@ List is a vertical layout to display information in rows
 
 #### Rules
 
--   Use `list-row` for each item inside the list
--   By default, the second child of the `list-row` will fill the remaining space. You can use `list-col-grow` on another child to make it fill the remaining space instead
--   Use `list-col-wrap` to force an item to wrap to the next line
+- Use `list-row` for each item inside the list
+- By default, the second child of the `list-row` will fill the remaining space. You can use `list-col-grow` on another child to make it fill the remaining space instead
+- Use `list-col-wrap` to force an item to wrap to the next line
 
 ### loading
 
@@ -1387,9 +1420,9 @@ Loading shows an animation to indicate that something is loading
 
 #### Class names
 
--   component: `loading`
--   style: `loading-spinner`, `loading-dots`, `loading-ring`, `loading-ball`, `loading-bars`, `loading-infinity`
--   size: `loading-xs`, `loading-sm`, `loading-md`, `loading-lg`, `loading-xl`
+- component: `loading`
+- style: `loading-spinner`, `loading-dots`, `loading-ring`, `loading-ball`, `loading-bars`, `loading-infinity`
+- size: `loading-xs`, `loading-sm`, `loading-md`, `loading-lg`, `loading-xl`
 
 #### Syntax
 
@@ -1399,7 +1432,7 @@ Loading shows an animation to indicate that something is loading
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the style/size class names
+- {MODIFIER} is optional and can have one of the style/size class names
 
 ### mask
 
@@ -1409,9 +1442,9 @@ Mask crops the content of the element to common shapes
 
 #### Class names
 
--   component: `mask`
--   style: `mask-squircle`, `mask-heart`, `mask-hexagon`, `mask-hexagon-2`, `mask-decagon`, `mask-pentagon`, `mask-diamond`, `mask-square`, `mask-circle`, `mask-star`, `mask-star-2`, `mask-triangle`, `mask-triangle-2`, `mask-triangle-3`, `mask-triangle-4`
--   modifier: `mask-half-1`, `mask-half-2`
+- component: `mask`
+- style: `mask-squircle`, `mask-heart`, `mask-hexagon`, `mask-hexagon-2`, `mask-decagon`, `mask-pentagon`, `mask-diamond`, `mask-square`, `mask-circle`, `mask-star`, `mask-star-2`, `mask-triangle`, `mask-triangle-2`, `mask-triangle-3`, `mask-triangle-4`
+- modifier: `mask-half-1`, `mask-half-2`
 
 #### Syntax
 
@@ -1421,9 +1454,9 @@ Mask crops the content of the element to common shapes
 
 #### Rules
 
--   {MODIFIER} is required and can have one of the style/modifier class names
--   You can change the shape of any element using `mask` class names
--   You can set custom sizes using `w-*` and `h-*`
+- {MODIFIER} is required and can have one of the style/modifier class names
+- You can change the shape of any element using `mask` class names
+- You can set custom sizes using `w-*` and `h-*`
 
 ### menu
 
@@ -1433,11 +1466,11 @@ Menu is used to display a list of links vertically or horizontally
 
 #### Class names
 
--   component: `menu`
--   part: `menu-title`, `menu-dropdown`, `menu-dropdown-toggle`
--   modifier: `menu-disabled`, `menu-active`, `menu-focus`, `menu-dropdown-show`
--   size: `menu-xs`, `menu-sm`, `menu-md`, `menu-lg`, `menu-xl`
--   direction: `menu-vertical`, `menu-horizontal`
+- component: `menu`
+- part: `menu-title`, `menu-dropdown`, `menu-dropdown-toggle`
+- modifier: `menu-disabled`, `menu-active`, `menu-focus`, `menu-dropdown-show`
+- size: `menu-xs`, `menu-sm`, `menu-md`, `menu-lg`, `menu-xl`
+- direction: `menu-vertical`, `menu-horizontal`
 
 #### Syntax
 
@@ -1459,11 +1492,11 @@ Horizontal menu:
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier/size/direction class names
--   Use `lg:menu-horizontal` for responsive layouts
--   Use `menu-title` for list item title
--   Use `<details>` tag to make submenus collapsible
--   Use `menu-dropdown` and `menu-dropdown-toggle` to toggle the dropdown using JS
+- {MODIFIER} is optional and can have one of the modifier/size/direction class names
+- Use `lg:menu-horizontal` for responsive layouts
+- Use `menu-title` for list item title
+- Use `<details>` tag to make submenus collapsible
+- Use `menu-dropdown` and `menu-dropdown-toggle` to toggle the dropdown using JS
 
 ### mockup-browser
 
@@ -1473,8 +1506,8 @@ Browser mockup shows a box that looks like a browser window
 
 #### Class names
 
--   component: `mockup-browser`
--   part: `mockup-browser-toolbar`
+- component: `mockup-browser`
+- part: `mockup-browser-toolbar`
 
 #### Syntax
 
@@ -1487,8 +1520,8 @@ Browser mockup shows a box that looks like a browser window
 
 #### Rules
 
--   For a default mockup, use just `mockup-browser` class name
--   To set a URL in toolbar, add a div with `input` class
+- For a default mockup, use just `mockup-browser` class name
+- To set a URL in toolbar, add a div with `input` class
 
 ### mockup-code
 
@@ -1498,7 +1531,7 @@ Code mockup is used to show a block of code in a box that looks like a code edit
 
 #### Class names
 
--   component: `mockup-code`
+- component: `mockup-code`
 
 #### Syntax
 
@@ -1510,9 +1543,9 @@ Code mockup is used to show a block of code in a box that looks like a code edit
 
 #### Rules
 
--   Use `<pre data-prefix="{prefix}">` to show a prefix before each line
--   Use `<code>` tag to add code syntax highlighting (requires additional library)
--   To highlight a line, add background/text color
+- Use `<pre data-prefix="{prefix}">` to show a prefix before each line
+- Use `<code>` tag to add code syntax highlighting (requires additional library)
+- To highlight a line, add background/text color
 
 ### mockup-phone
 
@@ -1522,8 +1555,8 @@ Phone mockup shows a mockup of an iPhone
 
 #### Class names
 
--   component: `mockup-phone`
--   part: `mockup-phone-camera`, `mockup-phone-display`
+- component: `mockup-phone`
+- part: `mockup-phone-camera`, `mockup-phone-display`
 
 #### Syntax
 
@@ -1536,7 +1569,7 @@ Phone mockup shows a mockup of an iPhone
 
 #### Rules
 
--   Inside `mockup-phone-display` you can add anything
+- Inside `mockup-phone-display` you can add anything
 
 ### mockup-window
 
@@ -1546,7 +1579,7 @@ Window mockup shows a box that looks like an operating system window
 
 #### Class names
 
--   component: `mockup-window`
+- component: `mockup-window`
 
 #### Syntax
 
@@ -1564,10 +1597,10 @@ Modal is used to show a dialog or a box when you click a button
 
 #### Class names
 
--   component: `modal`
--   part: `modal-box`, `modal-action`, `modal-backdrop`, `modal-toggle`
--   modifier: `modal-open`
--   placement: `modal-top`, `modal-middle`, `modal-bottom`, `modal-start`, `modal-end`
+- component: `modal`
+- part: `modal-box`, `modal-action`, `modal-backdrop`, `modal-toggle`
+- modifier: `modal-open`
+- placement: `modal-top`, `modal-middle`, `modal-bottom`, `modal-start`, `modal-end`
 
 #### Syntax
 
@@ -1603,10 +1636,10 @@ Using anchor links (legacy)
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier/placement class names
--   Add `tabindex="0"` to make modal focusable
--   Use unique IDs for each modal
--   For HTML dialog element modals, add `<form method="dialog">` for closing the modal with submit
+- {MODIFIER} is optional and can have one of the modifier/placement class names
+- Add `tabindex="0"` to make modal focusable
+- Use unique IDs for each modal
+- For HTML dialog element modals, add `<form method="dialog">` for closing the modal with submit
 
 ### navbar
 
@@ -1616,8 +1649,8 @@ Navbar is used to show a navigation bar on the top of the page
 
 #### Class names
 
--   component: `navbar`
--   part: `navbar-start`, `navbar-center`, `navbar-end`
+- component: `navbar`
+- part: `navbar-start`, `navbar-center`, `navbar-end`
 
 #### Syntax
 
@@ -1627,9 +1660,9 @@ Navbar is used to show a navigation bar on the top of the page
 
 #### Rules
 
--   use `navbar-start`, `navbar-center`, `navbar-end` to position content horizontally
--   put anything inside each section
--   suggestion - use `base-200` for background color
+- use `navbar-start`, `navbar-center`, `navbar-end` to position content horizontally
+- put anything inside each section
+- suggestion - use `base-200` for background color
 
 ### pagination
 
@@ -1639,9 +1672,9 @@ Pagination is a group of buttons
 
 #### Class names
 
--   component: `join`
--   part: `join-item`
--   direction: `join-vertical`, `join-horizontal`
+- component: `join`
+- part: `join-item`
+- direction: `join-vertical`, `join-horizontal`
 
 #### Syntax
 
@@ -1651,8 +1684,8 @@ Pagination is a group of buttons
 
 #### Rules
 
--   Use `join-item` for each button or link inside the pagination
--   Use `btn` class for styling pagination items
+- Use `join-item` for each button or link inside the pagination
+- Use `btn` class for styling pagination items
 
 ### progress
 
@@ -1662,8 +1695,8 @@ Progress bar can be used to show the progress of a task or to show the passing o
 
 #### Class names
 
--   component: `progress`
--   color: `progress-neutral`, `progress-primary`, `progress-secondary`, `progress-accent`, `progress-info`, `progress-success`, `progress-warning`, `progress-error`
+- component: `progress`
+- color: `progress-neutral`, `progress-primary`, `progress-secondary`, `progress-accent`, `progress-info`, `progress-success`, `progress-warning`, `progress-error`
 
 #### Syntax
 
@@ -1673,8 +1706,8 @@ Progress bar can be used to show the progress of a task or to show the passing o
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the color class names
--   You must specify value and max attributes
+- {MODIFIER} is optional and can have one of the color class names
+- You must specify value and max attributes
 
 ### radial-progress
 
@@ -1684,7 +1717,7 @@ Radial progress can be used to show the progress of a task or to show the passin
 
 #### Class names
 
--   component: `radial-progress`
+- component: `radial-progress`
 
 #### Syntax
 
@@ -1701,10 +1734,10 @@ Radial progress can be used to show the progress of a task or to show the passin
 
 #### Rules
 
--   The `--value` CSS variable and text must be a number between 0 and 100
--   you need to add `aria-valuenow="{value}"`, `aria-valuenow={value}` so screen readers can properly read value and also show that its a progress element to them
--   Use `div` instead of progress because browsers can't show text inside progress tag
--   Use `--size` for setting size (default 5rem) and `--thickness` to set how thick the indicator is
+- The `--value` CSS variable and text must be a number between 0 and 100
+- you need to add `aria-valuenow="{value}"`, `aria-valuenow={value}` so screen readers can properly read value and also show that its a progress element to them
+- Use `div` instead of progress because browsers can't show text inside progress tag
+- Use `--size` for setting size (default 5rem) and `--thickness` to set how thick the indicator is
 
 ### radio
 
@@ -1714,9 +1747,9 @@ Radio buttons allow the user to select one option
 
 #### Class names
 
--   component: `radio`
--   color: `radio-neutral`, `radio-primary`, `radio-secondary`, `radio-accent`, `radio-success`, `radio-warning`, `radio-info`, `radio-error`
--   size: `radio-xs`, `radio-sm`, `radio-md`, `radio-lg`, `radio-xl`
+- component: `radio`
+- color: `radio-neutral`, `radio-primary`, `radio-secondary`, `radio-accent`, `radio-success`, `radio-warning`, `radio-info`, `radio-error`
+- size: `radio-xs`, `radio-sm`, `radio-md`, `radio-lg`, `radio-xl`
 
 #### Syntax
 
@@ -1726,9 +1759,9 @@ Radio buttons allow the user to select one option
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the size/color class names
--   Replace {name} with a unique name for the radio group
--   Each set of radio inputs should have unique `name` attributes to avoid conflicts with other sets of radio inputs on the same page
+- {MODIFIER} is optional and can have one of the size/color class names
+- Replace {name} with a unique name for the radio group
+- Each set of radio inputs should have unique `name` attributes to avoid conflicts with other sets of radio inputs on the same page
 
 ### range
 
@@ -1738,9 +1771,9 @@ Range slider is used to select a value by sliding a handle
 
 #### Class names
 
--   component: `range`
--   color: `range-neutral`, `range-primary`, `range-secondary`, `range-accent`, `range-success`, `range-warning`, `range-info`, `range-error`
--   size: `range-xs`, `range-sm`, `range-md`, `range-lg`, `range-xl`
+- component: `range`
+- color: `range-neutral`, `range-primary`, `range-secondary`, `range-accent`, `range-success`, `range-warning`, `range-info`, `range-error`
+- size: `range-xs`, `range-sm`, `range-md`, `range-lg`, `range-xl`
 
 #### Syntax
 
@@ -1750,8 +1783,8 @@ Range slider is used to select a value by sliding a handle
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each color/size class names
--   You must specify `min` and `max` attributes
+- {MODIFIER} is optional and can have one of each color/size class names
+- You must specify `min` and `max` attributes
 
 ### rating
 
@@ -1761,9 +1794,9 @@ Rating is a set of radio buttons that allow the user to rate something
 
 #### Class names
 
--   component: `rating`
--   modifier: `rating-half`, `rating-hidden`
--   size: `rating-xs`, `rating-sm`, `rating-md`, `rating-lg`, `rating-xl`
+- component: `rating`
+- modifier: `rating-half`, `rating-hidden`
+- size: `rating-xs`, `rating-sm`, `rating-md`, `rating-lg`, `rating-xl`
 
 #### Syntax
 
@@ -1775,9 +1808,9 @@ Rating is a set of radio buttons that allow the user to rate something
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier/size class names
--   Each set of rating inputs should have unique `name` attributes to avoid conflicts with other ratings on the same page
--   Add `rating-hidden` for the first radio to make it hidden so user can clear the rating
+- {MODIFIER} is optional and can have one of the modifier/size class names
+- Each set of rating inputs should have unique `name` attributes to avoid conflicts with other ratings on the same page
+- Add `rating-hidden` for the first radio to make it hidden so user can clear the rating
 
 ### select
 
@@ -1787,10 +1820,10 @@ Select is used to pick a value from a list of options
 
 #### Class names
 
--   component: `select`
--   style: `select-ghost`
--   color: `select-neutral`, `select-primary`, `select-secondary`, `select-accent`, `select-info`, `select-success`, `select-warning`, `select-error`
--   size: `select-xs`, `select-sm`, `select-md`, `select-lg`, `select-xl`
+- component: `select`
+- style: `select-ghost`
+- color: `select-neutral`, `select-primary`, `select-secondary`, `select-accent`, `select-info`, `select-success`, `select-warning`, `select-error`
+- size: `select-xs`, `select-sm`, `select-md`, `select-lg`, `select-xl`
 
 #### Syntax
 
@@ -1802,7 +1835,7 @@ Select is used to pick a value from a list of options
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each style/color/size class names
+- {MODIFIER} is optional and can have one of each style/color/size class names
 
 ### skeleton
 
@@ -1812,8 +1845,8 @@ Skeleton is a component that can be used to show a loading state
 
 #### Class names
 
--   component: `skeleton`
--   modifier: `skeleton-text`
+- component: `skeleton`
+- modifier: `skeleton-text`
 
 #### Syntax
 
@@ -1829,7 +1862,7 @@ Example with text skeleton:
 
 #### Rules
 
--   Add `h-*` and `w-*` utility classes to set height and width
+- Add `h-*` and `w-*` utility classes to set height and width
 
 ### stack
 
@@ -1839,8 +1872,8 @@ Stack visually puts elements on top of each other
 
 #### Class Names:
 
--   Component: `stack`
--   Modifier: `stack-top`, `stack-bottom`, `stack-start`, `stack-end`
+- Component: `stack`
+- Modifier: `stack-top`, `stack-bottom`, `stack-start`, `stack-end`
 
 #### Syntax
 
@@ -1850,8 +1883,8 @@ Stack visually puts elements on top of each other
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier class names
--   You can use `w-*` and `h-*` classes to set the width and height of the stack, making all items the same size
+- {MODIFIER} is optional and can have one of the modifier class names
+- You can use `w-*` and `h-*` classes to set the width and height of the stack, making all items the same size
 
 ### stat
 
@@ -1861,9 +1894,9 @@ Stat is used to show numbers and data in a block
 
 #### Class names
 
--   Component: `stats`
--   Part: `stat`, `stat-title`, `stat-value`, `stat-desc`, `stat-figure`, `stat-actions`
--   Direction: `stats-horizontal`, `stats-vertical`
+- Component: `stats`
+- Part: `stat`, `stat-title`, `stat-value`, `stat-desc`, `stat-figure`, `stat-actions`
+- Direction: `stats-horizontal`, `stats-vertical`
 
 #### Syntax
 
@@ -1875,9 +1908,9 @@ Stat is used to show numbers and data in a block
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the direction class names
--   It's horizontal by default but you can make it vertical with the `stats-vertical` class
--   Content includes `stat-title`, `stat-value`, `stat-desc` inside a `stat`
+- {MODIFIER} is optional and can have one of the direction class names
+- It's horizontal by default but you can make it vertical with the `stats-vertical` class
+- Content includes `stat-title`, `stat-value`, `stat-desc` inside a `stat`
 
 ### status
 
@@ -1887,9 +1920,9 @@ Status is a really small icon to visually show the current status of an element,
 
 #### Class Names:
 
--   Component: `status`
--   Color: `status-neutral`, `status-primary`, `status-secondary`, `status-accent`, `status-info`, `status-success`, `status-warning`, `status-error`
--   Size: `status-xs`, `status-sm`, `status-md`, `status-lg`, `status-xl`
+- Component: `status`
+- Color: `status-neutral`, `status-primary`, `status-secondary`, `status-accent`, `status-info`, `status-success`, `status-warning`, `status-error`
+- Size: `status-xs`, `status-sm`, `status-md`, `status-lg`, `status-xl`
 
 #### Syntax
 
@@ -1899,8 +1932,8 @@ Status is a really small icon to visually show the current status of an element,
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the color/size class names
--   This component does not render anything visible
+- {MODIFIER} is optional and can have one of the color/size class names
+- This component does not render anything visible
 
 ### steps
 
@@ -1910,10 +1943,10 @@ Steps can be used to show a list of steps in a process
 
 #### Class Names:
 
--   Component: `steps`
--   Part: `step`, `step-icon`
--   Color: `step-neutral`, `step-primary`, `step-secondary`, `step-accent`, `step-info`, `step-success`, `step-warning`, `step-error`
--   Direction: `steps-vertical`, `steps-horizontal`
+- Component: `steps`
+- Part: `step`, `step-icon`
+- Color: `step-neutral`, `step-primary`, `step-secondary`, `step-accent`, `step-info`, `step-success`, `step-warning`, `step-error`
+- Direction: `steps-vertical`, `steps-horizontal`
 
 #### Syntax
 
@@ -1925,10 +1958,10 @@ Steps can be used to show a list of steps in a process
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each direction/color class names
--   To make a step active, add the `step-primary` class
--   You can add an icon in each step using `step-icon` class
--   To display data in `data-content` ,use `data-content="{value}"` at the `<li>`
+- {MODIFIER} is optional and can have one of each direction/color class names
+- To make a step active, add the `step-primary` class
+- You can add an icon in each step using `step-icon` class
+- To display data in `data-content` ,use `data-content="{value}"` at the `<li>`
 
 ### swap
 
@@ -1938,10 +1971,10 @@ Swap allows you to toggle the visibility of two elements using a checkbox or a c
 
 #### Class Names:
 
--   Component: `swap`
--   Part: `swap-on`, `swap-off`, `swap-indeterminate`
--   Modifier: `swap-active`
--   Style: `swap-rotate`, `swap-flip`
+- Component: `swap`
+- Part: `swap-on`, `swap-off`, `swap-indeterminate`
+- Modifier: `swap-active`
+- Style: `swap-rotate`, `swap-flip`
 
 #### Syntax
 
@@ -1966,9 +1999,9 @@ Using class name
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier/style class names
--   Use only a hidden checkbox to control swap state or add/remove the `swap-active` class using JS to control state
--   To show something when the checkbox is indeterminate, use `swap-indeterminate` class
+- {MODIFIER} is optional and can have one of the modifier/style class names
+- Use only a hidden checkbox to control swap state or add/remove the `swap-active` class using JS to control state
+- To show something when the checkbox is indeterminate, use `swap-indeterminate` class
 
 ### tab
 
@@ -1978,11 +2011,11 @@ Tabs can be used to show a list of links in a tabbed format
 
 #### Class Names:
 
--   Component: `tabs`
--   Part: `tab`, `tab-content`
--   Style: `tabs-box`, `tabs-border`, `tabs-lift`
--   Modifier: `tab-active`, `tab-disabled`
--   Placement: `tabs-top`, `tabs-bottom`
+- Component: `tabs`
+- Part: `tab`, `tab-content`
+- Style: `tabs-box`, `tabs-border`, `tabs-lift`
+- Modifier: `tab-active`, `tab-disabled`
+- Placement: `tabs-top`, `tabs-bottom`
 
 #### Syntax
 
@@ -2004,9 +2037,9 @@ Using radio inputs:
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the style/size class names
--   Radio inputs are needed for tab content to work with tab click
--   If tabs gets a background then every tab inside it becomes rounded from both top corners
+- {MODIFIER} is optional and can have one of the style/size class names
+- Radio inputs are needed for tab content to work with tab click
+- If tabs gets a background then every tab inside it becomes rounded from both top corners
 
 ### table
 
@@ -2016,9 +2049,9 @@ Table can be used to show a list of data in a table format
 
 #### Class Names:
 
--   Component: `table`
--   Modifier: `table-zebra`, `table-pin-rows`, `table-pin-cols`
--   Size: `table-xs`, `table-sm`, `table-md`, `table-lg`, `table-xl`
+- Component: `table`
+- Modifier: `table-zebra`, `table-pin-rows`, `table-pin-cols`
+- Size: `table-xs`, `table-sm`, `table-md`, `table-lg`, `table-xl`
 
 #### Syntax
 
@@ -2041,8 +2074,8 @@ Table can be used to show a list of data in a table format
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each modifier/size class names
--   The `overflow-x-auto` class is added to the wrapper div to make the table horizontally scrollable on smaller screens
+- {MODIFIER} is optional and can have one of each modifier/size class names
+- The `overflow-x-auto` class is added to the wrapper div to make the table horizontally scrollable on smaller screens
 
 ### text-rotate
 
@@ -2052,7 +2085,7 @@ Text Rotate can show up to 6 lines of text, one at a time, with a an infinite lo
 
 #### Class Names:
 
--   Component: `text-rotate`
+- Component: `text-rotate`
 
 #### Syntax
 
@@ -2117,9 +2150,9 @@ Custom line height in case you have a tall font or need more vertical spacing be
 
 #### Rules
 
--   `text-rotate` must have one span or div inside it that contains 2 to 6 spans/divs for each line of text
--   Total duration of the loop is 10000 milliseconds by default
--   You can set custom duration using `duration-{value}` utility class, where value is in milliseconds (e.g. `duration-12000` for 12 seconds)
+- `text-rotate` must have one span or div inside it that contains 2 to 6 spans/divs for each line of text
+- Total duration of the loop is 10000 milliseconds by default
+- You can set custom duration using `duration-{value}` utility class, where value is in milliseconds (e.g. `duration-12000` for 12 seconds)
 
 ### textarea
 
@@ -2129,10 +2162,10 @@ Textarea allows users to enter text in multiple lines
 
 #### Class Names:
 
--   Component: `textarea`
--   Style: `textarea-ghost`
--   Color: `textarea-neutral`, `textarea-primary`, `textarea-secondary`, `textarea-accent`, `textarea-info`, `textarea-success`, `textarea-warning`, `textarea-error`
--   Size: `textarea-xs`, `textarea-sm`, `textarea-md`, `textarea-lg`, `textarea-xl`
+- Component: `textarea`
+- Style: `textarea-ghost`
+- Color: `textarea-neutral`, `textarea-primary`, `textarea-secondary`, `textarea-accent`, `textarea-info`, `textarea-success`, `textarea-warning`, `textarea-error`
+- Size: `textarea-xs`, `textarea-sm`, `textarea-md`, `textarea-lg`, `textarea-xl`
 
 #### Syntax
 
@@ -2142,7 +2175,7 @@ Textarea allows users to enter text in multiple lines
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each style/color/size class names
+- {MODIFIER} is optional and can have one of each style/color/size class names
 
 ### theme-controller
 
@@ -2152,7 +2185,7 @@ If a checked checkbox input or a checked radio input with theme-controller class
 
 #### Class names
 
--   component: `theme-controller`
+- component: `theme-controller`
 
 #### Syntax
 
@@ -2162,7 +2195,7 @@ If a checked checkbox input or a checked radio input with theme-controller class
 
 #### Rules
 
--   The value attribute of the input element should be a valid daisyUI theme name
+- The value attribute of the input element should be a valid daisyUI theme name
 
 ### timeline
 
@@ -2172,10 +2205,10 @@ Timeline component shows a list of events in chronological order
 
 #### Class Names:
 
--   Component: `timeline`
--   Part: `timeline-start`, `timeline-middle`, `timeline-end`
--   Modifier: `timeline-snap-icon`, `timeline-box`, `timeline-compact`
--   Direction: `timeline-vertical`, `timeline-horizontal`
+- Component: `timeline`
+- Part: `timeline-start`, `timeline-middle`, `timeline-end`
+- Modifier: `timeline-snap-icon`, `timeline-box`, `timeline-compact`
+- Direction: `timeline-vertical`, `timeline-horizontal`
 
 #### Syntax
 
@@ -2191,10 +2224,10 @@ Timeline component shows a list of events in chronological order
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the modifier/direction class names
--   To make a vertical timeline, add the `timeline-vertical` class to the `ul` element or just do nothing (because its the default style.)
--   Add `timeline-snap-icon` to snap the icon to the start instead of middle
--   Add the `timeline-compact` class to force all items on one side
+- {MODIFIER} is optional and can have one of the modifier/direction class names
+- To make a vertical timeline, add the `timeline-vertical` class to the `ul` element or just do nothing (because its the default style.)
+- Add `timeline-snap-icon` to snap the icon to the start instead of middle
+- Add the `timeline-compact` class to force all items on one side
 
 ### toast
 
@@ -2204,8 +2237,8 @@ Toast is a wrapper to stack elements, positioned on the corner of page
 
 #### Class Names:
 
--   Component: `toast`
--   Placement: `toast-start`, `toast-center`, `toast-end`, `toast-top`, `toast-middle`, `toast-bottom`
+- Component: `toast`
+- Placement: `toast-start`, `toast-center`, `toast-end`, `toast-top`, `toast-middle`, `toast-bottom`
 
 #### Syntax
 
@@ -2215,7 +2248,7 @@ Toast is a wrapper to stack elements, positioned on the corner of page
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of the placement class names
+- {MODIFIER} is optional and can have one of the placement class names
 
 ### toggle
 
@@ -2225,9 +2258,9 @@ Toggle is a checkbox that is styled to look like a switch button
 
 #### Class Names:
 
--   Component: `toggle`
--   Color: `toggle-primary`, `toggle-secondary`, `toggle-accent`, `toggle-neutral`, `toggle-success`, `toggle-warning`, `toggle-info`, `toggle-error`
--   Size: `toggle-xs`, `toggle-sm`, `toggle-md`, `toggle-lg`, `toggle-xl`
+- Component: `toggle`
+- Color: `toggle-primary`, `toggle-secondary`, `toggle-accent`, `toggle-neutral`, `toggle-success`, `toggle-warning`, `toggle-info`, `toggle-error`
+- Size: `toggle-xs`, `toggle-sm`, `toggle-md`, `toggle-lg`, `toggle-xl`
 
 #### Syntax
 
@@ -2237,7 +2270,7 @@ Toggle is a checkbox that is styled to look like a switch button
 
 #### Rules
 
--   {MODIFIER} is optional and can have one of each color/size class names
+- {MODIFIER} is optional and can have one of each color/size class names
 
 ### validator
 
@@ -2247,8 +2280,8 @@ Validator class changes the color of form elements to error or success based on 
 
 #### Class names
 
--   component: `validator`
--   part: `validator-hint`
+- component: `validator`
+- part: `validator-hint`
 
 #### Syntax
 
@@ -2259,4 +2292,4 @@ Validator class changes the color of form elements to error or success based on 
 
 #### Rules
 
--   Use with `input`, `select`, `textarea`
+- Use with `input`, `select`, `textarea`

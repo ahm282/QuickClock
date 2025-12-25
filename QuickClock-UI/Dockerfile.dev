@@ -1,0 +1,11 @@
+FROM node:20-alpine
+
+WORKDIR /workspace
+RUN apk add --no-cache bash
+
+# Install deps at build time (node_modules is also persisted via a named volume in compose)
+COPY package*.json ./
+RUN npm ci || npm install
+
+EXPOSE 5173
+CMD ["npm", "run", "start"]

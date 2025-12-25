@@ -19,5 +19,5 @@ public interface JpaInvalidatedTokenRepository extends JpaRepository<Invalidated
 
     @Modifying
     @Query("delete from InvalidatedTokenEntity e where e.expiryTime <= ?1")
-    void deleteAllByExpiryTimeBefore(Instant cutoff); // For clean up job
+    void deleteAllByExpiryTimeBefore(Instant cutoff); // For cleanup job
 }

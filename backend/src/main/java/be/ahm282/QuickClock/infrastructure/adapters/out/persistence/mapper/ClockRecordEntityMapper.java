@@ -13,7 +13,7 @@ public class ClockRecordEntityMapper {
         entity.setId(domain.getId());
         entity.setUserId(domain.getUserId());
         entity.setType(domain.getType());
-        entity.setTimestamp(domain.getTimestamp());
+        entity.setRecordedAt(domain.getRecordedAt());
         entity.setReason(domain.getReason());
         return entity;
     }
@@ -25,7 +25,7 @@ public class ClockRecordEntityMapper {
                 entity.getId(),
                 entity.getUserId(),
                 entity.getType(),
-                entity.getTimestamp(),
+                entity.getRecordedAt(),
                 entity.getReason()
         );
     }

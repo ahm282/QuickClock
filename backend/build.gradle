@@ -33,6 +33,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'me.gosimple:nbvcxz:1.5.1'
     implementation 'com.bucket4j:bucket4j-core:8.10.1'
+    implementation 'org.decimal4j:decimal4j:1.0.3'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

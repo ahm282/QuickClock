@@ -8,5 +8,5 @@ public record TokenValidationResult(
         String kioskId,
         Instant issuedAt,
         Instant expiresAt,
-        String jti
+        String tokenId
 ) {}

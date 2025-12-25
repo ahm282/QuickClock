@@ -23,22 +23,33 @@ public class QRCodeService {
     /**
      * Generate a QR token URL for clocking IN
      */
-    public ClockQRCodeResponseDTO generateClockInQRCode(UUID publicId, String purpose) {
+    public ClockQRCodeResponseDTO generateClockInQRCode(UUID publicId) {
         User user = userRepositoryPort.findByPublicId(publicId)
                 .orElseThrow(() -> new BusinessRuleException("User not found"));
 
-        String token = qrTokenPort.generateToken(user.getId(), purpose);
-        return new ClockQRCodeResponseDTO(token, "/api/clock/qr/in");
+        String token = qrTokenPort.generateToken(user.getId(), "clock-in");
+        String tokenId = qrTokenPort.extractTokenId(token);
+        return new ClockQRCodeResponseDTO(
+                token,
+                "/clock/qr/in",
+                tokenId
+        );
     }
 
     /**
      * Generate a QR token URL for clocking OUT
      */
-    public ClockQRCodeResponseDTO generateClockOutQRCode(UUID publicId, String purpose) {
+    public ClockQRCodeResponseDTO generateClockOutQRCode(UUID publicId) {
         User user = userRepositoryPort.findByPublicId(publicId)
                 .orElseThrow(() -> new BusinessRuleException("User not found"));
 
-        String token = qrTokenPort.generateToken(user.getId(), purpose);
-        return new ClockQRCodeResponseDTO(token, "/api/clock/qr/out");
+        String token = qrTokenPort.generateToken(user.getId(), "clock-out");
+        String tokenId = qrTokenPort.extractTokenId(token);
+
+        return new ClockQRCodeResponseDTO(
+                token,
+                "/clock/qr/out",
+                tokenId
+        );
     }
 }

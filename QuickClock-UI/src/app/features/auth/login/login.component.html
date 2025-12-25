@@ -55,11 +55,11 @@
                     </div>
 
                     @if (errorMsg) {
-                    <div
-                        class="text-red-500 text-xs text-center bg-red-50 p-2.5 rounded-md mt-3"
-                    >
-                        {{ errorMsg }}
-                    </div>
+                        <div
+                            class="text-red-500 text-xs text-center bg-red-50 p-2.5 rounded-md mt-3"
+                        >
+                            {{ errorMsg }}
+                        </div>
                     }
 
                     <div class="pt-4">
@@ -68,7 +68,7 @@
                             [disabled]="loginForm.invalid || isLoading"
                             class="btn btn-primary inline-flex text-gray-300 focus-visible:text-primary items-center justify-center gap-2 whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-2 border-border focus:bg-background bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 w-full h-12 rounded-xl font-medium text-base shadow"
                         >
-                            {{ isLoading ? "Logging in..." : "Sign In" }}
+                            {{ isLoading ? 'Logging in...' : 'Sign In' }}
                         </button>
                     </div>
                 </form>

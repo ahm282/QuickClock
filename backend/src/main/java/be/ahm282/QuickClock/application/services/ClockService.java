@@ -3,6 +3,7 @@ package be.ahm282.QuickClock.application.services;
 import be.ahm282.QuickClock.application.ports.in.ClockUseCase;
 import be.ahm282.QuickClock.application.ports.out.ClockRecordRepositoryPort;
 import be.ahm282.QuickClock.application.ports.out.QRTokenPort;
+import be.ahm282.QuickClock.application.ports.out.QrScanNotificationPort;
 import be.ahm282.QuickClock.domain.exception.BusinessRuleException;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
 import be.ahm282.QuickClock.domain.model.ClockRecordType;
@@ -10,6 +11,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -18,10 +22,12 @@ public class ClockService implements ClockUseCase {
 
     private final ClockRecordRepositoryPort clockRepo;
     private final QRTokenPort qrTokenPort;
+    private final QrScanNotificationPort qrScanNotificationPort;
 
-    public ClockService(ClockRecordRepositoryPort clockRepo, QRTokenPort qrTokenPort) {
+    public ClockService(ClockRecordRepositoryPort clockRepo, QRTokenPort qrTokenPort, QrScanNotificationPort qrScanNotificationPort) {
         this.clockRepo = clockRepo;
         this.qrTokenPort = qrTokenPort;
+        this.qrScanNotificationPort = qrScanNotificationPort;
     }
 
     @Override
@@ -40,24 +46,44 @@ public class ClockService implements ClockUseCase {
 
     @Override
     public ClockRecord clockInWithQR(String qrToken, Long authenticatedUserId) {
-        Long tokenUserId = qrTokenPort.validateAndExtractUserId(qrToken, "clock-in");
+        var validation = qrTokenPort.validate(qrToken, "clock-in");
+        Long tokenUserId = validation.userId();
 
         if (!tokenUserId.equals(authenticatedUserId)) {
             throw new BusinessRuleException("QR token does not belong to the authenticated user");
         }
 
-        return clockIn(tokenUserId);
+        ClockRecord record = clockIn(tokenUserId);
+
+        qrScanNotificationPort.notifyScanned(
+                validation.tokenId(),
+                tokenUserId,
+                "IN",
+                record.getRecordedAt()
+        );
+
+        return record;
     }
 
     @Override
     public ClockRecord clockOutWithQR(String qrToken, Long authenticatedUserId) {
-        Long tokenUserId = qrTokenPort.validateAndExtractUserId(qrToken, "clock-out");
+        var validation = qrTokenPort.validate(qrToken, "clock-out");
+        Long tokenUserId = validation.userId();
 
         if (!tokenUserId.equals(authenticatedUserId)) {
             throw new BusinessRuleException("QR token does not belong to the authenticated user");
         }
 
-        return clockOut(tokenUserId);
+        ClockRecord record = clockOut(tokenUserId);
+
+        qrScanNotificationPort.notifyScanned(
+                validation.tokenId(),
+                tokenUserId,
+                "OUT",
+                record.getRecordedAt()
+        );
+
+        return record;
     }
 
     @Override
@@ -65,20 +91,34 @@ public class ClockService implements ClockUseCase {
         return clockRepo.findAllByUserId(userId);
     }
 
+    public List<ClockRecord> getTodayActivities(Long userId) {
+        // Get start and end of today in UTC
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDate today = LocalDate.now(zoneId);
+
+        ZonedDateTime startOfDay = today.atStartOfDay(zoneId);
+        ZonedDateTime endOfDay = today.plusDays(1).atStartOfDay(zoneId);
+
+        Instant startInstant = startOfDay.toInstant();
+        Instant endInstant = endOfDay.toInstant();
+
+        return clockRepo.findByUserIdAndRecordedAtBetween(userId, startInstant, endInstant);
+    }
+
     // ---------- Admin manual clocking ----------
 
     @Override
-    public ClockRecord adminClockIn(Long userId, Instant timestamp, String reason) {
+    public ClockRecord adminClockIn(Long userId, Instant recordedAtTimestamp, String reason) {
         // TODO: Consider enforcing time constraints (e.g., cannot clock in for a time in the future)
         checkClockInRules(userId);
-        ClockRecord record = ClockRecord.createAt(userId, ClockRecordType.IN, timestamp, reason);
+        ClockRecord record = ClockRecord.createAt(userId, ClockRecordType.IN, recordedAtTimestamp, reason);
         return clockRepo.save(record);
     }
 
     @Override
-    public ClockRecord adminClockOut(Long userId, Instant timestamp, String reason) {
+    public ClockRecord adminClockOut(Long userId, Instant recordedAtTimestamp, String reason) {
         checkClockOutRules(userId);
-        ClockRecord record = ClockRecord.createAt(userId, ClockRecordType.OUT, timestamp, reason);
+        ClockRecord record = ClockRecord.createAt(userId, ClockRecordType.OUT, recordedAtTimestamp, reason);
         return clockRepo.save(record);
     }
 
@@ -90,6 +130,7 @@ public class ClockService implements ClockUseCase {
             }
         });
     }
+
     private void checkClockOutRules(Long userId) {
         clockRepo.findLatestByUserId(userId).ifPresent(lastRecord -> {
             if (ClockRecordType.OUT.equals(lastRecord.getType())) {
