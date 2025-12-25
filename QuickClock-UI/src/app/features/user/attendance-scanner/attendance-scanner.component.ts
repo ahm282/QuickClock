@@ -20,7 +20,6 @@ import {
     History,
 } from 'lucide-angular';
 import { environment } from '../../../environments/environment';
-import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
     selector: 'app-attendance-scanner',
@@ -87,7 +86,7 @@ export class AttendanceScannerComponent {
                     }
                 },
                 error: (error) => {
-                    console.error('Failed to load current status:', error);
+                    console.error('Failed to fetch current status:', error);
                     // Default to false if we can't determine status
                     this.isClockedIn.set(false);
                 },

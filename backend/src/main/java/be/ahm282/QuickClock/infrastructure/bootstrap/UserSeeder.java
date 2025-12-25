@@ -6,6 +6,7 @@ import be.ahm282.QuickClock.domain.model.User;
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
@@ -18,10 +19,12 @@ import java.util.Set;
 public class UserSeeder {
     private final UserRepositoryPort userRepositoryPort;
     private final SecureRandom secureRandom;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public UserSeeder(UserRepositoryPort userRepositoryPort) {
+    public UserSeeder(UserRepositoryPort userRepositoryPort, BCryptPasswordEncoder passwordEncoder) {
         this.userRepositoryPort = userRepositoryPort;
         this.secureRandom = new SecureRandom();
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostConstruct
@@ -54,7 +57,7 @@ public class UserSeeder {
         User user = User.newEmployee(
                 username,
                 displayName,
-                "$2a$12$arCwvNjUX42eEOdol04eReAZnDKMx9MTUmF9xAgn4.OoJjvV3hrUi",
+                passwordEncoder.encode("password123"),
                 secret,
                 roles);
         userRepositoryPort.save(user);

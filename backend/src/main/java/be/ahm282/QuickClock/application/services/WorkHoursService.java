@@ -5,6 +5,7 @@ import be.ahm282.QuickClock.application.ports.out.ClockRecordRepositoryPort;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
 import be.ahm282.QuickClock.domain.model.ClockRecordType;
 import be.ahm282.QuickClock.infrastructure.config.LocalizationConfig;
+import org.decimal4j.immutable.Decimal1f;
 import org.springframework.stereotype.Service;
 
 import java.time.*;
@@ -45,16 +46,18 @@ public class WorkHoursService {
         // Filter records
         List<ClockRecord> todayRecords = allRecords.stream()
                 .filter(r -> !r.getRecordedAt().isBefore(startOfToday))
+                .filter(r -> !r.getRecordedAt().isAfter(now))
                 .sorted(Comparator.comparing(ClockRecord::getRecordedAt))
                 .toList();
 
         List<ClockRecord> weekRecords = allRecords.stream()
                 .filter(r -> !r.getRecordedAt().isBefore(startOfWeek))
+                .filter(r -> !r.getRecordedAt().isAfter(now))
                 .sorted(Comparator.comparing(ClockRecord::getRecordedAt))
                 .toList();
 
-        double hoursToday = calculateHoursFromRecords(todayRecords, now);
-        double hoursThisWeek = calculateHoursFromRecords(weekRecords, now);
+        Decimal1f hoursToday = calculateHoursFromRecords(todayRecords, now);
+        Decimal1f hoursThisWeek = calculateHoursFromRecords(weekRecords, now);
 
         return new WorkHoursDTO(hoursToday, hoursThisWeek);
     }
@@ -64,7 +67,7 @@ public class WorkHoursService {
      * Pairs IN/OUT records and sums the duration.
      * If the last record is an IN without an OUT, calculates up to 'now'.
      */
-    private double calculateHoursFromRecords(List<ClockRecord> records, Instant now) {
+    private Decimal1f calculateHoursFromRecords(List<ClockRecord> records, Instant now) {
         long totalSeconds = 0;
         ClockRecord lastIn = null;
 
@@ -86,7 +89,7 @@ public class WorkHoursService {
         }
 
         // Convert seconds to hours (with decimal precision)
-        return totalSeconds / 3600.0;
+        return Decimal1f.valueOf(totalSeconds / 3600.0);
     }
 }
 
