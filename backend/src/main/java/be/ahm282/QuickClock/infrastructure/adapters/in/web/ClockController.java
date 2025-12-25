@@ -134,6 +134,16 @@ public class ClockController {
         return workHoursService.calculateWorkHours(userId);
     }
 
+    @GetMapping("/activity/me")
+    public List<ClockResponseDTO> getMyTodayActivities(HttpServletRequest request) {
+        Long userId = securityUtil.extractUserIdFromRequestToken(request);
+
+        return clockService.getTodayActivities(userId)
+                .stream()
+                .map(responseMapper::toDTO)
+                .toList();
+    }
+
     // -------------------------------------------------------------------------
     // QR-based endpoints (employee flow, initiated from kiosk)
     // -------------------------------------------------------------------------

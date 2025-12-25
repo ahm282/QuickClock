@@ -2,5 +2,13 @@
 <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3 items-start">
     <app-attendance-scanner class="lg:col-span-2 w-full" />
 
-    <app-work-hours-card class="lg:col-span-1 w-full h-full" />
+    <div class="flex flex-col gap-4 lg:col-span-1">
+        <app-work-hours-card class="lg:col-span-1 w-full h-full" />
+        <app-recent-activity-card
+            [activities]="activities"
+            [loading]="loading"
+            [error]="error"
+            class="lg:col-span-1 w-full h-full"
+        />
+    </div>
 </div>

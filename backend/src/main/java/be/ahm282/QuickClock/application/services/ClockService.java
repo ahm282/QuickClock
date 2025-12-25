@@ -11,6 +11,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -86,6 +89,20 @@ public class ClockService implements ClockUseCase {
     @Override
     public List<ClockRecord> getHistory(Long userId) {
         return clockRepo.findAllByUserId(userId);
+    }
+
+    public List<ClockRecord> getTodayActivities(Long userId) {
+        // Get start and end of today in UTC
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDate today = LocalDate.now(zoneId);
+
+        ZonedDateTime startOfDay = today.atStartOfDay(zoneId);
+        ZonedDateTime endOfDay = today.plusDays(1).atStartOfDay(zoneId);
+
+        Instant startInstant = startOfDay.toInstant();
+        Instant endInstant = endOfDay.toInstant();
+
+        return clockRepo.findByUserIdAndRecordedAtBetween(userId, startInstant, endInstant);
     }
 
     // ---------- Admin manual clocking ----------
