@@ -1,143 +1,147 @@
 <!-- SUCCESS view -->
 @if (scanStatus(); as status) {
-    <div class="kiosk-full center">
-        <div class="success-card">
-            <div class="success-dot">✓</div>
-            <h1 class="text-4xl font-light">Success</h1>
-            <h2>{{
-                status.direction === 'IN' ? 'Clocked in' : 'Clocked out'
-            }}</h2>
-            <p class="text-muted-foreground">
-                {{ selectedEmployee()?.displayName }}
-            </p>
-            <p class="text-sm text-muted-foreground/60">
-                {{ status.clockedAt | date: 'shortTime' }}
-            </p>
-        </div>
+<div class="kiosk-full center">
+    <div class="success-card">
+        <div class="success-dot">✓</div>
+        <h1 class="text-4xl font-light">Success</h1>
+        <h2>{{ status.direction === 'IN' ? 'Clocked in' : 'Clocked out' }}</h2>
+        <p class="text-muted-foreground">
+            {{ selectedEmployee()?.displayName }}
+        </p>
+        <p class="text-sm text-muted-foreground/60">
+            {{ status.clockedAt | date : 'shortTime' }}
+        </p>
     </div>
+</div>
 }
 
 <!-- QR view -->
 @else if (selectedEmployee()) {
-    <div class="kiosk-full">
-        <header class="kiosk-header">
+<div class="kiosk-full">
+    <header class="kiosk-header-wide">
+        <div class="flex justify-between gap-4">
             <app-logo />
-            <button
-                class="btn btn-secondary flex items-center gap-2 text-muted-foreground hover:text-muted-foreground transition-colors"
-                (click)="back()"
+            <div class="flex items-center gap-4">
+                <p class="text-sm text-muted-foreground">
+                    {{ today() | date : 'fullDate' }}
+                </p>
+                <button
+                    class="btn btn-secondary flex items-center gap-2 text-muted hover:text-white"
+                    (click)="back()"
+                >
+                    <lucide-icon [img]="ArrowLeft" [size]="18"></lucide-icon>
+                    <span>Back</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="kiosk-center">
+        <h1 class="text-3xl md:text-4xl font-light mb-2">
+            {{ selectedEmployee()?.displayName }}
+        </h1>
+        <p class="text-muted-foreground mb-4">Scan with your phone</p>
+
+        <div class="qr-box">
+            @if (qrLoading() || !isQrVisible()) {
+            <div
+                class="flex flex-col items-center justify-center gap-2 text-muted-foreground/50 h-[250px] w-[250px]"
             >
-                <lucide-icon [img]="ArrowLeft" [size]="18"></lucide-icon>
-                <span>Back</span>
-            </button>
-        </header>
-
-        <main class="kiosk-center">
-            <h1 class="text-3xl md:text-4xl font-light mb-2">
-                {{ selectedEmployee()?.displayName }}
-            </h1>
-            <p class="text-muted-foreground mb-4">Scan with your phone</p>
-
-            <div class="qr-box">
-                @if (qrLoading() || !isQrVisible()) {
-                    <div
-                        class="flex flex-col items-center justify-center gap-2 text-muted-foreground/50 h-[250px] w-[250px]"
-                    >
-                        <lucide-icon
-                            [img]="LoaderCircle"
-                            class="animate-spin"
-                            [size]="32"
-                        ></lucide-icon>
-                        <span class="text-sm">Connecting...</span>
-                    </div>
-                } @else {
-                    <qrcode
-                        [qrdata]="qrData()"
-                        [width]="250"
-                        [errorCorrectionLevel]="'H'"
-                        [imageWidth]="50"
-                        [imageHeight]="50"
-                        [colorDark]="'#004b9b'"
-                        [colorLight]="'#ffffff'"
-                        [margin]="2"
-                    ></qrcode>
-                }
+                <lucide-icon
+                    [img]="LoaderCircle"
+                    class="animate-spin"
+                    [size]="32"
+                ></lucide-icon>
+                <span class="text-sm">Connecting...</span>
             </div>
-
-            <div>
-                <progress
-                    class="progress w-56"
-                    [value]="timeRemaining()"
-                    [max]="30"
-                ></progress>
-            </div>
-
-            <div class="timer-pill">
-                <lucide-angular [img]="QrCode" [size]="18"></lucide-angular>
-                <span class="text-sm text-muted-foreground-foreground"
-                    >QR Code refreshes in</span
-                >
-                <span class="font-mono text-lg font-semibold"
-                    >{{ timeRemaining() }}s</span
-                >
-            </div>
-
-            @if (error()) {
-                <p class="text-destructive text-sm mt-6">{{ error() }}</p>
+            } @else {
+            <qrcode
+                [qrdata]="qrData()"
+                [width]="250"
+                [errorCorrectionLevel]="'H'"
+                [imageWidth]="50"
+                [imageHeight]="50"
+                [colorDark]="'#004b9b'"
+                [colorLight]="'#ffffff'"
+                [margin]="2"
+            ></qrcode>
             }
-        </main>
-    </div>
+        </div>
+
+        <div>
+            <progress
+                class="progress w-56"
+                [value]="timeRemaining()"
+                [max]="30"
+            ></progress>
+        </div>
+
+        <div class="timer-pill">
+            <lucide-angular [img]="QrCode" [size]="18"></lucide-angular>
+            <span class="text-sm text-muted-foreground-foreground"
+                >QR Code refreshes in</span
+            >
+            <span class="font-mono text-lg font-semibold"
+                >{{ timeRemaining() }}s</span
+            >
+        </div>
+
+        @if (error()) {
+        <p class="text-destructive text-sm mt-6">{{ error() }}</p>
+        }
+    </main>
+</div>
 }
 
 <!-- SELECTION view -->
 @else {
-    <div class="kiosk-full">
-        <header class="kiosk-header-wide">
-            <div class="flex justify-between gap-4">
-                <app-logo />
-                <div class="flex items-center gap-4">
-                    <p class="text-sm text-muted-foreground">
-                        {{ today() | date: 'fullDate' }}
-                    </p>
-                    <app-logout-button />
-                </div>
+<div class="kiosk-full">
+    <header class="kiosk-header-wide">
+        <div class="flex justify-between gap-4">
+            <app-logo />
+            <div class="flex items-center gap-4">
+                <p class="text-sm text-muted-foreground">
+                    {{ today() | date : 'fullDate' }}
+                </p>
+                <app-logout-button />
             </div>
-            <h1 class="text-4xl md:text-5xl font-light">Clock In/Out</h1>
-        </header>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-light">Clock In/Out</h1>
+    </header>
 
-        <main class="kiosk-grid">
-            @if (loading()) {
-                <div class="text-muted-foreground">Loading employees...</div>
-            } @else if (error()) {
-                <div class="text-destructive">{{ error() }}</div>
-            } @else {
-                <div>
-                    <h2 class="text-lg font-light text-muted-foreground mb-8">
-                        Select your name
-                    </h2>
+    <main class="kiosk-grid">
+        @if (loading()) {
+        <div class="text-muted-foreground">Loading employees...</div>
+        } @else if (error()) {
+        <div class="text-destructive">{{ error() }}</div>
+        } @else {
+        <div>
+            <h2 class="text-lg font-light text-muted-foreground mb-8">
+                Select your name
+            </h2>
+            <div
+                class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+            >
+                @for (u of employees(); track u.publicId) {
+                <button
+                    class="cursor-pointer group relative p-6 rounded-2xl border border-border bg-card hover:border-primary/50 hover:bg-accent/5 transition-all duration-200 text-left"
+                    (click)="select(u)"
+                >
                     <div
-                        class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+                        class="w-14 h-14 rounded-full bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-4 group-hover:from-primary/30 group-hover:to-primary/10 transition-colors"
                     >
-                        @for (u of employees(); track u.publicId) {
-                            <button
-                                class="cursor-pointer group relative p-6 rounded-2xl border border-border bg-card hover:border-primary/50 hover:bg-accent/5 transition-all duration-200 text-left"
-                                (click)="select(u)"
-                            >
-                                <div
-                                    class="w-14 h-14 rounded-full bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-4 group-hover:from-primary/30 group-hover:to-primary/10 transition-colors"
-                                >
-                                    <span
-                                        class="text-lg font-semibold text-primary"
-                                        >{{ u.displayName.charAt(0) }}</span
-                                    >
-                                </div>
-                                <h3 class="font-medium text mb-1">
-                                    {{ u.displayName }}
-                                </h3>
-                            </button>
-                        }
+                        <span class="text-lg font-semibold text-primary">{{
+                            u.displayName.charAt(0)
+                        }}</span>
                     </div>
-                </div>
-            }
-        </main>
-    </div>
+                    <h3 class="font-medium text mb-1">
+                        {{ u.displayName }}
+                    </h3>
+                </button>
+                }
+            </div>
+        </div>
+        }
+    </main>
+</div>
 }
