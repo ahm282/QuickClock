@@ -24,6 +24,7 @@ import {
 import { AppLogoComponent } from '../../shared/components/app-logo/app-logo.component';
 import { QrScanStatusDTO } from '../../core/models/qr-scan-status.model';
 import { Subscription } from 'rxjs';
+import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
 
 @Component({
     selector: 'app-kiosk-page',
@@ -34,6 +35,7 @@ import { Subscription } from 'rxjs';
         LogoutButtonComponent,
         LucideAngularModule,
         AppLogoComponent,
+        ThemeToggleComponent,
     ],
     templateUrl: './kiosk-page.component.html',
     styleUrl: './kiosk-page.component.css',

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { LucideAngularModule, Moon, SunMedium } from 'lucide-angular';
 import { environment } from '../../../environments/environment';
 
@@ -25,6 +25,10 @@ export class ThemeToggleComponent {
             this.currentTheme = saved;
         } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             this.currentTheme = 'business';
+            localStorage.setItem('theme', 'business');
+        } else {
+            this.currentTheme = 'corporate';
+            localStorage.setItem('theme', 'corporate');
         }
 
         document.documentElement.setAttribute('data-theme', this.currentTheme);
