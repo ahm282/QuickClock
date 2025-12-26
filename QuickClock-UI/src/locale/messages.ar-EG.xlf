@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-  <file source-language="en-US" datatype="plaintext" original="ng2.template">
+  <file source-language="en-US" target-language="ar-EG" datatype="plaintext" original="ng2.template" xml:lang="ar-EG">
     <body>
       <trans-unit id="attendanceScannerStatusTitle" datatype="html">
         <source> Current Status </source>
+        <target>الحالة الحالية</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">11,15</context>
@@ -12,8 +13,10 @@
                         status</note>
         <note priority="1" from="meaning">Section Heading</note>
       </trans-unit>
+
       <trans-unit id="statusClockedIn" datatype="html">
         <source> Clocked In </source>
+        <target>حضور</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">28,30</context>
@@ -21,8 +24,10 @@
         <note priority="1" from="description">User is currently clocked in</note>
         <note priority="1" from="meaning">Status</note>
       </trans-unit>
+
       <trans-unit id="statusClockedOut" datatype="html">
         <source> Clocked Out </source>
+        <target>انصراف</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">36,39</context>
@@ -31,8 +36,10 @@
                             out</note>
         <note priority="1" from="meaning">Status</note>
       </trans-unit>
+
       <trans-unit id="sinceTimeLabel" datatype="html">
         <source> Since <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium text-foreground&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ clockService.clockStatus()!.lastClockTime }}"/> <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <target> منذ <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium text-foreground&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ clockService.clockStatus()!.lastClockTime }}"/> <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">48,52</context>
@@ -41,8 +48,10 @@
                         action</note>
         <note priority="1" from="meaning">Label</note>
       </trans-unit>
+
       <trans-unit id="scanAlignHint" datatype="html">
         <source> Align QR code within the frame... </source>
+        <target>يرجى محاذاة رمز QR داخل الإطار...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">115,117</context>
@@ -50,8 +59,10 @@
         <note priority="1" from="description">Align QR code hint</note>
         <note priority="1" from="meaning">Instruction</note>
       </trans-unit>
+
       <trans-unit id="cameraErrorTitle" datatype="html">
         <source> Camera Access Failed </source>
+        <target>فشل الوصول إلى الكاميرا</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">134,136</context>
@@ -59,8 +70,10 @@
         <note priority="1" from="description">Camera access failed</note>
         <note priority="1" from="meaning">Error Heading</note>
       </trans-unit>
+
       <trans-unit id="tryAgainButton" datatype="html">
         <source> Try Again </source>
+        <target>إعادة المحاولة</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">145,147</context>
@@ -68,8 +81,10 @@
         <note priority="1" from="description">Try camera again</note>
         <note priority="1" from="meaning">Action</note>
       </trans-unit>
+
       <trans-unit id="readyToScanTitle" datatype="html">
         <source> Ready to Scan </source>
+        <target>جاهز للمسح</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">163,165</context>
@@ -77,8 +92,10 @@
         <note priority="1" from="description">Ready to scan heading</note>
         <note priority="1" from="meaning">State</note>
       </trans-unit>
+
       <trans-unit id="cameraUsageHint" datatype="html">
         <source> Use your device camera to clock in or out </source>
+        <target>استخدم كاميرا جهازك لتسجيل الحضور أو الانصراف</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">171,175</context>
@@ -87,8 +104,10 @@
                             instruction</note>
         <note priority="1" from="meaning">Instruction</note>
       </trans-unit>
+
       <trans-unit id="processingAttendanceMsg" datatype="html">
         <source> Processing attendance... </source>
+        <target>جارٍ معالجة طلب تسجيل الحضور...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">197,200</context>
@@ -97,8 +116,10 @@
                         message</note>
         <note priority="1" from="meaning">State</note>
       </trans-unit>
+
       <trans-unit id="stopScannerBtn" datatype="html">
         <source>Stop Scanner</source>
+        <target>إيقاف الماسح</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">208,211</context>
@@ -106,8 +127,10 @@
         <note priority="1" from="description">Stop scanner button</note>
         <note priority="1" from="meaning">Action</note>
       </trans-unit>
+
       <trans-unit id="startScannerBtn" datatype="html">
         <source>Start Scanner</source>
+        <target>تشغيل الماسح</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">219,222</context>
@@ -115,8 +138,10 @@
         <note priority="1" from="description">Start scanner button</note>
         <note priority="1" from="meaning">Action</note>
       </trans-unit>
+
       <trans-unit id="lastScanLabel" datatype="html">
         <source> Last scan: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium text-foreground&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ lastScanTime() }}"/> <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <target> آخر عملية مسح: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium text-foreground&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ lastScanTime() }}"/> <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">228,232</context>
@@ -124,8 +149,10 @@
         <note priority="1" from="description">Last scan timestamp label</note>
         <note priority="1" from="meaning">Label</note>
       </trans-unit>
+
       <trans-unit id="recentActivityTitle" datatype="html">
         <source>Today&apos;s Activity</source>
+        <target>نشاط اليوم</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.html</context>
           <context context-type="linenumber">5,10</context>
@@ -133,8 +160,10 @@
         <note priority="1" from="description">Recent activity card title</note>
         <note priority="1" from="meaning">Card Heading</note>
       </trans-unit>
+
       <trans-unit id="noActivityMessage" datatype="html">
         <source>No activity yet.</source>
+        <target>لا يوجد نشاط بعد.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.html</context>
           <context context-type="linenumber">30,34</context>
@@ -142,57 +171,73 @@
         <note priority="1" from="description">No recent activity text</note>
         <note priority="1" from="meaning">State message</note>
       </trans-unit>
+
       <trans-unit id="clockInLabel" datatype="html">
         <source>Clock in</source>
+        <target>حضور</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
+
       <trans-unit id="breakStartLabel" datatype="html">
         <source>Break start</source>
+        <target>بداية الاستراحة</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
+
       <trans-unit id="breakEndLabel" datatype="html">
         <source>Break end</source>
+        <target>نهاية الاستراحة</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.ts</context>
           <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
+
       <trans-unit id="clockOutLabel" datatype="html">
         <source>Clock out</source>
+        <target>انصراف</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.ts</context>
           <context context-type="linenumber">27</context>
         </context-group>
       </trans-unit>
+
       <trans-unit id="greetingMorning" datatype="html">
         <source>Good Morning</source>
+        <target>صباح الخير</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/user-welcome/user-welcome.component.ts</context>
           <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
+
       <trans-unit id="greetingAfternoon" datatype="html">
         <source>Good Afternoon</source>
+        <target>نهارك سعيد</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/user-welcome/user-welcome.component.ts</context>
           <context context-type="linenumber">21</context>
         </context-group>
       </trans-unit>
+
       <trans-unit id="greetingEvening" datatype="html">
         <source>Good Evening</source>
+        <target>مساء الخير</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/user-welcome/user-welcome.component.ts</context>
           <context context-type="linenumber">23</context>
         </context-group>
       </trans-unit>
+
       <trans-unit id="workHoursTitle" datatype="html">
         <source>Work Hours</source>
+        <target>ساعات العمل</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
           <context context-type="linenumber">5,9</context>
@@ -200,8 +245,10 @@
         <note priority="1" from="description">Work hours card title</note>
         <note priority="1" from="meaning">Card Heading</note>
       </trans-unit>
+
       <trans-unit id="retryWorkHoursButton" datatype="html">
         <source> Retry </source>
+        <target>إعادة المحاولة</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
           <context context-type="linenumber">28,31</context>
@@ -209,8 +256,10 @@
         <note priority="1" from="description">Retry fetching work hours label</note>
         <note priority="1" from="meaning">Action</note>
       </trans-unit>
+
       <trans-unit id="noWorkHoursDataMessage" datatype="html">
         <source>No data available.</source>
+        <target>لا توجد بيانات متاحة.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
           <context context-type="linenumber">38,42</context>
@@ -219,8 +268,10 @@
                 available</note>
         <note priority="1" from="meaning">State message</note>
       </trans-unit>
+
       <trans-unit id="refreshWorkHoursButton" datatype="html">
         <source> Refresh </source>
+        <target>تحديث</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
           <context context-type="linenumber">45,49</context>
@@ -228,8 +279,10 @@
         <note priority="1" from="description">Refresh work hours label</note>
         <note priority="1" from="meaning">Action</note>
       </trans-unit>
+
       <trans-unit id="labelToday" datatype="html">
         <source>Today</source>
+        <target>اليوم</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
           <context context-type="linenumber">58,61</context>
@@ -237,8 +290,10 @@
         <note priority="1" from="description">Label for today&apos;s hours</note>
         <note priority="1" from="meaning">Time period</note>
       </trans-unit>
+
       <trans-unit id="labelThisWeek" datatype="html">
         <source>This week</source>
+        <target>هذا الأسبوع</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
           <context context-type="linenumber">68,74</context>
@@ -246,8 +301,10 @@
         <note priority="1" from="description">Label for weekly hours</note>
         <note priority="1" from="meaning">Time period</note>
       </trans-unit>
+
       <trans-unit id="footerCopyright" datatype="html">
         <source>© <x id="INTERPOLATION" equiv-text="{{ getYear() }}"/> QuickClock. All rights reserved.</source>
+        <target>© <x id="INTERPOLATION" equiv-text="{{ getYear() }}"/> QuickClock. جميع الحقوق محفوظة.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/layout/main-layout/main-layout.component.html</context>
           <context context-type="linenumber">14,15</context>
@@ -255,8 +312,10 @@
         <note priority="1" from="description">Copyright statement</note>
         <note priority="1" from="meaning">Footer</note>
       </trans-unit>
+
       <trans-unit id="logoutButtonLabel" datatype="html">
         <source><x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;LogOut&quot; [size]=&quot;18&quot;&gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;/lucide-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;hidden md:block&quot;&gt;"/>Logout<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <target><x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;LogOut&quot; [size]=&quot;18&quot;&gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;/lucide-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;hidden md:block&quot;&gt;"/>تسجيل الخروج<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/logout-button/logout-button.component.html</context>
           <context context-type="linenumber">6,10</context>
@@ -264,8 +323,10 @@
         <note priority="1" from="description">Logout button label</note>
         <note priority="1" from="meaning">User action</note>
       </trans-unit>
+
       <trans-unit id="confirmLogoutTitle" datatype="html">
         <source>Confirm Logout</source>
+        <target>تأكيد تسجيل الخروج</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/logout-button/logout-button.component.html</context>
           <context context-type="linenumber">15,20</context>
@@ -273,8 +334,10 @@
         <note priority="1" from="description">Confirm logout dialog title</note>
         <note priority="1" from="meaning">Dialog title</note>
       </trans-unit>
+
       <trans-unit id="confirmLogoutMessage" datatype="html">
         <source> Are you sure you want to log out? </source>
+        <target>هل أنت متأكد من رغبتك في تسجيل الخروج؟</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/logout-button/logout-button.component.html</context>
           <context context-type="linenumber">23,27</context>
@@ -283,8 +346,10 @@
                 message</note>
         <note priority="1" from="meaning">Dialog message</note>
       </trans-unit>
+
       <trans-unit id="cancelLogoutButton" datatype="html">
         <source>Cancel</source>
+        <target>إلغاء</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/logout-button/logout-button.component.html</context>
           <context context-type="linenumber">30,33</context>
@@ -292,8 +357,10 @@
         <note priority="1" from="description">Cancel logout button</note>
         <note priority="1" from="meaning">Dialog button</note>
       </trans-unit>
+
       <trans-unit id="confirmLogoutButton" datatype="html">
         <source> Logout </source>
+        <target>تسجيل الخروج</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/logout-button/logout-button.component.html</context>
           <context context-type="linenumber">37,41</context>
@@ -301,8 +368,10 @@
         <note priority="1" from="description">Confirm logout button</note>
         <note priority="1" from="meaning">Dialog button</note>
       </trans-unit>
+
       <trans-unit id="closeDialogAria" datatype="html">
         <source>close</source>
+        <target>إغلاق</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/logout-button/logout-button.component.html</context>
           <context context-type="linenumber">43,44</context>

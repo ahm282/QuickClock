@@ -1,5 +1,5 @@
 {
-    "name": "quick-clock-ui",
+    "name": "quick-clock",
     "version": "0.0.0",
     "scripts": {
         "ng": "ng",

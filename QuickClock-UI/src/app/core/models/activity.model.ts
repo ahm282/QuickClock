@@ -1,5 +1,5 @@
 export interface Activity {
     id: number;
-    type: string;
+    type: 'in' | 'break_start' | 'break_end' | 'out';
     recordedAt: string;
 }

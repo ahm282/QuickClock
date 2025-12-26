@@ -5,7 +5,7 @@ import { ClockService } from '../../../core/services/clock.service';
 @Component({
     selector: 'app-work-hours-card',
     standalone: true,
-    imports: [IntlNumberPipe],
+    imports: [],
     templateUrl: './work-hours-card.component.html',
     styleUrl: './work-hours-card.component.css',
 })

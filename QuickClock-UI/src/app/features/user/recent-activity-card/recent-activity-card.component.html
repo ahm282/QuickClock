@@ -1,5 +1,7 @@
 <div class="p-6 md:p-8 rounded-2xl border border-border bg-card min-h-full">
-    <h3 class="text-sm text-muted-foreground opacity-70 mb-6"
+    <h3
+        class="text-sm text-muted-foreground opacity-70 mb-6"
+        i18n="Card Heading|Recent activity card title@@recentActivityTitle"
         >Today's Activity</h3
     >
 
@@ -22,7 +24,11 @@
     </div>
     } @else if (!activities().length) {
     <div class="alert">
-        <span class="text-sm opacity-80">No activity yet.</span>
+        <span
+            class="text-sm opacity-80"
+            i18n="State message|No recent activity text@@noActivityMessage"
+            >No activity yet.</span
+        >
     </div>
     } @else {
     <div class="space-y-4">
@@ -32,7 +38,7 @@
                 <span
                     class="font-medium text-foreground text-sm"
                     [ngClass]="
-                        activity.type.toLowerCase() === 'in'
+                        isEntry(activity.type)
                             ? 'text-emerald-600'
                             : 'text-red-600'
                     "

@@ -14,12 +14,13 @@ export class UserWelcomeComponent {
 
     timeBasedGreeting(): string {
         const currentHour = new Date().getHours();
+
         if (currentHour < 12) {
-            return 'Good Morning';
+            return $localize`:@@greetingMorning:Good Morning`;
         } else if (currentHour < 18) {
-            return 'Good Afternoon';
+            return $localize`:@@greetingAfternoon:Good Afternoon`;
         } else {
-            return 'Good Evening';
+            return $localize`:@@greetingEvening:Good Evening`;
         }
     }
 }

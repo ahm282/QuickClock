@@ -49,7 +49,7 @@
     <div class="space-y-6">
         <div>
             <p class="text-5xl font-light text-primary">
-                {{ clockService.workHours()!.hoursToday | intlNumber }}
+                {{ clockService.workHours()!.hoursToday }}
             </p>
             <p
                 class="text-sm text-muted-foreground opacity-70 mt-1"
@@ -60,7 +60,7 @@
 
         <div class="pt-6 border-t border-border">
             <p class="text-3xl font-light text-foreground">
-                {{ clockService.workHours()!.hoursThisWeek | intlNumber }}
+                {{ clockService.workHours()!.hoursThisWeek }}
             </p>
             <p
                 class="text-sm text-muted-foreground opacity-70 mt-1"
