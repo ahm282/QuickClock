@@ -27,8 +27,10 @@ export class AppHeaderComponent {
             | 'corporate'
             | 'business'
             | null;
-        if (saved === 'corporate' || saved === 'business') {
+        if (saved) {
             this.currentTheme = saved;
+        } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            this.currentTheme = 'business';
         }
 
         document.documentElement.setAttribute('data-theme', this.currentTheme);
