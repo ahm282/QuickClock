@@ -129,3 +129,17 @@ select:-webkit-autofill:focus {
 .animate-scan {
     animation: scan 2s linear infinite;
 }
+
+@media (prefers-reduced-motion: reduce) {
+    :root.theme-transition {
+        transition: none !important;
+    }
+}
+
+:root.theme-transition,
+:root.theme-transition *,
+:root.theme-transition *:before,
+:root.theme-transition *:after {
+    transition: all 0.3s ease-in !important;
+    transition-delay: 0s !important;
+}

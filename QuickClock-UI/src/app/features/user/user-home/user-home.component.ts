@@ -22,7 +22,6 @@ export class UserHomeComponent {
     clockService = inject(ClockService);
 
     ngOnInit() {
-        // Initialize all clock-related data
         this.clockService.initializeData();
     }
 }

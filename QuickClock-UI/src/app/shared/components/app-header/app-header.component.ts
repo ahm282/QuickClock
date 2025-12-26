@@ -3,6 +3,7 @@ import { LucideAngularModule, Clock, Moon, SunMedium } from 'lucide-angular';
 import { LogoutButtonComponent } from '../logout-button/logout-button.component';
 import { AppLogoComponent } from '../app-logo/app-logo.component';
 import { AuthService } from '../../../core/services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
     selector: 'app-header',
@@ -19,6 +20,7 @@ export class AppHeaderComponent {
     readonly moon = Moon;
 
     currentTheme: 'corporate' | 'business' = 'corporate';
+    private readonly THEME_TRANSITION_MS = environment.THEME_TRANSITION_MS;
 
     ngOnInit(): void {
         const saved = localStorage.getItem('theme') as
@@ -33,9 +35,20 @@ export class AppHeaderComponent {
     }
 
     switchTheme(): void {
-        this.currentTheme =
+        const newTheme =
             this.currentTheme === 'corporate' ? 'business' : 'corporate';
-        document.documentElement.setAttribute('data-theme', this.currentTheme);
-        localStorage.setItem('theme', this.currentTheme);
+
+        // Add a temporary class to enable smooth transitions
+        document.documentElement.classList.add('theme-transition');
+
+        // Apply new theme
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+
+        window.setTimeout(() => {
+            document.documentElement.classList.remove('theme-transition');
+        }, this.THEME_TRANSITION_MS);
+
+        this.currentTheme = newTheme;
     }
 }
