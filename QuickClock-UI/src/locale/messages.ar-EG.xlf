@@ -3,7 +3,7 @@
   <file source-language="en-US" target-language="ar-EG" datatype="plaintext" original="ng2.template" xml:lang="ar-EG">
     <body>
       <trans-unit id="attendanceScannerStatusTitle" datatype="html">
-        <source> Current Status </source>
+        <source>Current Status</source>
         <target>الحالة الحالية</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
@@ -15,7 +15,7 @@
       </trans-unit>
 
       <trans-unit id="statusClockedIn" datatype="html">
-        <source> Clocked In </source>
+        <source>Clocked In</source>
         <target>حضور</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
@@ -26,8 +26,8 @@
       </trans-unit>
 
       <trans-unit id="statusClockedOut" datatype="html">
-        <source> Clocked Out </source>
-        <target>انصراف</target>
+        <source>Clocked Out</source>
+        <target>اِنصراف</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
           <context context-type="linenumber">36,39</context>
@@ -38,7 +38,7 @@
       </trans-unit>
 
       <trans-unit id="sinceTimeLabel" datatype="html">
-        <source> Since <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium text-foreground&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ clockService.clockStatus()!.lastClockTime }}"/> <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <source>Since <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium text-foreground&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ clockService.clockStatus()!.lastClockTime }}"/> <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <target> منذ <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium text-foreground&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ clockService.clockStatus()!.lastClockTime }}"/> <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
@@ -50,7 +50,7 @@
       </trans-unit>
 
       <trans-unit id="scanAlignHint" datatype="html">
-        <source> Align QR code within the frame... </source>
+        <source>Align QR code within the frame...</source>
         <target>يرجى محاذاة رمز QR داخل الإطار...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
@@ -61,7 +61,7 @@
       </trans-unit>
 
       <trans-unit id="cameraErrorTitle" datatype="html">
-        <source> Camera Access Failed </source>
+        <source>Camera Access Failed</source>
         <target>فشل الوصول إلى الكاميرا</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
@@ -72,7 +72,7 @@
       </trans-unit>
 
       <trans-unit id="tryAgainButton" datatype="html">
-        <source> Try Again </source>
+        <source>Try Again</source>
         <target>إعادة المحاولة</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
@@ -83,7 +83,7 @@
       </trans-unit>
 
       <trans-unit id="readyToScanTitle" datatype="html">
-        <source> Ready to Scan </source>
+        <source>Ready to Scan</source>
         <target>جاهز للمسح</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
@@ -94,7 +94,7 @@
       </trans-unit>
 
       <trans-unit id="cameraUsageHint" datatype="html">
-        <source> Use your device camera to clock in or out </source>
+        <source>Use your device camera to clock in or out</source>
         <target>استخدم كاميرا جهازك لتسجيل الحضور أو الانصراف</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
@@ -106,7 +106,7 @@
       </trans-unit>
 
       <trans-unit id="processingAttendanceMsg" datatype="html">
-        <source> Processing attendance... </source>
+        <source>Processing attendance...</source>
         <target>جارٍ معالجة طلب تسجيل الحضور...</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
@@ -140,7 +140,7 @@
       </trans-unit>
 
       <trans-unit id="lastScanLabel" datatype="html">
-        <source> Last scan: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium text-foreground&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ lastScanTime() }}"/> <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <source>Last scan: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium text-foreground&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ lastScanTime() }}"/> <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <target> آخر عملية مسح: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium text-foreground&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ lastScanTime() }}"/> <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
@@ -201,7 +201,7 @@
 
       <trans-unit id="clockOutLabel" datatype="html">
         <source>Clock out</source>
-        <target>انصراف</target>
+        <target>اِنصراف</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.ts</context>
           <context context-type="linenumber">27</context>
@@ -247,7 +247,7 @@
       </trans-unit>
 
       <trans-unit id="retryWorkHoursButton" datatype="html">
-        <source> Retry </source>
+        <source>Retry</source>
         <target>إعادة المحاولة</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
@@ -270,7 +270,7 @@
       </trans-unit>
 
       <trans-unit id="refreshWorkHoursButton" datatype="html">
-        <source> Refresh </source>
+        <source>Refresh</source>
         <target>تحديث</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
@@ -345,7 +345,7 @@
       </trans-unit>
 
       <trans-unit id="confirmLogoutMessage" datatype="html">
-        <source> Are you sure you want to log out? </source>
+        <source>Are you sure you want to log out?</source>
         <target>هل أنت متأكد من رغبتك في تسجيل الخروج؟</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/logout-button/logout-button.component.html</context>
@@ -368,7 +368,7 @@
       </trans-unit>
 
       <trans-unit id="confirmLogoutButton" datatype="html">
-        <source> Logout </source>
+        <source>Logout</source>
         <target>تسجيل الخروج</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/logout-button/logout-button.component.html</context>

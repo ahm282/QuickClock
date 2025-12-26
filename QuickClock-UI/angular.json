@@ -64,7 +64,11 @@
                             ".svg": "text",
                             ".woff2": "file"
                         },
-                        "localize": true
+                        "localize": true,
+                        "allowedCommonJsDependencies": [
+                            "qrcode",
+                            "angularx-qrcode"
+                        ]
                     },
                     "configurations": {
                         "production": {
