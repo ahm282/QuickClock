@@ -1,9 +1,11 @@
 <div class="p-6 md:p-8 rounded-2xl border border-border bg-card min-h-full">
     <h3
-        class="text-sm text-muted-foreground opacity-70 mb-6"
+        class="text-sm text-muted-foreground opacity-70 mb-6 flex items-center gap-2"
         i18n="Card Heading|Recent activity card title@@recentActivityTitle"
-        >Today's Activity</h3
     >
+        <lucide-icon [img]="list" class="w-4 h-4"></lucide-icon>
+        <span>Today's Activity</span>
+    </h3>
 
     @if (loading()) {
     <div class="space-y-4">
@@ -34,21 +36,18 @@
     <div class="space-y-4">
         @for (activity of activities(); track activity.id ?? $index) {
         <div class="flex items-center justify-between">
-            <div class="flex justify-between items-center w-full">
-                <span
-                    class="font-medium text-foreground text-sm"
-                    [ngClass]="
-                        isEntry(activity.type)
-                            ? 'text-emerald-600'
-                            : 'text-red-600'
-                    "
-                >
-                    {{ label(activity.type) }}
-                </span>
-                <span class="text-xs text-muted-foreground opacity-70">
-                    {{ activity.recordedAt | date : 'shortTime' }}
-                </span>
-            </div>
+            <span
+                class="badge badge-soft rounded-md font-medium text-sm w-32 flex items-center gap-2"
+                [ngClass]="
+                    isEntry(activity.type) ? 'badge-success' : 'badge-error'
+                "
+            >
+                <lucide-icon [img]="icon(activity.type)" class="w-3 h-3" />
+                <span>{{ label(activity.type) }}</span>
+            </span>
+            <span class="text-xs text-muted-foreground w-3/12 text-right">
+                {{ activity.recordedAt | date : 'shortTime' }}
+            </span>
         </div>
         }
     </div>

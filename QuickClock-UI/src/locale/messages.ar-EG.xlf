@@ -313,6 +313,15 @@
         <note priority="1" from="meaning">Footer</note>
       </trans-unit>
 
+      <trans-unit id="changeLanguageAria" datatype="html">
+        <source>Change Language</source>
+        <target>تغيير اللغة</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/language-switcher/language-switcher.component.html</context>
+          <context context-type="linenumber">6,7</context>
+        </context-group>
+      </trans-unit>
+
       <trans-unit id="logoutButtonLabel" datatype="html">
         <source><x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;LogOut&quot; [size]=&quot;18&quot;&gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;/lucide-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;hidden md:block&quot;&gt;"/>Logout<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <target><x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;LogOut&quot; [size]=&quot;18&quot;&gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;/lucide-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;hidden md:block&quot;&gt;"/>تسجيل الخروج<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></target>

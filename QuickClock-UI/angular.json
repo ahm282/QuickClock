@@ -86,7 +86,8 @@
                             "optimization": false,
                             "extractLicenses": false,
                             "sourceMap": true,
-                            "i18nMissingTranslation": "error"
+                            "i18nMissingTranslation": "error",
+                            "outputHashing": "media"
                         },
                         "ar-EG": {
                             "localize": ["ar-EG"]
@@ -98,7 +99,10 @@
                     "builder": "@angular/build:dev-server",
                     "configurations": {
                         "production": {
-                            "buildTarget": "QuickClock:build:production"
+                            "buildTarget": "QuickClock:build:production",
+                            "ssl": true,
+                            "host": "0.0.0.0",
+                            "port": 5173
                         },
                         "development": {
                             "buildTarget": "QuickClock:build:development",

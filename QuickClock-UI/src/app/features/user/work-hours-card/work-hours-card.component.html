@@ -1,9 +1,14 @@
 <div class="w-full h-fit p-6 md:p-8 rounded-2xl border border-border bg-card">
     <h3
-        class="text-sm text-muted-foreground opacity-70 mb-4"
+        class="text-sm text-muted-foreground opacity-70 mb-4 flex items-center gap-2"
         i18n="Card Heading|Work hours card title@@workHoursTitle"
-        >Work Hours</h3
     >
+        <lucide-icon
+            [img]="ClipboardClock"
+            class="w-4 h-4 text-muted-foreground"
+        />
+        <span>Work Hours</span>
+    </h3>
 
     @if (clockService.workHoursLoading()) {
     <div class="space-y-6">
@@ -48,8 +53,8 @@
     } @else {
     <div class="space-y-6">
         <div>
-            <p class="text-5xl font-light text-primary">
-                {{ clockService.workHours()!.hoursToday }}
+            <p class="text-5xl font-light text-primary flex items-center gap-3">
+                <span>{{ clockService.workHours()!.hoursToday }}</span>
             </p>
             <p
                 class="text-sm text-muted-foreground opacity-70 mt-1"

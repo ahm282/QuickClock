@@ -4,6 +4,7 @@ import { LogoutButtonComponent } from '../logout-button/logout-button.component'
 import { AppLogoComponent } from '../app-logo/app-logo.component';
 import { ThemeToggleComponent } from '../theme-toggle/theme-toggle.component';
 import { AuthService } from '../../../core/services/auth.service';
+import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
 
 @Component({
     selector: 'app-header',
@@ -13,6 +14,7 @@ import { AuthService } from '../../../core/services/auth.service';
         LogoutButtonComponent,
         AppLogoComponent,
         ThemeToggleComponent,
+        LanguageSwitcherComponent,
     ],
     templateUrl: './app-header.component.html',
     styleUrl: './app-header.component.css',

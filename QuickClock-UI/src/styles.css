@@ -19,8 +19,12 @@
     /* Semantic Colors */
     --color-info: oklch(0.65 0.12 235);
     --color-info-content: oklch(1 0 0);
-    --color-error: oklch(0.577 0.245 27.325);
+    --color-error: oklch(0.57 0.245 27.325);
     --color-error-content: oklch(1 0 0);
+    --color-success: oklch(0.59 0.22 142);
+    --color-success-content: oklch(1 0 0);
+    --color-warning: oklch(0.75 0.2 100);
+    --color-warning-content: oklch(0.2 0 0);
 
     /* Surfaces */
     --color-base-100: oklch(0.98 0 0); /* Pure White Card */
@@ -46,8 +50,12 @@
     --color-primary-content: oklch(0.15 0 0);
     --color-info: oklch(0.72 0.11 220);
     --color-info-content: oklch(0.15 0 0);
-    --color-error: oklch(0.58 0.22 25);
+    --color-error: oklch(0.54 0.2 30);
     --color-error-content: oklch(0.95 0 0);
+    --color-success: oklch(0.58 0.58 162);
+    --color-success-content: oklch(0.95 0 0);
+    --color-warning: oklch(0.65 0.15 100);
+    --color-warning-content: oklch(0.15 0 0);
 
     /* Surfaces */
     --color-base-100: oklch(0.19 0.02 253);
@@ -143,4 +151,16 @@ select:-webkit-autofill:focus {
 :root.theme-transition *:after {
     transition: all 0.3s ease-in !important;
     transition-delay: 0s !important;
+}
+
+@layer utilities {
+    @supports (color: color-mix(in lab, red, red)) {
+        .badge-soft {
+            background-color: color-mix(
+                in oklab,
+                var(--badge-color, var(--color-base-content)) 14%,
+                var(--color-base-100)
+            );
+        }
+    }
 }

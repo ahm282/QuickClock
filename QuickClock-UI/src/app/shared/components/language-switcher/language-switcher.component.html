@@ -1,0 +1,54 @@
+<div class="dropdown dropdown-end">
+    <div
+        tabindex="0"
+        role="button"
+        class="btn btn-ghost btn-square relative text-muted-foreground"
+        aria-label="Change Language"
+        i18n-aria-label="@@changeLanguageAria"
+    >
+        <lucide-icon [img]="languagesIcon" class="w-5 h-5" />
+    </div>
+
+    <ul
+        tabindex="0"
+        class="dropdown-content z-10 menu p-2 shadow-lg bg-base-100 rounded-box w-40 mt-2 border border-border"
+    >
+        <li>
+            <button
+                (click)="switchLanguage('en-US')"
+                [class.active]="currentLocale === 'en-US'"
+                class="flex justify-between"
+            >
+                <div class="w-full flex items-center justify-between"
+                    ><span
+                        class="w-7 h-fit rounded-full inline-block shadow-sm"
+                        [innerHTML]="flagUK"
+                    ></span
+                    ><span class="w-full text-right">English</span></div
+                >
+                @if (currentLocale === 'en-US') {
+                <lucide-icon [img]="checkIcon" class="w-5 h-5" />
+                }
+            </button>
+        </li>
+
+        <li class="mt-2">
+            <button
+                (click)="switchLanguage('ar-EG')"
+                [class.active]="currentLocale === 'ar-EG'"
+                class="flex justify-between font-arabic"
+            >
+                <div class="w-full flex items-center justify-between">
+                    <span
+                        class="w-7 h-fit rounded-full inline-block shadow-sm"
+                        [innerHTML]="flagEG"
+                    ></span>
+                    <span class="w-full text-right">العربية</span>
+                </div>
+                @if (currentLocale === 'ar-EG') {
+                <lucide-icon [img]="checkIcon" class="w-4 h-4" />
+                }
+            </button>
+        </li>
+    </ul>
+</div>

@@ -3,10 +3,10 @@
   <file source-language="en-US" datatype="plaintext" original="ng2.template">
     <body>
       <trans-unit id="attendanceScannerStatusTitle" datatype="html">
-        <source> Current Status </source>
+        <source><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Current Status<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/attendance-scanner/attendance-scanner.component.html</context>
-          <context context-type="linenumber">11,15</context>
+          <context context-type="linenumber">11,12</context>
         </context-group>
         <note priority="1" from="description">Attendance scanner current
                         status</note>
@@ -125,10 +125,10 @@
         <note priority="1" from="meaning">Label</note>
       </trans-unit>
       <trans-unit id="recentActivityTitle" datatype="html">
-        <source>Today&apos;s Activity</source>
+        <source><x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;list&quot; class=&quot;w-4 h-4&quot;&gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;/lucide-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Today&apos;s Activity<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.html</context>
-          <context context-type="linenumber">5,10</context>
+          <context context-type="linenumber">6,10</context>
         </context-group>
         <note priority="1" from="description">Recent activity card title</note>
         <note priority="1" from="meaning">Card Heading</note>
@@ -137,7 +137,7 @@
         <source>No activity yet.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.html</context>
-          <context context-type="linenumber">30,34</context>
+          <context context-type="linenumber">32,36</context>
         </context-group>
         <note priority="1" from="description">No recent activity text</note>
         <note priority="1" from="meaning">State message</note>
@@ -146,28 +146,28 @@
         <source>Clock in</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.ts</context>
-          <context context-type="linenumber">21</context>
+          <context context-type="linenumber">49</context>
         </context-group>
       </trans-unit>
       <trans-unit id="breakStartLabel" datatype="html">
         <source>Break start</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.ts</context>
-          <context context-type="linenumber">23</context>
+          <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="breakEndLabel" datatype="html">
         <source>Break end</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.ts</context>
-          <context context-type="linenumber">25</context>
+          <context context-type="linenumber">53</context>
         </context-group>
       </trans-unit>
       <trans-unit id="clockOutLabel" datatype="html">
         <source>Clock out</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/recent-activity-card/recent-activity-card.component.ts</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="greetingMorning" datatype="html">
@@ -192,10 +192,16 @@
         </context-group>
       </trans-unit>
       <trans-unit id="workHoursTitle" datatype="html">
-        <source>Work Hours</source>
+        <source><x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon
+            [img]=&quot;ClipboardClock&quot;
+            class=&quot;w-4 h-4 text-muted-foreground&quot;
+        /&gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon
+            [img]=&quot;ClipboardClock&quot;
+            class=&quot;w-4 h-4 text-muted-foreground&quot;
+        /&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Work Hours<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
-          <context context-type="linenumber">5,9</context>
+          <context context-type="linenumber">6,13</context>
         </context-group>
         <note priority="1" from="description">Work hours card title</note>
         <note priority="1" from="meaning">Card Heading</note>
@@ -204,7 +210,7 @@
         <source> Retry </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
-          <context context-type="linenumber">28,31</context>
+          <context context-type="linenumber">33,36</context>
         </context-group>
         <note priority="1" from="description">Retry fetching work hours label</note>
         <note priority="1" from="meaning">Action</note>
@@ -213,7 +219,7 @@
         <source>No data available.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
-          <context context-type="linenumber">38,42</context>
+          <context context-type="linenumber">43,47</context>
         </context-group>
         <note priority="1" from="description">Text shown when no data is
                 available</note>
@@ -223,7 +229,7 @@
         <source> Refresh </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
-          <context context-type="linenumber">45,49</context>
+          <context context-type="linenumber">50,54</context>
         </context-group>
         <note priority="1" from="description">Refresh work hours label</note>
         <note priority="1" from="meaning">Action</note>
@@ -232,7 +238,7 @@
         <source>Today</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
-          <context context-type="linenumber">58,61</context>
+          <context context-type="linenumber">63,66</context>
         </context-group>
         <note priority="1" from="description">Label for today&apos;s hours</note>
         <note priority="1" from="meaning">Time period</note>
@@ -241,7 +247,7 @@
         <source>This week</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/user/work-hours-card/work-hours-card.component.html</context>
-          <context context-type="linenumber">68,74</context>
+          <context context-type="linenumber">73,79</context>
         </context-group>
         <note priority="1" from="description">Label for weekly hours</note>
         <note priority="1" from="meaning">Time period</note>
@@ -254,6 +260,13 @@
         </context-group>
         <note priority="1" from="description">Copyright statement</note>
         <note priority="1" from="meaning">Footer</note>
+      </trans-unit>
+      <trans-unit id="changeLanguageAria" datatype="html">
+        <source>Change Language</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/language-switcher/language-switcher.component.html</context>
+          <context context-type="linenumber">6,7</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="logoutButtonLabel" datatype="html">
         <source><x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;LogOut&quot; [size]=&quot;18&quot;&gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;/lucide-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;hidden md:block&quot;&gt;"/>Logout<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>

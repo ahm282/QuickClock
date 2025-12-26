@@ -1,10 +1,18 @@
 import { DatePipe, NgClass } from '@angular/common';
 import { Component, input } from '@angular/core';
+import {
+    LucideAngularModule,
+    LogIn,
+    LogOut,
+    Coffee,
+    Clock,
+    List,
+} from 'lucide-angular';
 import type { Activity } from '../../../core/models/activity.model';
 
 @Component({
     selector: 'app-recent-activity-card',
-    imports: [DatePipe, NgClass],
+    imports: [DatePipe, NgClass, LucideAngularModule],
     templateUrl: './recent-activity-card.component.html',
     styleUrl: './recent-activity-card.component.css',
 })
@@ -12,6 +20,26 @@ export class RecentActivityCardComponent {
     activities = input.required<Activity[]>();
     loading = input.required<boolean>();
     error = input<string | null>();
+
+    readonly logIn = LogIn;
+    readonly logOut = LogOut;
+    readonly coffee = Coffee;
+    readonly clock = Clock;
+    readonly list = List;
+
+    icon(type: Activity['type']) {
+        switch (type.toLowerCase()) {
+            case 'in':
+                return this.logIn;
+            case 'break_start':
+            case 'break_end':
+                return this.coffee;
+            case 'out':
+                return this.logOut;
+            default:
+                return this.clock;
+        }
+    }
 
     trackByIdx = (index: number) => index;
 
