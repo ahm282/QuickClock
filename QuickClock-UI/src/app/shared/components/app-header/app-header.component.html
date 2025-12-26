@@ -2,38 +2,7 @@
     <app-logo />
 
     <div class="flex items-center gap-2">
-        <button
-            type="button"
-            (click)="switchTheme()"
-            class="btn btn-ghost btn-square relative text-muted-foreground"
-            [attr.aria-label]="
-                currentTheme === 'business'
-                    ? 'Switch to light mode'
-                    : 'Switch to dark mode'
-            "
-        >
-            <lucide-icon
-                [img]="sunMedium"
-                class="absolute size-5 transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)]"
-                [class.opacity-0]="currentTheme === 'business'"
-                [class.rotate-90]="currentTheme === 'business'"
-                [class.scale-0]="currentTheme === 'business'"
-                [class.opacity-100]="currentTheme !== 'business'"
-                [class.rotate-0]="currentTheme !== 'business'"
-                [class.scale-100]="currentTheme !== 'business'"
-            ></lucide-icon>
-
-            <lucide-icon
-                [img]="moon"
-                class="absolute size-5 transition-all duration-300 ease-[cubic-bezier(0.23,1,0.32,1)]"
-                [class.opacity-100]="currentTheme === 'business'"
-                [class.rotate-0]="currentTheme === 'business'"
-                [class.scale-100]="currentTheme === 'business'"
-                [class.opacity-0]="currentTheme !== 'business'"
-                [class.-rotate-90]="currentTheme !== 'business'"
-                [class.scale-0]="currentTheme !== 'business'"
-            ></lucide-icon>
-        </button>
+        <app-theme-toggle />
 
         @if (authService.currentUser()) {
         <app-logout-button />
