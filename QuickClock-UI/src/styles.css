@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@custom-variant business ([data-theme="business"] &);
 
 @plugin "daisyui" {
     themes: corporate --default, business --prefersdark;
