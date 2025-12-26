@@ -1,23 +1,46 @@
 <button
     class="btn btn-ghost flex items-center gap-2 text-muted-foreground transition-colors"
     (click)="openModal()"
+    i18n="User action|Logout button label@@logoutButtonLabel"
 >
     <lucide-icon [img]="LogOut" [size]="18"></lucide-icon>
     <span class="hidden md:block">Logout</span>
 </button>
 
-<dialog id="logout_modal" class="modal">
+<dialog #logout_modal class="modal">
     <div class="modal-box">
-        <h3 class="text-lg font-semibold mb-4">Confirm Logout</h3>
-        <p class="mb-6"> Are you sure you want to log out? </p>
+        <h3
+            class="text-lg font-semibold mb-4"
+            i18n="Dialog title|Confirm logout dialog title@@confirmLogoutTitle"
+            >Confirm Logout</h3
+        >
+        <p
+            class="mb-6"
+            i18n="
+                Dialog message|Confirm logout dialog
+                message@@confirmLogoutMessage"
+        >
+            Are you sure you want to log out?
+        </p>
         <div class="modal-action">
-            <button class="btn btn-ghost" (click)="closeModal()">Cancel</button>
-            <button class="btn btn-error" (click)="confirmLogout()">
+            <button
+                class="btn btn-ghost"
+                (click)="closeModal()"
+                i18n="Dialog button|Cancel logout button@@cancelLogoutButton"
+                >Cancel</button
+            >
+            <button
+                class="btn btn-error"
+                (click)="confirmLogout()"
+                i18n="Dialog button|Confirm logout button@@confirmLogoutButton"
+            >
                 Logout
             </button>
         </div>
     </div>
     <form method="dialog" class="modal-backdrop">
-        <button>close</button>
+        <button i18n-aria-label="@@closeDialogAria" aria-label="close"
+            >close</button
+        >
     </form>
 </dialog>

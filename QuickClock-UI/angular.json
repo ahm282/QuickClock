@@ -41,10 +41,7 @@
                         "outputPath": "dist/quick-clock-ui",
                         "index": "src/index.html",
                         "browser": "src/main.ts",
-                        "polyfills": [
-                          "zone.js",
-                          "@angular/localize/init"
-                        ],
+                        "polyfills": ["zone.js", "@angular/localize/init"],
                         "tsConfig": "tsconfig.app.json",
                         "assets": [
                             {
@@ -53,7 +50,11 @@
                             }
                         ],
                         "styles": ["src/styles.css"],
-                        "scripts": []
+                        "scripts": [],
+                        "loader": {
+                            ".svg": "text",
+                            ".woff2": "file"
+                        }
                     },
                     "configurations": {
                         "production": {
@@ -95,15 +96,18 @@
                     "defaultConfiguration": "development"
                 },
                 "extract-i18n": {
-                    "builder": "@angular/build:extract-i18n"
+                    "builder": "@angular/build:extract-i18n",
+                    "options": {
+                        "outputPath": "src/locale"
+                    }
                 },
                 "test": {
                     "builder": "@angular/build:karma",
                     "options": {
                         "polyfills": [
-                          "zone.js",
-                          "zone.js/testing",
-                          "@angular/localize/init"
+                            "zone.js",
+                            "zone.js/testing",
+                            "@angular/localize/init"
                         ],
                         "tsConfig": "tsconfig.spec.json",
                         "assets": [

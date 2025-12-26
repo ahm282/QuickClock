@@ -1,5 +1,9 @@
 <div class="w-full h-fit p-6 md:p-8 rounded-2xl border border-border bg-card">
-    <h3 class="text-sm text-muted-foreground opacity-70 mb-4">Work Hours</h3>
+    <h3
+        class="text-sm text-muted-foreground opacity-70 mb-4"
+        i18n="Card Heading|Work hours card title@@workHoursTitle"
+        >Work Hours</h3
+    >
 
     @if (clockService.workHoursLoading()) {
     <div class="space-y-6">
@@ -16,14 +20,28 @@
     } @else if (clockService.workHoursError()) {
     <div class="alert alert-error">
         <span class="text-sm">{{ clockService.workHoursError() }}</span>
-        <button class="btn btn-sm btn-outline" (click)="clockService.fetchWorkHours()">
+        <button
+            class="btn btn-sm btn-outline"
+            (click)="clockService.fetchWorkHours()"
+            i18n="Action|Retry fetching work hours label@@retryWorkHoursButton"
+        >
             Retry
         </button>
     </div>
     } @else if (!clockService.workHours()) {
     <div class="alert">
-        <span class="text-sm opacity-80">No data available.</span>
-        <button class="btn btn-sm btn-outline" (click)="clockService.fetchWorkHours()">
+        <span
+            class="text-sm opacity-80"
+            i18n="
+                State message|Text shown when no data is
+                available@@noWorkHoursDataMessage"
+            >No data available.</span
+        >
+        <button
+            class="btn btn-sm btn-outline"
+            (click)="clockService.fetchWorkHours()"
+            i18n="Action|Refresh work hours label@@refreshWorkHoursButton"
+        >
             Refresh
         </button>
     </div>
@@ -33,14 +51,20 @@
             <p class="text-5xl font-light text-primary">
                 {{ clockService.workHours()!.hoursToday | intlNumber }}
             </p>
-            <p class="text-sm text-muted-foreground opacity-70 mt-1">Today</p>
+            <p
+                class="text-sm text-muted-foreground opacity-70 mt-1"
+                i18n="Time period|Label for today's hours@@labelToday"
+                >Today</p
+            >
         </div>
 
         <div class="pt-6 border-t border-border">
             <p class="text-3xl font-light text-foreground">
                 {{ clockService.workHours()!.hoursThisWeek | intlNumber }}
             </p>
-            <p class="text-sm text-muted-foreground opacity-70 mt-1"
+            <p
+                class="text-sm text-muted-foreground opacity-70 mt-1"
+                i18n="Time period|Label for weekly hours@@labelThisWeek"
                 >This week</p
             >
         </div>
