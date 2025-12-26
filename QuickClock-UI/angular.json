@@ -41,7 +41,10 @@
                         "outputPath": "dist/quick-clock-ui",
                         "index": "src/index.html",
                         "browser": "src/main.ts",
-                        "polyfills": ["zone.js"],
+                        "polyfills": [
+                          "zone.js",
+                          "@angular/localize/init"
+                        ],
                         "tsConfig": "tsconfig.app.json",
                         "assets": [
                             {
@@ -97,7 +100,11 @@
                 "test": {
                     "builder": "@angular/build:karma",
                     "options": {
-                        "polyfills": ["zone.js", "zone.js/testing"],
+                        "polyfills": [
+                          "zone.js",
+                          "zone.js/testing",
+                          "@angular/localize/init"
+                        ],
                         "tsConfig": "tsconfig.spec.json",
                         "assets": [
                             {
