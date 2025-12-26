@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, LOCALE_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { tap, catchError, of } from 'rxjs';
@@ -12,11 +12,13 @@ import { ClockActionRequest } from '../models/clock-action-request.model';
 })
 export class ClockService {
     private http = inject(HttpClient);
+    private locale = inject(LOCALE_ID);
 
     // Time formatter
-    private hm = new Intl.DateTimeFormat(undefined, {
+    private hm = new Intl.DateTimeFormat(this.locale, {
         hour: '2-digit',
         minute: '2-digit',
+        hour12: true,
     });
 
     // Reactive state using signals
