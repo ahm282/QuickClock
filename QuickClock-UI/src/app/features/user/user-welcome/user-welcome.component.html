@@ -2,8 +2,8 @@
     <h1 class="text-3xl md:text-5xl font-light">
         {{ timeBasedGreeting() }},&nbsp;{{
             authService.userDisplayName()?.trim()
-        }}</h1
-    >
+        }}
+    </h1>
     <p class="text-sm text-muted-foreground">
         {{ today() | date: 'fullDate' }}
     </p>

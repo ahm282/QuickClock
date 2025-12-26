@@ -97,7 +97,9 @@ export class KioskPageComponent {
                 this.loading.set(false);
             },
             error: () => {
-                this.error.set('Failed to load employees.');
+                this.error.set(
+                    $localize`:Error|Failed to load employee list@@kioskLoadEmployeesError:Failed to load employees.`,
+                );
                 this.loading.set(false);
             },
         });
@@ -203,7 +205,9 @@ export class KioskPageComponent {
                 }
             },
             error: () => {
-                this.error.set('Failed to generate QR.');
+                this.error.set(
+                    $localize`:Error|QR code generation failed@@kioskGenerateQrError:Failed to generate QR.`,
+                );
                 this.qrLoading.set(false);
             },
         });
@@ -234,7 +238,9 @@ export class KioskPageComponent {
                 }
             },
             error: (error) => {
-                this.error.set('Connection lost. Please try again.');
+                this.error.set(
+                    $localize`:Error|SSE connection lost@@kioskConnectionLostError:Connection lost. Please try again.`,
+                );
                 this.sseConnected.set(false);
                 this.resetQrState();
             },

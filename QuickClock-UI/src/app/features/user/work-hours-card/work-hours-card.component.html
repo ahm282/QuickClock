@@ -11,68 +11,74 @@
     </h3>
 
     @if (clockService.workHoursLoading()) {
-    <div class="space-y-6">
-        <div>
-            <div class="skeleton h-12 w-28"></div>
-            <div class="skeleton h-4 w-16 mt-2 opacity-80"></div>
-        </div>
+        <div class="space-y-6">
+            <div>
+                <div class="skeleton h-12 w-28"></div>
+                <div class="skeleton h-4 w-16 mt-2 opacity-80"></div>
+            </div>
 
-        <div class="pt-6 border-t border-border">
-            <div class="skeleton h-8 w-24"></div>
-            <div class="skeleton h-4 w-20 mt-2 opacity-80"></div>
+            <div class="pt-6 border-t border-border">
+                <div class="skeleton h-8 w-24"></div>
+                <div class="skeleton h-4 w-20 mt-2 opacity-80"></div>
+            </div>
         </div>
-    </div>
     } @else if (clockService.workHoursError()) {
-    <div class="alert alert-error">
-        <span class="text-sm">{{ clockService.workHoursError() }}</span>
-        <button
-            class="btn btn-sm btn-outline"
-            (click)="clockService.fetchWorkHours()"
-            i18n="Action|Retry fetching work hours label@@retryWorkHoursButton"
-        >
-            Retry
-        </button>
-    </div>
+        <div class="alert alert-error">
+            <span class="text-sm">{{ clockService.workHoursError() }}</span>
+            <button
+                class="btn btn-sm btn-outline"
+                (click)="clockService.fetchWorkHours()"
+                i18n="
+                    Action|Retry fetching work hours label@@retryWorkHoursButton"
+            >
+                Retry
+            </button>
+        </div>
     } @else if (!clockService.workHours()) {
-    <div class="alert">
-        <span
-            class="text-sm opacity-80"
-            i18n="
-                State message|Text shown when no data is
-                available@@noWorkHoursDataMessage"
-            >No data available.</span
-        >
-        <button
-            class="btn btn-sm btn-outline"
-            (click)="clockService.fetchWorkHours()"
-            i18n="Action|Refresh work hours label@@refreshWorkHoursButton"
-        >
-            Refresh
-        </button>
-    </div>
+        <div class="alert">
+            <span
+                class="text-sm opacity-80"
+                i18n="
+                    State message|Text shown when no data is
+                    available@@noWorkHoursDataMessage"
+            >
+                No data available.
+            </span>
+            <button
+                class="btn btn-sm btn-outline"
+                (click)="clockService.fetchWorkHours()"
+                i18n="Action|Refresh work hours label@@refreshWorkHoursButton"
+            >
+                Refresh
+            </button>
+        </div>
     } @else {
-    <div class="space-y-6">
-        <div>
-            <p class="text-5xl font-light text-primary flex items-center gap-3">
-                <span>{{ clockService.workHours()!.hoursToday }}</span>
-            </p>
-            <p
-                class="text-sm text-muted-foreground opacity-70 mt-1"
-                i18n="Time period|Label for today's hours@@labelToday"
-                >Today</p
-            >
-        </div>
+        <div class="space-y-6">
+            <div>
+                <p
+                    class="text-5xl font-light text-primary flex items-center gap-3"
+                >
+                    <span>{{ clockService.workHours()!.hoursToday }}</span>
+                </p>
+                <p
+                    class="text-sm text-muted-foreground opacity-70 mt-1"
+                    i18n="Time period|Label for today's hours@@labelToday"
+                >
+                    Today
+                </p>
+            </div>
 
-        <div class="pt-6 border-t border-border">
-            <p class="text-3xl font-light text-foreground">
-                {{ clockService.workHours()!.hoursThisWeek }}
-            </p>
-            <p
-                class="text-sm text-muted-foreground opacity-70 mt-1"
-                i18n="Time period|Label for weekly hours@@labelThisWeek"
-                >This week</p
-            >
+            <div class="pt-6 border-t border-border">
+                <p class="text-3xl font-light text-foreground">
+                    {{ clockService.workHours()!.hoursThisWeek }}
+                </p>
+                <p
+                    class="text-sm text-muted-foreground opacity-70 mt-1"
+                    i18n="Time period|Label for weekly hours@@labelThisWeek"
+                >
+                    This week
+                </p>
+            </div>
         </div>
-    </div>
     }
 </div>

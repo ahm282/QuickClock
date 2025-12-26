@@ -7,7 +7,8 @@
                     i18n="
                         Section Heading|Attendance scanner current
                         status@@attendanceScannerStatusTitle"
-                    >Current Status
+                >
+                    Current Status
                 </p>
 
                 <h2
@@ -20,35 +21,36 @@
                     "
                 >
                     @if (clockService.clockStatus()?.isClockedIn) {
-                    <span
-                        i18n="
-                            Status|User is currently clocked in@@statusClockedIn"
-                    >
-                        Clocked In
-                    </span>
+                        <span
+                            i18n="
+                                Status|User is currently clocked
+                                in@@statusClockedIn"
+                        >
+                            Clocked In
+                        </span>
                     } @else {
-                    <span
-                        i18n="
-                            Status|User is currently clocked
-                            out@@statusClockedOut"
-                    >
-                        Clocked Out
-                    </span>
+                        <span
+                            i18n="
+                                Status|User is currently clocked
+                                out@@statusClockedOut"
+                        >
+                            Clocked Out
+                        </span>
                     }
                 </h2>
 
                 @if (clockService.clockStatus()?.lastClockTime) {
-                <p
-                    class="text-sm text-muted-foreground pt-1"
-                    i18n="
-                        Label|Time elapsed since last clock
-                        action@@sinceTimeLabel"
-                >
-                    Since
-                    <span class="font-medium text-foreground">
-                        {{ clockService.clockStatus()!.lastClockTime }}
-                    </span>
-                </p>
+                    <p
+                        class="text-sm text-muted-foreground pt-1"
+                        i18n="
+                            Label|Time elapsed since last clock
+                            action@@sinceTimeLabel"
+                    >
+                        Since
+                        <span class="font-medium text-foreground">
+                            {{ clockService.clockStatus()!.lastClockTime }}
+                        </span>
+                    </p>
                 }
             </div>
 
@@ -76,8 +78,7 @@
                     [class.text-amber-600]="
                         !clockService.clockStatus()?.isClockedIn
                     "
-                >
-                </lucide-icon>
+                ></lucide-icon>
             </div>
         </div>
 
@@ -90,146 +91,155 @@
             [class.border-dashed]="!scannerActive()"
         >
             @if (scannerActive() && !cameraError()) {
-            <div class="flex flex-col items-center gap-4 relative">
-                <div
-                    class="relative w-full max-w-lg rounded-lg overflow-hidden border border-border shadow-inner bg-black"
-                >
-                    <video
-                        #videoElement
-                        autoplay
-                        playsinline
-                        muted
-                        class="w-full h-full max-h-80 object-cover"
-                    ></video>
-
+                <div class="flex flex-col items-center gap-4 relative">
                     <div
-                        class="absolute inset-0 bg-linear-to-b from-transparent via-primary/20 to-transparent w-full h-1/2 animate-scan"
-                    ></div>
-                </div>
+                        class="relative w-full max-w-lg rounded-lg overflow-hidden border border-border shadow-inner bg-black"
+                    >
+                        <video
+                            #videoElement
+                            autoplay
+                            playsinline
+                            muted
+                            class="w-full h-full max-h-80 object-cover"
+                        ></video>
 
-                <p
-                    class="text-xs text-muted-foreground animate-pulse"
-                    i18n="Instruction|Align QR code hint@@scanAlignHint"
-                >
-                    Align QR code within the frame...
-                </p>
-            </div>
+                        <div
+                            class="absolute inset-0 bg-linear-to-b from-transparent via-primary/20 to-transparent w-full h-1/2 animate-scan"
+                        ></div>
+                    </div>
+
+                    <p
+                        class="text-xs text-muted-foreground animate-pulse"
+                        i18n="Instruction|Align QR code hint@@scanAlignHint"
+                    >
+                        Align QR code within the frame...
+                    </p>
+                </div>
             } @else if (cameraError()) {
-            <div class="flex flex-col items-center gap-3 py-8 text-center">
-                <div
-                    class="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-2"
-                >
-                    <lucide-icon
-                        [name]="CircleAlert"
-                        class="w-8 h-8 text-destructive"
-                    ></lucide-icon>
-                </div>
-                <div>
-                    <p
-                        class="font-semibold text-foreground"
-                        i18n="
-                            Error Heading|Camera access failed@@cameraErrorTitle"
+                <div class="flex flex-col items-center gap-3 py-8 text-center">
+                    <div
+                        class="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-2"
                     >
-                        Camera Access Failed
-                    </p>
-                    <p class="text-sm text-destructive mt-1 max-w-xs mx-auto">
-                        {{ cameraError() }}
-                    </p>
+                        <lucide-icon
+                            [name]="CircleAlert"
+                            class="w-8 h-8 text-destructive"
+                        ></lucide-icon>
+                    </div>
+                    <div>
+                        <p
+                            class="font-semibold text-foreground"
+                            i18n="
+                                Error Heading|Camera access
+                                failed@@cameraErrorTitle"
+                        >
+                            Camera Access Failed
+                        </p>
+                        <p
+                            class="text-sm text-destructive mt-1 max-w-xs mx-auto"
+                        >
+                            {{ cameraError() }}
+                        </p>
+                    </div>
+                    <button
+                        class="btn btn-sm btn-outline mt-2"
+                        (click)="toggleScanner()"
+                        i18n="Action|Try camera again@@tryAgainButton"
+                    >
+                        Try Again
+                    </button>
                 </div>
-                <button
-                    class="btn btn-sm btn-outline mt-2"
-                    (click)="toggleScanner()"
-                    i18n="Action|Try camera again@@tryAgainButton"
-                >
-                    Try Again
-                </button>
-            </div>
             } @else {
-            <div class="flex flex-col items-center gap-4 py-8">
-                <div
-                    class="w-16 h-16 bg-muted flex items-center justify-center rounded-2xl"
-                >
-                    <lucide-icon
-                        [name]="QrCode"
-                        class="w-12 h-12 text-muted-foreground/60"
-                    ></lucide-icon>
-                </div>
-                <div class="text-center">
-                    <p
-                        class="font-medium text-foreground"
-                        i18n="State|Ready to scan heading@@readyToScanTitle"
+                <div class="flex flex-col items-center gap-4 py-8">
+                    <div
+                        class="w-16 h-16 bg-muted flex items-center justify-center rounded-2xl"
                     >
-                        Ready to Scan
-                    </p>
-                    <p
-                        class="text-sm text-muted-foreground mt-1"
-                        i18n="
-                            Instruction|Camera usage
-                            instruction@@cameraUsageHint"
-                    >
-                        Use your device camera to clock in or out
-                    </p>
+                        <lucide-icon
+                            [name]="QrCode"
+                            class="w-12 h-12 text-muted-foreground/60"
+                        ></lucide-icon>
+                    </div>
+                    <div class="text-center">
+                        <p
+                            class="font-medium text-foreground"
+                            i18n="State|Ready to scan heading@@readyToScanTitle"
+                        >
+                            Ready to Scan
+                        </p>
+                        <p
+                            class="text-sm text-muted-foreground mt-1"
+                            i18n="
+                                Instruction|Camera usage
+                                instruction@@cameraUsageHint"
+                        >
+                            Use your device camera to clock in or out
+                        </p>
+                    </div>
                 </div>
-            </div>
             }
         </div>
 
         <div class="mt-6 space-y-4">
             @if (requestError()) {
-            <div role="alert" class="alert alert-error alert-soft">
-                <lucide-icon [name]="CircleAlert" class="w-5 h-5"></lucide-icon>
-                <span>{{ requestError() }}</span>
-            </div>
-            } @if (processingRequest()) {
-            <div
-                class="flex items-center justify-center gap-3 p-4 rounded-xl bg-primary/10 border border-primary/20"
-            >
-                <span
-                    class="loading loading-spinner loading-sm text-primary"
-                ></span>
-                <span
-                    class="text-sm font-medium text-primary"
-                    i18n="
-                        State|Processing request
-                        message@@processingAttendanceMsg"
+                <div role="alert" class="alert alert-error alert-soft">
+                    <lucide-icon
+                        [name]="CircleAlert"
+                        class="w-5 h-5"
+                    ></lucide-icon>
+                    <span>{{ requestError() }}</span>
+                </div>
+            }
+            @if (processingRequest()) {
+                <div
+                    class="flex items-center justify-center gap-3 p-4 rounded-xl bg-primary/10 border border-primary/20"
                 >
-                    Processing attendance...
-                </span>
-            </div>
-            } @if (scannerActive()) {
-            <button
-                (click)="toggleScanner()"
-                class="btn btn-error w-full h-12 rounded-xl font-medium flex items-center justify-center gap-2"
-                [disabled]="processingRequest()"
-            >
-                <lucide-icon [name]="X" class="w-5 h-5"></lucide-icon>
-                <span i18n="Action|Stop scanner button@@stopScannerBtn"
-                    >Stop Scanner</span
-                >
-            </button>
-            } @else {
-            <button
-                (click)="toggleScanner()"
-                class="btn btn-primary w-full h-12 rounded-xl font-medium flex items-center justify-center gap-2"
-                [disabled]="processingRequest()"
-            >
-                <lucide-icon [name]="Camera" class="w-5 h-5"></lucide-icon>
-                <span i18n="Action|Start scanner button@@startScannerBtn"
-                    >Start Scanner</span
-                >
-            </button>
-            } @if (lastScanTime()) {
-            <div
-                class="flex items-center justify-center gap-2 text-sm text-muted-foreground"
-            >
-                <lucide-icon [name]="History" class="w-4 h-4"></lucide-icon>
-                <span i18n="Label|Last scan timestamp label@@lastScanLabel">
-                    Last scan:
-                    <span class="font-medium text-foreground">
-                        {{ lastScanTime() }}
+                    <span
+                        class="loading loading-spinner loading-sm text-primary"
+                    ></span>
+                    <span
+                        class="text-sm font-medium text-primary"
+                        i18n="
+                            State|Processing request
+                            message@@processingAttendanceMsg"
+                    >
+                        Processing attendance...
                     </span>
-                </span>
-            </div>
+                </div>
+            }
+            @if (scannerActive()) {
+                <button
+                    (click)="toggleScanner()"
+                    class="btn btn-error w-full h-12 rounded-xl font-medium flex items-center justify-center gap-2"
+                    [disabled]="processingRequest()"
+                >
+                    <lucide-icon [name]="X" class="w-5 h-5"></lucide-icon>
+                    <span i18n="Action|Stop scanner button@@stopScannerBtn">
+                        Stop Scanner
+                    </span>
+                </button>
+            } @else {
+                <button
+                    (click)="toggleScanner()"
+                    class="btn btn-primary w-full h-12 rounded-xl font-medium flex items-center justify-center gap-2"
+                    [disabled]="processingRequest()"
+                >
+                    <lucide-icon [name]="Camera" class="w-5 h-5"></lucide-icon>
+                    <span i18n="Action|Start scanner button@@startScannerBtn">
+                        Start Scanner
+                    </span>
+                </button>
+            }
+            @if (lastScanTime()) {
+                <div
+                    class="flex items-center justify-center gap-2 text-sm text-muted-foreground"
+                >
+                    <lucide-icon [name]="History" class="w-4 h-4"></lucide-icon>
+                    <span i18n="Label|Last scan timestamp label@@lastScanLabel">
+                        Last scan:
+                        <span class="font-medium text-foreground">
+                            {{ lastScanTime() }}
+                        </span>
+                    </span>
+                </div>
             }
         </div>
     </div>

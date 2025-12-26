@@ -12,8 +12,9 @@
         <h3
             class="text-lg font-semibold mb-4"
             i18n="Dialog title|Confirm logout dialog title@@confirmLogoutTitle"
-            >Confirm Logout</h3
         >
+            Confirm Logout
+        </h3>
         <p
             class="mb-6"
             i18n="
@@ -27,8 +28,9 @@
                 class="btn btn-ghost"
                 (click)="closeModal()"
                 i18n="Dialog button|Cancel logout button@@cancelLogoutButton"
-                >Cancel</button
             >
+                Cancel
+            </button>
             <button
                 class="btn btn-error"
                 (click)="confirmLogout()"
@@ -39,8 +41,8 @@
         </div>
     </div>
     <form method="dialog" class="modal-backdrop">
-        <button i18n-aria-label="@@closeDialogAria" aria-label="close"
-            >close</button
-        >
+        <button i18n-aria-label="@@closeDialogAria" aria-label="close">
+            close
+        </button>
     </form>
 </dialog>

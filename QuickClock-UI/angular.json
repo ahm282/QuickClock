@@ -124,9 +124,13 @@
                     "defaultConfiguration": "development"
                 },
                 "extract-i18n": {
-                    "builder": "@angular/build:extract-i18n",
+                    "builder": "ng-extract-i18n-merge:ng-extract-i18n-merge",
                     "options": {
-                        "outputPath": "src/locale"
+                        "buildTarget": "QuickClock:build",
+                        "format": "xlf",
+                        "outputPath": "src/locale",
+                        "trim": true,
+                        "targetFiles": ["messages.ar-EG.xlf"]
                     }
                 },
                 "test": {
