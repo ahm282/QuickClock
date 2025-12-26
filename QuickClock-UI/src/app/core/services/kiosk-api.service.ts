@@ -12,7 +12,7 @@ import { QrScanStatusDTO } from '../models/qr-scan-status.model';
 export interface UserSummaryDTO {
     publicId: string;
     displayName: string;
-    lastClockType: 'IN' | 'OUT' | null;
+    lastClockType: 'IN' | 'OUT' | 'BREAK_START' | 'BREAK_END' | null;
     lastClockTime: string | null;
 }
 
