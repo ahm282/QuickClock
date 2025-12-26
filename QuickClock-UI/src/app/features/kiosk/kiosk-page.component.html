@@ -26,7 +26,7 @@
                     {{ today() | date : 'fullDate' }}
                 </p>
                 <button
-                    class="btn btn-secondary flex items-center gap-2 text-muted hover:text-white"
+                    class="btn btn-secondary flex items-center gap-2 text-muted-foreground business:text-white"
                     (click)="back()"
                 >
                     <lucide-icon [img]="ArrowLeft" [size]="18"></lucide-icon>
@@ -43,29 +43,31 @@
         <p class="text-muted-foreground mb-4">Scan with your phone</p>
 
         <div class="qr-box">
-            @if (qrLoading() || !isQrVisible()) {
-            <div
-                class="flex flex-col items-center justify-center gap-2 text-muted-foreground/50 h-[250px] w-[250px]"
-            >
-                <lucide-icon
-                    [img]="LoaderCircle"
-                    class="animate-spin"
-                    [size]="32"
-                ></lucide-icon>
-                <span class="text-sm">Connecting...</span>
-            </div>
-            } @else {
             <qrcode
+                class="qr-layer"
+                [class.is-hidden]="qrLoading() || !isQrVisible()"
                 [qrdata]="qrData()"
-                [width]="250"
+                [width]="260"
                 [errorCorrectionLevel]="'H'"
-                [imageWidth]="50"
-                [imageHeight]="50"
                 [colorDark]="'#004b9b'"
-                [colorLight]="'#ffffff'"
+                [colorLight]="'#F9F9F9'"
                 [margin]="2"
             ></qrcode>
-            }
+
+            <div
+                class="qr-overlay"
+                [class.is-hidden]="!(qrLoading() || !isQrVisible())"
+            >
+                <div class="qr-overlay-card">
+                    <div class="spinner" aria-hidden="true"></div>
+                    <div class="overlay-text">
+                        <div class="overlay-title">Refreshing QR</div>
+                        <div class="overlay-subtitle"
+                            >Hold still for a moment</div
+                        >
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div>
@@ -78,17 +80,20 @@
 
         <div class="timer-pill">
             <lucide-angular [img]="QrCode" [size]="18"></lucide-angular>
-            <span class="text-sm text-muted-foreground-foreground"
+            <span class="text-sm text-muted-foreground whitespace-nowrap"
                 >QR Code refreshes in</span
             >
-            <span class="font-mono text-lg font-semibold"
+            <span
+                class="font-mono text-lg font-semibold tabular-nums inline-block w-[3ch] text-right"
                 >{{ timeRemaining() }}s</span
             >
         </div>
 
-        @if (error()) {
-        <p class="text-destructive text-sm mt-6">{{ error() }}</p>
-        }
+        <div class="error-slot">
+            @if (error()) {
+            <p class="text-destructive text-sm">{{ error() }}</p>
+            }
+        </div>
     </main>
 </div>
 }

@@ -182,7 +182,6 @@ export class KioskPageComponent {
         if (!publicId) return;
 
         this.qrLoading.set(true);
-        this.sseConnected.set(false); // Reset connection state
         this.scanSuccess.set(false);
         this.scanStatus.set(null);
 
