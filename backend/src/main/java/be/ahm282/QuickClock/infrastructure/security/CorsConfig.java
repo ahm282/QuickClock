@@ -34,7 +34,9 @@ public class CorsConfig {
 
                 // LAN
                 "http://192.168.0.62",
-                "https://192.168.0.62"
+                "https://192.168.0.62",
+                "http://192.168.0.62:5173",
+                "https://192.168.0.62:5173"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));

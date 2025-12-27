@@ -14,7 +14,7 @@ import java.util.Base64;
 import java.util.Set;
 
 @Component
-@Profile("prod")
+@Profile("dev")
 @ConditionalOnProperty(name = "app.bootstrap.enabled", havingValue = "true")
 public class UserSeeder {
     private final UserRepositoryPort userRepositoryPort;
