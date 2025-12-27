@@ -98,7 +98,13 @@
                             "extractLicenses": false,
                             "sourceMap": true,
                             "i18nMissingTranslation": "error",
-                            "outputHashing": "media"
+                            "outputHashing": "media",
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/app/environments/environment.ts",
+                                    "with": "src/app/environments/environment.dev.ts"
+                                }
+                            ]
                         },
                         "ar-EG": {
                             "localize": ["ar-EG"]

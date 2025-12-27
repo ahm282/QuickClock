@@ -87,6 +87,14 @@ export class KioskPageComponent {
         return JSON.stringify({ token, path });
     });
 
+    // Placeholder QR content shown while loading/connecting
+    placeholderQrData(): string {
+        return JSON.stringify({
+            token: 'placeholder',
+            path: '/kiosk/placeholder',
+        });
+    }
+
     // Only show QR when we have data AND the connection is established
     isQrVisible = computed(() => {
         return !!this.qrData() && this.sseConnected();

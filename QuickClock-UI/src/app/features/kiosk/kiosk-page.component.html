@@ -60,9 +60,9 @@
         </div>
 
         <div class="qr-box">
+            @if (isQrVisible()) {
             <qrcode
                 class="qr-layer"
-                [class.is-hidden]="qrLoading() || !isQrVisible()"
                 [qrdata]="qrData()"
                 [width]="260"
                 [errorCorrectionLevel]="'H'"
@@ -70,11 +70,18 @@
                 [colorLight]="'#F9F9F9'"
                 [margin]="2"
             ></qrcode>
-
-            <div
-                class="qr-overlay"
-                [class.is-hidden]="!(qrLoading() || !isQrVisible())"
-            >
+            } @else {
+            <!-- <qrcode
+                class="qr-layer"
+                [qrdata]="placeholderQrData()"
+                [width]="260"
+                [errorCorrectionLevel]="'L'"
+                [colorDark]="'#F9F9F9'"
+                [colorLight]="'#004b9b'"
+                [margin]="2"
+            ></qrcode>
+            <div class="qr-glass-effect"></div> -->
+            <div class="qr-overlay">
                 <div class="qr-overlay-card">
                     <div class="spinner" aria-hidden="true"></div>
                     <div class="overlay-text">
@@ -97,6 +104,7 @@
                     </div>
                 </div>
             </div>
+            }
         </div>
 
         <div>
