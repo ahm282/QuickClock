@@ -19,7 +19,7 @@
                 [class.active]="currentLocale === 'en-US'"
                 class="flex justify-between"
             >
-                <div class="w-full flex items-center justify-between">
+                <div class="w-full flex items-center justify-between gap-x-2">
                     <span
                         class="w-7 h-fit rounded-full inline-block shadow-sm"
                         [innerHTML]="flagUK"
@@ -27,7 +27,7 @@
                     <span class="w-full text-right">English</span>
                 </div>
                 @if (currentLocale === 'en-US') {
-                    <lucide-icon [img]="checkIcon" class="w-5 h-5" />
+                <lucide-icon [img]="checkIcon" class="w-5 h-5" />
                 }
             </button>
         </li>
@@ -38,7 +38,7 @@
                 [class.active]="currentLocale === 'ar-EG'"
                 class="flex justify-between font-arabic"
             >
-                <div class="w-full flex items-center justify-between">
+                <div class="w-full flex items-center justify-between gap-x-2">
                     <span
                         class="w-7 h-fit rounded-full inline-block shadow-sm"
                         [innerHTML]="flagEG"
@@ -46,7 +46,7 @@
                     <span class="w-full text-right">العربية</span>
                 </div>
                 @if (currentLocale === 'ar-EG') {
-                    <lucide-icon [img]="checkIcon" class="w-4 h-4" />
+                <lucide-icon [img]="checkIcon" class="w-4 h-4" />
                 }
             </button>
         </li>

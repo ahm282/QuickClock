@@ -240,6 +240,10 @@
         <note priority="1" from="description">Label for weekly hours</note>
         <note priority="1" from="meaning">Time period</note>
       </trans-unit>
+      <trans-unit id="footer.copyright" datatype="html">
+        <source>All rights reserved.</source>
+        <target state="new">حقوق النشر محفوظة.</target>
+      </trans-unit>
       <trans-unit id="footerCopyright" datatype="html">
         <source>© <x id="INTERPOLATION" equiv-text="{{ getYear() }}"/> QuickClock. All rights reserved.</source>
         <target>© <x id="INTERPOLATION" equiv-text="{{ getYear() }}"/> QuickClock. جميع الحقوق محفوظة.</target>
@@ -249,6 +253,46 @@
       <trans-unit id="changeLanguageAria" datatype="html">
         <source>Change Language</source>
         <target>تغيير اللغة</target>
+      </trans-unit>
+      <trans-unit id="login.action.forgotPassword" datatype="html">
+        <source>Forgot Password?</source>
+        <target state="new">هل نسيت كلمة المرور؟</target>
+      </trans-unit>
+      <trans-unit id="login.button.loggingIn" datatype="html">
+        <source>Logging in...</source>
+        <target state="new">تسجيل الدخول...</target>
+      </trans-unit>
+      <trans-unit id="login.button.signIn" datatype="html">
+        <source>Sign In</source>
+        <target state="new">تسجيل الدخول</target>
+      </trans-unit>
+      <trans-unit id="login.error.generic" datatype="html">
+        <source>Login failed. Please try again.</source>
+        <target state="new">فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.</target>
+      </trans-unit>
+      <trans-unit id="login.label.password" datatype="html">
+        <source>Password</source>
+        <target state="new">كلمة المرور</target>
+      </trans-unit>
+      <trans-unit id="login.label.username" datatype="html">
+        <source>Username</source>
+        <target state="new">اسم المستخدم</target>
+      </trans-unit>
+      <trans-unit id="login.placeholder.password" datatype="html">
+        <source>Password</source>
+        <target state="new">كلمة المرور</target>
+      </trans-unit>
+      <trans-unit id="login.placeholder.username" datatype="html">
+        <source>Username</source>
+        <target state="new">اسم المستخدم</target>
+      </trans-unit>
+      <trans-unit id="login.subtitle" datatype="html">
+        <source>Sign in to your account</source>
+        <target state="new">تسجيل الدخول إلى حسابك</target>
+      </trans-unit>
+      <trans-unit id="login.welcomeHeader" datatype="html">
+        <source>Welcome Back <x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;hand&quot; class=&quot;text-foreground size-6 rotate-12 mt-0.5&quot; &gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;/lucide-icon&gt;"/></source>
+        <target state="new">اهلاً بعودتك <x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;hand&quot; class=&quot;text-foreground size-6 rotate-12 mt-0.5&quot; &gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;/lucide-icon&gt;"/></target>
       </trans-unit>
       <trans-unit id="logoutButtonLabel" datatype="html">
         <source><x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;LogOut&quot; [size]=&quot;18&quot;&gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;/lucide-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;hidden md:block&quot;&gt;"/>Logout<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
