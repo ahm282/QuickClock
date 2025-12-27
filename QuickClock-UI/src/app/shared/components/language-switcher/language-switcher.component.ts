@@ -32,15 +32,21 @@ export class LanguageSwitcherComponent {
             return;
         }
 
-        const path = window.location.pathname;
-        let newPath: string;
+        localStorage.setItem('locale', targetLocale);
+        const { pathname, search, hash, origin } = window.location;
 
-        if (this.currentLocale === 'ar-EG' && targetLocale === 'en-US') {
-            newPath = path.replace(/^\/ar-EG/, '');
+        // "/en-US/dashboard" -> ["en-US", "dashboard"]
+        const segments = pathname.split('/').filter(Boolean);
+        const supportedLocales = ['en-US', 'ar-EG'];
+
+        if (segments.length > 0 && supportedLocales.includes(segments[0])) {
+            segments[0] = targetLocale;
         } else {
-            newPath = `/ar-EG${path === '/' ? '' : path}`;
+            segments.unshift(targetLocale);
         }
 
-        window.location.href = newPath;
+        // Reconstruct URL
+        const newPath = '/' + segments.join('/');
+        window.location.href = `${origin}${newPath}${search}${hash}`;
     }
 }

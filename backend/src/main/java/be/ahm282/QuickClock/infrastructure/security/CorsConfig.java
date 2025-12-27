@@ -17,24 +17,25 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
+                // 1. ADD THESE (Production Nginx Origins)
+                "https://localhost",
+                "http://localhost",
+                "https://127.0.0.1",
+                "http://127.0.0.1",
+
+                // Dev
                 "http://localhost:8081",
                 "https://localhost:8081",
                 "http://localhost:5173",
                 "https://localhost:5173",
-                "https://localhost:5173",
-                "http://127.0.0.1:8081",
                 "http://frontend:8081",
-                "https://frontend:8081",
-                "http://localhost:4200",
-                "http://127.0.0.1:4200",
                 "http://192.168.0.62:8081",
-                "http://192.168.0.62:4200",
-                "https://127.0.0.1:8081",
-                "https://localhost:4200",
-                "https://127.0.0.1:4200",
                 "https://192.168.0.62:8081",
-                "https://192.168.0.62:4200",
-                "https://192.168.0.62:5173"));
+
+                // LAN
+                "http://192.168.0.62",
+                "https://192.168.0.62"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         config.setExposedHeaders(List.of("Authorization", "Content-Type"));

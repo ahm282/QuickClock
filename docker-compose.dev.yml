@@ -86,7 +86,6 @@ services:
     working_dir: /workspace
     volumes:
       - ./QuickClock-UI:/workspace
-      - frontend_node_modules:/workspace/node_modules
       - ./certs:/certs:ro
     environment:
       - NODE_ENV=development
