@@ -19,7 +19,7 @@
     /* Semantic Colors */
     --color-info: oklch(0.65 0.12 235);
     --color-info-content: oklch(1 0 0);
-    --color-error: oklch(0.57 0.245 27.325);
+    --color-error: oklch(0.55 0.245 25);
     --color-error-content: oklch(1 0 0);
     --color-success: oklch(0.59 0.22 142);
     --color-success-content: oklch(1 0 0);
@@ -50,7 +50,7 @@
     --color-primary-content: oklch(0.15 0 0);
     --color-info: oklch(0.72 0.11 220);
     --color-info-content: oklch(0.15 0 0);
-    --color-error: oklch(0.57 0.245 27.325);
+    --color-error: oklch(0.50 0.245 27.325);
     --color-error-content: oklch(0.95 0 0);
     --color-success: oklch(0.58 0.58 162);
     --color-success-content: oklch(0.95 0 0);
@@ -84,6 +84,19 @@
 @layer base {
     * {
         font-family: 'Geist Variable', sans-serif;
+    }
+
+    /* Arabic locale styles */
+    :root:lang(ar),
+    :root[lang='ar'],
+    :root[lang^='ar-'] {
+        direction: rtl;
+    }
+
+    :root:lang(ar) *,
+    :root[lang='ar'] *,
+    :root[lang^='ar-'] * {
+        font-family: 'Almarai', 'Segoe UI', Geneva, Verdana, sans-serif !important;
     }
 
     body {

@@ -62,6 +62,7 @@
                         "scripts": [],
                         "loader": {
                             ".svg": "text",
+                            ".woff": "file",
                             ".woff2": "file"
                         },
                         "localize": true,
