@@ -19,14 +19,14 @@ services:
       ]
 
   database:
-    image: postgres:17.7-alpine3.23
+    image: postgres:18.1-alpine3.23
     container_name: quickclock-db
     environment:
       - POSTGRES_DB=quickclock
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=changeit
     volumes:
-      - db_data17:/var/lib/postgresql/data
+      - db_data18:/var/lib/postgresql/data
     networks:
       - quickclock
     ports:
@@ -97,7 +97,7 @@ services:
     restart: always
 
 volumes:
-  db_data17:
+  db_data18:
 
 networks:
   quickclock:
