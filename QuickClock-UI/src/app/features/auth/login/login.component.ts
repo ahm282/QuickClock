@@ -56,18 +56,17 @@ export class LoginComponent {
         this.authService.login({ username, password }).subscribe({
             next: () => {
                 this.isLoading = false;
-                console.log('Login successful');
-                console.log('User roles:', this.authService.roles());
                 if (this.authService.isKiosk()) {
                     this.router.navigate(['/kiosk']);
                 } else {
-                    this.router.navigate(['/dashboard']);
+                    this.router.navigate(['/home']);
                 }
             },
             error: (err) => {
                 this.isLoading = false;
                 this.errorMsg =
-                    err.error?.message || 'Login failed. Please try again.';
+                    err.error?.message ||
+                    $localize`:@@login.error.generic:Login failed. Please try again.`;
                 console.error(err);
             },
         });
