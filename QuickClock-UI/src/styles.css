@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @custom-variant business ([data-theme="business"] &);
 
+@import '@fontsource/almarai';
+
 @plugin "daisyui" {
     themes: corporate --default, business --prefersdark;
 }
