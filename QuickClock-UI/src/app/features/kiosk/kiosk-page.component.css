@@ -1,31 +1,31 @@
 /* Kiosk layout containers */
+:host {
+    display: block;
+    height: 100%;
+}
+
 .kiosk-full {
     height: 100%;
-    padding: 1.5rem;
+    width: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
     color: var(--color-base-content);
-    display: flex;
-    flex-direction: column;
+    padding: 1.5rem;
 }
 
 .kiosk-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 0 24px 0;
-    max-width: 80rem;
-    margin: 0 auto;
     width: 100%;
+    padding: 8px 0 24px;
+    flex: 0 0 auto;
 }
 
 .kiosk-header-wide {
-    padding: 24px 0 24px 0;
+    width: 100%;
     max-width: 80rem;
     margin: 0 auto;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    row-gap: 1.5rem;
 }
 
 .center {
@@ -34,15 +34,12 @@
 }
 
 .kiosk-center {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0 0 2rem 0;
-    max-width: 80rem;
-    margin: 0 auto;
+    place-self: center;
+    display: grid;
+    place-items: center;
+    gap: 16px;
     width: 100%;
+    max-width: 80rem;
 }
 
 .kiosk-grid {
@@ -151,7 +148,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 0.35rem;
     padding: 12px 20px;
     border-radius: 900px;
     border: 1px solid var(--border);

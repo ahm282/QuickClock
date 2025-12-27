@@ -47,15 +47,17 @@
     </header>
 
     <main class="kiosk-center">
-        <h1 class="text-3xl md:text-4xl font-light mb-2">
-            {{ selectedEmployee()?.displayName }}
-        </h1>
-        <p
-            class="text-muted-foreground mb-4"
-            i18n="Instruction|Scan QR code hint@@kioskScanInstruction"
-        >
-            Scan with your phone
-        </p>
+        <div class="text-center mb-4">
+            <h1 class="text-3xl md:text-4xl font-light mb-2">
+                {{ selectedEmployee()?.displayName }}
+            </h1>
+            <p
+                class="text-muted-foreground"
+                i18n="Instruction|Scan QR code hint@@kioskScanInstruction"
+            >
+                Scan with your phone
+            </p>
+        </div>
 
         <div class="qr-box">
             <qrcode
@@ -144,15 +146,15 @@
                 <app-logout-button />
             </div>
         </div>
+    </header>
+
+    <main class="kiosk-grid">
         <h1
-            class="text-4xl md:text-5xl font-light"
+            class="text-4xl md:text-5xl font-light my-5"
             i18n="Heading|Main kiosk heading@@kioskMainTitle"
         >
             Clock In/Out
         </h1>
-    </header>
-
-    <main class="kiosk-grid">
         @if (loading()) {
         <div
             class="text-muted-foreground"
