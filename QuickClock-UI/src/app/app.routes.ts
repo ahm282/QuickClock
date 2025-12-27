@@ -24,7 +24,12 @@ export const routes: Routes = [
         component: MainLayoutComponent,
         canActivate: [authGuard],
         children: [
-            { path: 'home', component: UserHomeComponent },
+            {
+                path: 'home',
+                component: UserHomeComponent,
+                canActivate: [rolesGuard],
+                data: { excludeRoles: ['KIOSK'] },
+            },
             { path: 'dashboard', redirectTo: 'home', pathMatch: 'full' },
         ],
     },
@@ -32,7 +37,7 @@ export const routes: Routes = [
         path: 'kiosk',
         component: KioskLayoutComponent,
         canActivate: [authGuard, rolesGuard],
-        data: { roles: ['KIOSK', 'ADMIN', 'SUPER_ADMIN'] },
+        data: { roles: ['KIOSK'] },
         children: [{ path: '', component: KioskPageComponent }],
     },
 ];
