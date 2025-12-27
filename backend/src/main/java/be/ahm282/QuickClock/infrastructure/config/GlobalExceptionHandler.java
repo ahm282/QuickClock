@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 
 import java.time.Instant;
 import java.util.*;
@@ -109,6 +111,17 @@ public class GlobalExceptionHandler {
         log.warn("AccessDeniedException: {}", ex.getMessage());
 
         return ResponseEntity.status(status).body(body);
+    }
+
+    // ---------------------------
+    // SSE
+    // ---------------------------
+    @ExceptionHandler(AsyncRequestNotUsableException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE) // Status doesn't matter much, response is committed
+    public void handleAsyncDisconnect() {
+        // Determine that the client disconnected.
+        // Do NOT return a ResponseEntity or body.
+        // Returning void tells Spring "I handled it, stop processing."
     }
 
     // ---------------------------
