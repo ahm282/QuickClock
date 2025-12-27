@@ -88,12 +88,12 @@ export class KioskPageComponent {
     });
 
     // Placeholder QR content shown while loading/connecting
-    placeholderQrData(): string {
-        return JSON.stringify({
-            token: 'placeholder',
-            path: '/kiosk/placeholder',
-        });
-    }
+    // placeholderQrData(): string {
+    //     return JSON.stringify({
+    //         token: 'placeholder',
+    //         path: '/kiosk/placeholder',
+    //     });
+    // }
 
     // Only show QR when we have data AND the connection is established
     isQrVisible = computed(() => {
@@ -123,15 +123,14 @@ export class KioskPageComponent {
         effect(() => {
             const emp = this.selectedEmployee();
             const status = this.scanStatus();
+            const qrVisible = this.isQrVisible();
 
             this.stopTimer();
 
-            if (!emp || status) {
+            if (!emp || status || !qrVisible) {
                 this.timeRemaining.set(30);
                 return;
             }
-
-            this.timeRemaining.set(30);
 
             // Optimization: Run timer outside Angular zone
             this.ngZone.runOutsideAngular(() => {
