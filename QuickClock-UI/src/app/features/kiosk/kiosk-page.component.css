@@ -1,6 +1,6 @@
 /* Kiosk layout containers */
 .kiosk-full {
-    min-height: 100vh;
+    height: 100%;
     padding: 1.5rem;
     color: var(--color-base-content);
     display: flex;

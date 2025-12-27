@@ -3,7 +3,10 @@
     min-height: 100vh;
     background: var(--color-base-100);
     color: var(--color-base-content);
-    font-family: "Geist Variable", sans-serif;
+    font-family: 'Geist Variable', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 /* Kiosk-specific button style */
@@ -18,4 +21,30 @@
 .kiosk-root .input,
 .kiosk-root .card {
     border-radius: 1rem;
+}
+
+/* Footer styling */
+.kiosk-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    color: var(--color-base-content);
+    max-width: 80rem;
+    width: 100%;
+    margin: 0 auto 1rem auto;
+}
+
+.footer-date,
+.footer-time {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.footer-date {
+    text-align: left;
+}
+
+.footer-time {
+    text-align: right;
 }

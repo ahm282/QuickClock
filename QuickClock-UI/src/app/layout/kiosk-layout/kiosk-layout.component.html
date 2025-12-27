@@ -1,3 +1,7 @@
 <div class="kiosk-root">
     <router-outlet></router-outlet>
+    <footer class="kiosk-footer">
+        <span class="footer-date">{{ currentTime | date : 'fullDate' }}</span>
+        <span class="footer-time">{{ currentTime | date : 'shortTime' }}</span>
+    </footer>
 </div>
