@@ -244,11 +244,6 @@ public class AuthenticationService implements AuthUseCase {
     }
 
     private void validateInviteCode(String code) {
-        // TODO temporary: allow "ok" as a universal code during dev
-        if (code.equals("ok")) {
-            return;
-        }
-
         var inviteOptional = inviteCodeRepositoryPort.findByCode(code);
         if (inviteOptional.isEmpty()) {
             throw new ValidationException("Invalid invite code");
