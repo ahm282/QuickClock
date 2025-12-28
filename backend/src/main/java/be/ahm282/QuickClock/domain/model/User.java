@@ -75,7 +75,7 @@ public class User {
                 .roles(roles)
                 .accountType(AccountType.EMPLOYEE)
                 .active(true)
-                .lastPasswordChange(Instant.EPOCH)
+                .lastPasswordChange(Instant.now())
                 .build();
     }
 
