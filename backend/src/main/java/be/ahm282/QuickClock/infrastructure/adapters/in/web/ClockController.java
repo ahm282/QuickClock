@@ -14,7 +14,7 @@ import be.ahm282.QuickClock.domain.model.ClockRecordType;
 import be.ahm282.QuickClock.infrastructure.mapper.ClockResponseMapper;
 import be.ahm282.QuickClock.infrastructure.security.SecurityUtil;
 import be.ahm282.QuickClock.infrastructure.security.service.RateLimitService;
-import be.ahm282.QuickClock.infrastructure.sse.QrScanPushService;
+import be.ahm282.QuickClock.infrastructure.adapters.out.notification.sse.QrScanPushService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

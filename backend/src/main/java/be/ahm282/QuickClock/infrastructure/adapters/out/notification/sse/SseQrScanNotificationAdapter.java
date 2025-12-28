@@ -1,4 +1,4 @@
-package be.ahm282.QuickClock.infrastructure.sse;
+package be.ahm282.QuickClock.infrastructure.adapters.out.notification.sse;
 
 import be.ahm282.QuickClock.application.ports.out.QrScanNotificationPort;
 import be.ahm282.QuickClock.application.dto.response.QrScanStatusResponse;
