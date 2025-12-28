@@ -13,9 +13,17 @@
         >
             Success
         </h1>
-        <h2 i18n="Status|Clock action result@@kioskClockResult">
-            {{ status.direction === 'IN' ? 'Clocked in' : 'Clocked out' }}
+
+        @if (status.direction === 'IN') {
+        <h2 i18n="Status|Clock action result@@kioskClockResultIn">
+            Clocked in
         </h2>
+        } @else {
+        <h2 i18n="Status|Clock action result@@kioskClockResultOut">
+            Clocked out
+        </h2>
+        }
+
         <p class="text-muted-foreground">
             {{ selectedEmployee()?.displayName }}
         </p>

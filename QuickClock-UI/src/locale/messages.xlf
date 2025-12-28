@@ -7,11 +7,6 @@
         <note priority="1" from="description">Success message</note>
         <note priority="1" from="meaning">Status</note>
       </trans-unit>
-      <trans-unit id="kioskClockResult" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ status.direction === &apos;IN&apos; ? &apos;Clocked in&apos; : &apos;Clocked out&apos; }}"/></source>
-        <note priority="1" from="description">Clock action result</note>
-        <note priority="1" from="meaning">Status</note>
-      </trans-unit>
       <trans-unit id="kioskBackButton" datatype="html">
         <source>Back</source>
         <note priority="1" from="description">Go back button</note>
@@ -66,6 +61,16 @@
         <source>Failed to generate QR.</source>
         <note priority="1" from="description">QR code generation failed</note>
         <note priority="1" from="meaning">Error</note>
+      </trans-unit>
+      <trans-unit id="kioskClockResultIn" datatype="html">
+        <source>Clocked in</source>
+        <note priority="1" from="description">Clock action result</note>
+        <note priority="1" from="meaning">Status</note>
+      </trans-unit>
+      <trans-unit id="kioskClockResultOut" datatype="html">
+        <source>Clocked out</source>
+        <note priority="1" from="description">Clock action result</note>
+        <note priority="1" from="meaning">Status</note>
       </trans-unit>
       <trans-unit id="kioskConnectionLostError" datatype="html">
         <source>Connection lost. Please try again.</source>
