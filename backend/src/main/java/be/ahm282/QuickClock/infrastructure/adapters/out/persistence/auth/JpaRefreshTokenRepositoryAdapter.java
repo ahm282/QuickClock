@@ -2,7 +2,7 @@ package be.ahm282.QuickClock.infrastructure.adapters.out.persistence.auth;
 
 import be.ahm282.QuickClock.application.ports.out.RefreshTokenRepositoryPort;
 import be.ahm282.QuickClock.domain.model.RefreshToken;
-import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper.RefreshTokenMapper;
+import be.ahm282.QuickClock.infrastructure.mapper.RefreshTokenMapper;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;

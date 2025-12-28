@@ -2,7 +2,7 @@ package be.ahm282.QuickClock.infrastructure.adapters.out.persistence.clock;
 
 import be.ahm282.QuickClock.application.ports.out.ClockRecordRepositoryPort;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
-import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper.ClockRecordEntityMapper;
+import be.ahm282.QuickClock.infrastructure.mapper.ClockRecordEntityMapper;
 import be.ahm282.QuickClock.infrastructure.entity.ClockRecordEntity;
 import org.springframework.stereotype.Component;
 

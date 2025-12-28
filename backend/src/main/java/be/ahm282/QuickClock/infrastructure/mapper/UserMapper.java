@@ -1,4 +1,4 @@
-package be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper;
+package be.ahm282.QuickClock.infrastructure.mapper;
 
 import be.ahm282.QuickClock.domain.model.User;
 import be.ahm282.QuickClock.infrastructure.entity.UserEntity;

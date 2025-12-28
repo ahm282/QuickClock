@@ -4,7 +4,7 @@ import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.exception.UsernameAlreadyExistsException;
 import be.ahm282.QuickClock.domain.model.AccountType;
 import be.ahm282.QuickClock.domain.model.User;
-import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper.UserMapper;
+import be.ahm282.QuickClock.infrastructure.mapper.UserMapper;
 import be.ahm282.QuickClock.infrastructure.entity.UserEntity;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;

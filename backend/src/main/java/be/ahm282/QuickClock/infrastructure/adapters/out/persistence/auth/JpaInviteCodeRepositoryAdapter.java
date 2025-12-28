@@ -2,7 +2,7 @@ package be.ahm282.QuickClock.infrastructure.adapters.out.persistence.auth;
 
 import be.ahm282.QuickClock.application.ports.out.InviteCodeRepositoryPort;
 import be.ahm282.QuickClock.domain.model.InviteCode;
-import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.mapper.InviteCodeMapper;
+import be.ahm282.QuickClock.infrastructure.mapper.InviteCodeMapper;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
