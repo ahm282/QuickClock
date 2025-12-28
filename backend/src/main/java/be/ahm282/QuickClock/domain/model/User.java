@@ -45,6 +45,24 @@ public class User {
         return new Builder();
     }
 
+    public Builder toBuilder() {
+        return new Builder()
+                .id(this.id)
+                .publicId(this.publicId)
+                .username(this.username)
+                .displayName(this.displayName)
+                .displayNameArabic(this.displayNameArabic)
+                .passwordHash(this.passwordHash)
+                .secret(this.secret)
+                .roles(this.roles)
+                .accountType(this.accountType)
+                .active(this.active)
+                .lastLogin(this.lastLogin)
+                .lastPasswordChange(this.lastPasswordChange)
+                .failedLoginAttempts(this.failedLoginAttempts)
+                .lockedUntil(this.lockedUntil);
+    }
+
     // ---------- Factories ----------
 
     public static User newEmployee(String username, String displayName, String displayNameArabic, String passwordHash, String secret, Set<Role> roles) {

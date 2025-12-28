@@ -20,14 +20,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
 public class AuthenticationService implements AuthUseCase {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationService.class);
+    private static final int MAX_FAILED_ATTEMPTS = 5;
+    private static final int LOCK_DURATION_MINUTES = 10;
 
     private final UserRepositoryPort userRepositoryPort;
     private final InviteCodeRepositoryPort inviteCodeRepositoryPort;
@@ -64,20 +68,35 @@ public class AuthenticationService implements AuthUseCase {
     }
 
     @Override
+    @Transactional(noRollbackFor = AuthenticationException.class)
     public TokenPairDTO login(String username, String password) {
         Optional<User> maybeUser = userRepositoryPort.findByUsername(username);
 
         String hashToCheck = maybeUser.map(User::getPasswordHash).orElse(dummyHash);
         boolean passwordMatches = passwordEncoder.matches(password, hashToCheck);
 
-        if (maybeUser.isEmpty() || !passwordMatches) {
+        if (maybeUser.isEmpty()) {
             throw new AuthenticationException("Authentication failed. Invalid username or password.");
         }
 
         User user = maybeUser.get();
-        List<Role> roles = toRoleList(user);
 
-        return issueInitialTokens(user, roles);
+        if (!user.isActive()) {
+            throw new AuthenticationException("Account is disabled.");
+        }
+
+        if (isAccountLocked(user)) {
+            throw new AuthenticationException("Account is locked. Try again later.");
+        }
+
+        if (!passwordMatches) {
+            handleFailedLogin(user);
+            throw new AuthenticationException("Authentication failed. Invalid username or password.");
+        }
+
+
+        user = handleSuccessfulLogin(user);
+        return issueInitialTokens(user, toRoleList(user));
     }
 
     @Override
@@ -97,6 +116,36 @@ public class AuthenticationService implements AuthUseCase {
     // ====================
     // Private helpers
     // ====================
+
+    private boolean isAccountLocked(User user) {
+        return user.getLockedUntil() != null && user.getLockedUntil().isAfter(Instant.now());
+    }
+
+    private void handleFailedLogin(User user) {
+        int newFailCount = user.getFailedLoginAttempts() + 1;
+        Instant lockedUntil = null;
+
+        if (newFailCount >= MAX_FAILED_ATTEMPTS) {
+            lockedUntil = Instant.now().plus(LOCK_DURATION_MINUTES, ChronoUnit.MINUTES);
+            log.warn("User '{}' locked due to too many failed attempts.", user.getUsername());
+        }
+
+        User updated = user.toBuilder()
+                .failedLoginAttempts(newFailCount)
+                .lockedUntil(lockedUntil)
+                .build();
+        userRepositoryPort.save(updated);
+    }
+
+    private User handleSuccessfulLogin(User user) {
+        User updated = user.toBuilder()
+                .failedLoginAttempts(0)
+                .lockedUntil(null)
+                .lastLogin(Instant.now())
+                .build();
+        return userRepositoryPort.save(updated);
+    }
+
     private List<Role> toRoleList(User user) {
         if (user.getRoles() == null || user.getRoles().isEmpty()) {
             return Collections.emptyList();
