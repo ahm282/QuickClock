@@ -74,6 +74,7 @@ export class KioskApiService {
 
                 async onopen(response) {
                     if (response.ok) {
+                        subscriber.next('connected');
                         return;
                     } else if (
                         response.status >= 400 &&

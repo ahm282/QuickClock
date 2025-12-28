@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -17,12 +18,12 @@ public class QrScanPushService {
     private static final Logger log = LoggerFactory.getLogger(QrScanPushService.class);
 
     // 30s + 5s skew
-    private static final long SSE_TIMEMOUT_MILLIS = Duration.ofSeconds(35).toMillis();
+    private static final long SSE_TIMEOUT_MILLIS = Duration.ofSeconds(35).toMillis();
 
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter subscribe(String tokenId) {
-        SseEmitter emitter = new SseEmitter(SSE_TIMEMOUT_MILLIS);
+        SseEmitter emitter = new SseEmitter(SSE_TIMEOUT_MILLIS);
         emitters.put(tokenId, emitter);
 
         emitter.onCompletion(() -> emitters.remove(tokenId));
@@ -36,13 +37,15 @@ public class QrScanPushService {
         });
 
         // Initial event so the client can start polling immediately
-        try {
-            emitter.send(SseEmitter.event()
-                    .name("init")
-                    .data("connected"));
-        } catch (Exception ex) {
-            emitters.remove(tokenId);
-        }
+        CompletableFuture.runAsync(() -> {
+            try {
+                emitter.send(SseEmitter.event()
+                        .name("init")
+                        .data("connected"));
+            } catch (Exception ex) {
+                emitters.remove(tokenId);
+            }
+        });
 
         return emitter;
     }
