@@ -1,3 +1,3 @@
-package be.ahm282.QuickClock.application.dto;
+package be.ahm282.QuickClock.application.dto.response;
 
-public record TokenPairDTO(String accessToken, String refreshToken) {}
+public record TokenPairResponse(String accessToken, String refreshToken) {}

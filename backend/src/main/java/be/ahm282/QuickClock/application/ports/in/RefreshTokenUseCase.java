@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.application.ports.in;
 
-import be.ahm282.QuickClock.application.dto.TokenPairDTO;
+import be.ahm282.QuickClock.application.dto.response.TokenPairResponse;
 import be.ahm282.QuickClock.domain.exception.TokenException;
 
 
@@ -13,7 +13,7 @@ public interface RefreshTokenUseCase {
      * @return new TokenPair(access, refresh)
      * @throws TokenException when replay or other token-level security problem is detected.
      */
-    TokenPairDTO rotateRefreshTokenByToken(String refreshToken) throws TokenException;
+    TokenPairResponse rotateRefreshTokenByToken(String refreshToken) throws TokenException;
 
     /**
      * Invalidate the refresh token by its JWT string (for logout).

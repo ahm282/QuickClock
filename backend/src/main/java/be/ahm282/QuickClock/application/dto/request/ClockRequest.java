@@ -1,17 +1,17 @@
-package be.ahm282.QuickClock.application.ports.in.dto;
+package be.ahm282.QuickClock.application.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 
-public class ClockRequestDTO {
+public class ClockRequest {
     @NotNull(message = "userId is required")
     private Long userId;
 
     @NotNull(message = "TimeEntry must be associated with a type")
     private String type;
 
-    public ClockRequestDTO() {}
+    public ClockRequest() {}
 
-    public ClockRequestDTO(Long userId, String type) {
+    public ClockRequest(Long userId, String type) {
         this.userId = userId;
         this.type = type;
     }

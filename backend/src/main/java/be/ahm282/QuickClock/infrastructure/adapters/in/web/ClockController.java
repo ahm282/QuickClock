@@ -1,16 +1,16 @@
 package be.ahm282.QuickClock.infrastructure.adapters.in.web;
 
-import be.ahm282.QuickClock.application.dto.WorkHoursDTO;
-import be.ahm282.QuickClock.application.ports.in.dto.ClockQRCodeRequestDTO;
-import be.ahm282.QuickClock.application.ports.in.dto.ClockQRCodeResponseDTO;
-import be.ahm282.QuickClock.application.ports.in.dto.ClockResponseDTO;
+import be.ahm282.QuickClock.application.dto.request.AdminClockRequest;
+import be.ahm282.QuickClock.application.dto.request.ClockQRCodeRequest;
+import be.ahm282.QuickClock.application.dto.response.ClockQRCodeResponse;
+import be.ahm282.QuickClock.application.dto.response.ClockResponse;
+import be.ahm282.QuickClock.application.dto.response.WorkHoursResponse;
 import be.ahm282.QuickClock.application.services.ClockService;
 import be.ahm282.QuickClock.application.services.QRCodeService;
 import be.ahm282.QuickClock.application.services.WorkHoursService;
 import be.ahm282.QuickClock.domain.exception.RateLimitException;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
 import be.ahm282.QuickClock.domain.model.ClockRecordType;
-import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.AdminClockRequestDTO;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.mapper.ClockResponseDTOMapper;
 import be.ahm282.QuickClock.infrastructure.security.SecurityUtil;
 import be.ahm282.QuickClock.infrastructure.security.service.RateLimitService;
@@ -61,7 +61,7 @@ public class ClockController {
 
     @PostMapping("/in")
     @ResponseStatus(HttpStatus.CREATED)
-    public ClockResponseDTO clockIn(HttpServletRequest request) {
+    public ClockResponse clockIn(HttpServletRequest request) {
         Long userId = securityUtil.extractUserIdFromRequestToken(request);
         ClockRecord record = clockService.clockIn(userId);
         return responseMapper.toDTO(record);
@@ -69,7 +69,7 @@ public class ClockController {
 
     @PostMapping("/out")
     @ResponseStatus(HttpStatus.CREATED)
-    public ClockResponseDTO clockOut(HttpServletRequest request) {
+    public ClockResponse clockOut(HttpServletRequest request) {
         Long userId = securityUtil.extractUserIdFromRequestToken(request);
         ClockRecord record = clockService.clockOut(userId);
         return responseMapper.toDTO(record);
@@ -81,7 +81,7 @@ public class ClockController {
     // - Others: only their own
     // -------------------------------------------------------------------------
     @GetMapping("/history/{userId}")
-    public List<ClockResponseDTO> getHistory(@PathVariable Long userId, HttpServletRequest request) {
+    public List<ClockResponse> getHistory(@PathVariable Long userId, HttpServletRequest request) {
         Authentication auth = securityUtil.getAuthenticationOrThrow();
 
         boolean isAdmin = securityUtil.hasAdminRole(auth);
@@ -99,7 +99,7 @@ public class ClockController {
     }
 
     @GetMapping("/history/me")
-    public List<ClockResponseDTO> getMyHistory(HttpServletRequest request) {
+    public List<ClockResponse> getMyHistory(HttpServletRequest request) {
         Long userId = securityUtil.extractUserIdFromRequestToken(request);
         return clockService.getHistory(userId)
                 .stream()
@@ -130,13 +130,13 @@ public class ClockController {
     }
 
     @GetMapping("/hours/me")
-    public WorkHoursDTO getMyWorkHours(HttpServletRequest request) {
+    public WorkHoursResponse getMyWorkHours(HttpServletRequest request) {
         Long userId = securityUtil.extractUserIdFromRequestToken(request);
         return workHoursService.calculateWorkHours(userId);
     }
 
     @GetMapping("/activity/me")
-    public List<ClockResponseDTO> getMyTodayActivities(HttpServletRequest request) {
+    public List<ClockResponse> getMyTodayActivities(HttpServletRequest request) {
         Long userId = securityUtil.extractUserIdFromRequestToken(request);
 
         return clockService.getTodayActivities(userId)
@@ -150,13 +150,13 @@ public class ClockController {
     // -------------------------------------------------------------------------
 
     @GetMapping("/qr/generate/in/{publicId}")
-    public ClockQRCodeResponseDTO generateClockInQRCode(@PathVariable UUID publicId) {
+    public ClockQRCodeResponse generateClockInQRCode(@PathVariable UUID publicId) {
         securityUtil.requireKioskOrAdmin();
         return qrCodeService.generateClockInQRCode(publicId);
     }
 
     @GetMapping("/qr/generate/out/{publicId}")
-    public ClockQRCodeResponseDTO generateClockOutQRCode(@PathVariable UUID publicId) {
+    public ClockQRCodeResponse generateClockOutQRCode(@PathVariable UUID publicId) {
         securityUtil.requireKioskOrAdmin();
         return qrCodeService.generateClockOutQRCode(publicId);
     }
@@ -167,7 +167,7 @@ public class ClockController {
 
     @PostMapping("/qr/in")
     @ResponseStatus(HttpStatus.CREATED)
-    public ClockResponseDTO clockInWithQR(@RequestBody @Valid ClockQRCodeRequestDTO request,
+    public ClockResponse clockInWithQR(@RequestBody @Valid ClockQRCodeRequest request,
                                           HttpServletRequest httpRequest) {
         String ipAddress = securityUtil.getClientIp(httpRequest);
         if (!rateLimitService.allowClockQrAttempt(ipAddress)) {
@@ -181,7 +181,7 @@ public class ClockController {
 
     @PostMapping("/qr/out")
     @ResponseStatus(HttpStatus.CREATED)
-    public ClockResponseDTO clockOutWithQR(@RequestBody @Valid ClockQRCodeRequestDTO request,
+    public ClockResponse clockOutWithQR(@RequestBody @Valid ClockQRCodeRequest request,
                                            HttpServletRequest httpRequest) {
         String ipAddress = securityUtil.getClientIp(httpRequest);
         if (!rateLimitService.allowClockQrAttempt(ipAddress)) {
@@ -199,7 +199,7 @@ public class ClockController {
 
     @PostMapping("/admin/in")
     @ResponseStatus(HttpStatus.CREATED)
-    public ClockResponseDTO adminClockIn(@RequestBody @Valid AdminClockRequestDTO request) {
+    public ClockResponse adminClockIn(@RequestBody @Valid AdminClockRequest request) {
         securityUtil.requireAdmin();
         ClockRecord record = clockService.adminClockIn(
                 request.userId(),
@@ -211,7 +211,7 @@ public class ClockController {
 
     @PostMapping("/admin/out")
     @ResponseStatus(HttpStatus.CREATED)
-    public ClockResponseDTO adminClockOut(@RequestBody @Valid AdminClockRequestDTO request) {
+    public ClockResponse adminClockOut(@RequestBody @Valid AdminClockRequest request) {
         securityUtil.requireAdmin();
         ClockRecord record = clockService.adminClockOut(
                 request.userId(),

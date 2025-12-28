@@ -1,8 +1,8 @@
 package be.ahm282.QuickClock.infrastructure.adapters.in.web;
 
+import be.ahm282.QuickClock.application.dto.response.InviteCodeResponse;
 import be.ahm282.QuickClock.application.ports.in.InviteCodeUseCase;
 import be.ahm282.QuickClock.domain.model.InviteCode;
-import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.InviteCodeResponseDTO;
 import be.ahm282.QuickClock.infrastructure.security.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class InviteController {
 
     @PostMapping // Maps to POST /api/admin/invites
     @ResponseStatus(HttpStatus.CREATED)
-    public InviteCodeResponseDTO createInvite(HttpServletRequest request) {
+    public InviteCodeResponse createInvite(HttpServletRequest request) {
         securityUtil.requireAdmin();
         var userId = securityUtil.extractUserIdFromRequestToken(request);
 
@@ -41,7 +41,7 @@ public class InviteController {
     // -------------------------------------------------------------------------
 
     @GetMapping("/active")
-    public List<InviteCodeResponseDTO> listActiveInvites() {
+    public List<InviteCodeResponse> listActiveInvites() {
         securityUtil.requireAdmin(); // Use SecurityUtil for auth check
 
         List<InviteCode> invites = inviteCodeUseCase.listActiveInvites();
@@ -68,8 +68,8 @@ public class InviteController {
     // Mapping
     // -------------------------------------------------------------------------
 
-    private InviteCodeResponseDTO toDto(InviteCode invite) {
-        return new InviteCodeResponseDTO(
+    private InviteCodeResponse toDto(InviteCode invite) {
+        return new InviteCodeResponse(
                 invite.getCode(),
                 invite.getExpiresAt(),
                 invite.getCreatedByUserId(),

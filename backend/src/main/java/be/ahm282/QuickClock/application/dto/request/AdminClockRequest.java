@@ -1,11 +1,11 @@
-package be.ahm282.QuickClock.infrastructure.adapters.in.web.dto;
+package be.ahm282.QuickClock.application.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.Instant;
 
-public record AdminClockRequestDTO(
+public record AdminClockRequest(
         @NotNull
         Long userId,
         Instant recordedAtTimestamp,

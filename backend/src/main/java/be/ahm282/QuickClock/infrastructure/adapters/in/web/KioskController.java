@@ -1,14 +1,16 @@
 package be.ahm282.QuickClock.infrastructure.adapters.in.web;
 
+import be.ahm282.QuickClock.application.dto.UserSummaryView;
 import be.ahm282.QuickClock.application.ports.in.UserDirectoryUseCase;
 import be.ahm282.QuickClock.application.ports.out.ClockRecordRepositoryPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
-import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.UserSummaryDTO;
+import be.ahm282.QuickClock.domain.model.ClockRecord;
 import be.ahm282.QuickClock.infrastructure.security.SecurityUtil;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -30,7 +32,7 @@ public class KioskController {
     }
 
     @GetMapping("/employees")
-    public List<UserSummaryDTO> listEmployees() {
+    public List<UserSummaryView> listEmployees() {
         securityUtil.requireKioskOrAdmin();
 
         return userDirectoryUseCase.listEmployeesForKiosk()
@@ -40,8 +42,8 @@ public class KioskController {
                             .orElseThrow();
                     var lastClock = clockRecordRepository.findLatestByUserId(user.getId());
                     String lastClockType = lastClock.map(c -> c.getType().name()).orElse(null);
-                    String lastClockTime = lastClock.map(c -> c.getRecordedAt().toString()).orElse(null);
-                    return new UserSummaryDTO(u.publicId(), u.displayName(), u.displayNameArabic(), lastClockType, lastClockTime);
+                    Instant lastClockTime = lastClock.map(ClockRecord::getRecordedAt).orElse(null);
+                    return new UserSummaryView(u.publicId(), u.displayName(), u.displayNameArabic(), lastClockType, lastClockTime);
                 })
                 .toList();
     }

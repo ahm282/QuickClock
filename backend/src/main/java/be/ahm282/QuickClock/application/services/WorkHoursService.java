@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.application.services;
 
-import be.ahm282.QuickClock.application.dto.WorkHoursDTO;
+import be.ahm282.QuickClock.application.dto.response.WorkHoursResponse;
 import be.ahm282.QuickClock.application.ports.out.ClockRecordRepositoryPort;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
 import be.ahm282.QuickClock.domain.model.ClockRecordType;
@@ -29,7 +29,7 @@ public class WorkHoursService {
      * Calculate work hours for today and this week for a given user.
      * Uses configured timezone and week start day (e.g., Saturday for Egypt).
      */
-    public WorkHoursDTO calculateWorkHours(Long userId) {
+    public WorkHoursResponse calculateWorkHours(Long userId) {
         List<ClockRecord> allRecords = clockRecordRepository.findAllByUserId(userId);
 
         // Get current time and boundaries using the configured timezone
@@ -59,7 +59,7 @@ public class WorkHoursService {
         Decimal1f hoursToday = calculateHoursFromRecords(todayRecords, now);
         Decimal1f hoursThisWeek = calculateHoursFromRecords(weekRecords, now);
 
-        return new WorkHoursDTO(hoursToday, hoursThisWeek);
+        return new WorkHoursResponse(hoursToday, hoursThisWeek);
     }
 
     /**

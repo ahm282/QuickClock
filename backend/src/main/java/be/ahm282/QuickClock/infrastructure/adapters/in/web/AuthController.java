@@ -1,6 +1,8 @@
 package be.ahm282.QuickClock.infrastructure.adapters.in.web;
 
-import be.ahm282.QuickClock.application.dto.TokenPairDTO;
+import be.ahm282.QuickClock.application.dto.response.TokenPairResponse;
+import be.ahm282.QuickClock.application.dto.request.LoginRequest;
+import be.ahm282.QuickClock.application.dto.request.RegisterRequest;
 import be.ahm282.QuickClock.application.ports.in.AuthUseCase;
 import be.ahm282.QuickClock.application.ports.in.RefreshTokenUseCase;
 import be.ahm282.QuickClock.application.ports.out.TokenProviderPort;
@@ -8,8 +10,6 @@ import be.ahm282.QuickClock.domain.exception.AuthenticationException;
 import be.ahm282.QuickClock.domain.exception.RateLimitException;
 import be.ahm282.QuickClock.domain.exception.TokenException;
 import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.AccessTokenResponseDTO;
-import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.LoginRequestDTO;
-import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.RegisterRequestDTO;
 import be.ahm282.QuickClock.infrastructure.security.service.RateLimitService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
@@ -52,7 +52,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody @Valid RegisterRequestDTO request, HttpServletRequest httpRequest) {
+    public ResponseEntity<Void> register(@RequestBody @Valid RegisterRequest request, HttpServletRequest httpRequest) {
         String rateLimitKey = getClientIp(httpRequest);
 
         if (!rateLimitService.allowRegisterAttempt(rateLimitKey)) {
@@ -65,7 +65,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AccessTokenResponseDTO> login(@RequestBody @Valid LoginRequestDTO request, HttpServletRequest httpRequest, HttpServletResponse response) {
+    public ResponseEntity<AccessTokenResponseDTO> login(@RequestBody @Valid LoginRequest request, HttpServletRequest httpRequest, HttpServletResponse response) {
         String ipAddress = getClientIp(httpRequest);
         String rateLimitKey = ipAddress + ":" + request.username();
 
@@ -74,7 +74,7 @@ public class AuthController {
             throw new RateLimitException("Too many login attempts. Please try again later.");
         }
 
-        TokenPairDTO pair = authUseCase.login(request.username(), request.password());
+        TokenPairResponse pair = authUseCase.login(request.username(), request.password());
 
         // Reset rate limit on successful login
         rateLimitService.resetLoginLimit(rateLimitKey);
@@ -102,7 +102,7 @@ public class AuthController {
         }
 
         try {
-            TokenPairDTO pair = refreshTokenUseCase.rotateRefreshTokenByToken(refreshToken);
+            TokenPairResponse pair = refreshTokenUseCase.rotateRefreshTokenByToken(refreshToken);
 
             // Reset rate limit on successful refresh
             rateLimitService.resetRefreshLimit(rateLimitKey);

@@ -1,14 +1,14 @@
-package be.ahm282.QuickClock.application.ports.in.dto;
+package be.ahm282.QuickClock.application.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class ClockQRCodeRequestDTO {
+public class ClockQRCodeRequest {
     @NotBlank(message = "QR Token is required")
     private String token;
 
-    public ClockQRCodeRequestDTO() {}
+    public ClockQRCodeRequest() {}
 
-    public ClockQRCodeRequestDTO(String token) {
+    public ClockQRCodeRequest(String token) {
         this.token = token;
     }
 

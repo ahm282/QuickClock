@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.infrastructure.sse;
 
-import be.ahm282.QuickClock.infrastructure.adapters.in.web.dto.QrScanStatusDTO;
+import be.ahm282.QuickClock.application.dto.response.QrScanStatusResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -50,7 +50,7 @@ public class QrScanPushService {
         return emitter;
     }
 
-    public void notifyScanned(String tokenId, QrScanStatusDTO status) {
+    public void notifyScanned(String tokenId, QrScanStatusResponse status) {
         SseEmitter emitter = emitters.remove(tokenId);
         if (emitter == null) {
             log.debug("No active SSE emitter for tokenId {}, dropping scan notification", tokenId);

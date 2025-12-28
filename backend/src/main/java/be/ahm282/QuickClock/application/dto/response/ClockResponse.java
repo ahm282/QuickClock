@@ -1,10 +1,10 @@
-package be.ahm282.QuickClock.application.ports.in.dto;
+package be.ahm282.QuickClock.application.dto.response;
 
 import be.ahm282.QuickClock.domain.model.ClockRecordType;
 
 import java.time.Instant;
 
-public record ClockResponseDTO(
+public record ClockResponse(
         Long id,
         Long userId,
         ClockRecordType type,

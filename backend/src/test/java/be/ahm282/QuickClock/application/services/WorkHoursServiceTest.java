@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.application.services;
 
-import be.ahm282.QuickClock.application.dto.WorkHoursDTO;
+import be.ahm282.QuickClock.application.dto.WorkHoursResponse;
 import be.ahm282.QuickClock.application.ports.out.ClockRecordRepositoryPort;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
 import be.ahm282.QuickClock.domain.model.ClockRecordType;
@@ -55,7 +55,7 @@ class WorkHoursServiceTest {
         when(clockRecordRepository.findAllByUserId(1L)).thenReturn(records);
 
         // When
-        WorkHoursDTO result = workHoursService.calculateWorkHours(1L);
+        WorkHoursResponse result = workHoursService.calculateWorkHours(1L);
 
         // Then: Should have 8 hours today
         assertEquals(8.0, result.hoursToday(), 0.01);
@@ -82,7 +82,7 @@ class WorkHoursServiceTest {
         when(clockRecordRepository.findAllByUserId(1L)).thenReturn(records);
 
         // When
-        WorkHoursDTO result = workHoursService.calculateWorkHours(1L);
+        WorkHoursResponse result = workHoursService.calculateWorkHours(1L);
 
         // Then: 4 hours (morning) + 4.5 hours (afternoon) = 8.5 hours
         assertEquals(8.5, result.hoursToday(), 0.01);
@@ -101,7 +101,7 @@ class WorkHoursServiceTest {
         when(clockRecordRepository.findAllByUserId(1L)).thenReturn(records);
 
         // When
-        WorkHoursDTO result = workHoursService.calculateWorkHours(1L);
+        WorkHoursResponse result = workHoursService.calculateWorkHours(1L);
 
         // Then: Should have hours today if the clock-in was within today's boundaries in Cairo time
         // This test might have 0 hours if run at midnight, or full hours if clock-in was today
@@ -148,7 +148,7 @@ class WorkHoursServiceTest {
         when(clockRecordRepository.findAllByUserId(1L)).thenReturn(records);
 
         // When
-        WorkHoursDTO result = workHoursService.calculateWorkHours(1L);
+        WorkHoursResponse result = workHoursService.calculateWorkHours(1L);
 
         // Then: Week hours should include all days from Saturday onwards
         assertTrue(result.hoursThisWeek() >= 21.0); // At least 6+7+8 = 21 hours
@@ -160,7 +160,7 @@ class WorkHoursServiceTest {
         when(clockRecordRepository.findAllByUserId(1L)).thenReturn(List.of());
 
         // When
-        WorkHoursDTO result = workHoursService.calculateWorkHours(1L);
+        WorkHoursResponse result = workHoursService.calculateWorkHours(1L);
 
         // Then: Should have 0 hours
         assertEquals(0.0, result.hoursToday(), 0.01);
@@ -183,7 +183,7 @@ class WorkHoursServiceTest {
         when(clockRecordRepository.findAllByUserId(1L)).thenReturn(records);
 
         // When
-        WorkHoursDTO result = workHoursService.calculateWorkHours(1L);
+        WorkHoursResponse result = workHoursService.calculateWorkHours(1L);
 
         // Then: Should not count in today's hours but should count in week hours (as ongoing)
         assertEquals(0.0, result.hoursToday(), 0.01);
