@@ -39,8 +39,8 @@ public class CorsConfig {
                 "https://192.168.0.62:5173"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        config.setExposedHeaders(List.of("Authorization", "Content-Type"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-QuickClock-Guard"));
+        config.setExposedHeaders(List.of("Authorization", "Content-Type", "X-QuickClock-Guard"));
         config.setAllowCredentials(true);
         config.setMaxAge(Duration.ofHours(1));
 
