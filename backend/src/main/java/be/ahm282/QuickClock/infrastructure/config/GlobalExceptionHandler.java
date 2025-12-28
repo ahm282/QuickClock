@@ -103,16 +103,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     // -------------------------------------------------------------------------
-    // 5. SSE & Async (Silent)
-    // -------------------------------------------------------------------------
-    @ExceptionHandler(AsyncRequestNotUsableException.class)
-    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
-    public void handleAsyncDisconnect() {
-        // Client disconnected, do nothing.
-    }
-
-    // -------------------------------------------------------------------------
-    // 6. Fallback
+    // 5. Fallback
     // -------------------------------------------------------------------------
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ProblemDetail> handleUnknownException(Exception ex) {
