@@ -22,9 +22,11 @@ import java.security.SecureRandom;
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
+    private final TimeWindowGuardFilter timeWindowGuardFilter;
 
-    public SecurityConfig(JwtAuthFilter jwtAuthFilter) {
+    public SecurityConfig(JwtAuthFilter jwtAuthFilter, TimeWindowGuardFilter timeWindowGuardFilter) {
         this.jwtAuthFilter = jwtAuthFilter;
+        this.timeWindowGuardFilter = timeWindowGuardFilter;
     }
 
     @Bean
@@ -71,7 +73,10 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(
                         jwtAuthFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(
+                        timeWindowGuardFilter,
+                        JwtAuthFilter.class);
 
         return http.build();
     }
