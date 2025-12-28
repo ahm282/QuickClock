@@ -61,11 +61,11 @@ public class InviteCodeService implements InviteCodeUseCase {
             throw new BusinessRuleException("Invite code has expired");
         }
 
-        if (inviteCode.isUsed()) {
+        if (inviteCode.used()) {
             throw new BusinessRuleException("Invite code has already been used");
         }
 
-        if (inviteCode.isRevoked()) {
+        if (inviteCode.revoked()) {
             throw new BusinessRuleException("Invite code has already been revoked");
         }
 

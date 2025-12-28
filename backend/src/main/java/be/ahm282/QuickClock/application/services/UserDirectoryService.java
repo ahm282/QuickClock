@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.application.services;
 
-import be.ahm282.QuickClock.application.dto.UserSummaryView;
+import be.ahm282.QuickClock.application.dto.response.UserSummaryResponse;
 import be.ahm282.QuickClock.application.ports.in.UserDirectoryUseCase;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import org.springframework.stereotype.Service;
@@ -16,10 +16,10 @@ public class UserDirectoryService implements UserDirectoryUseCase {
     }
 
     @Override
-    public List<UserSummaryView> listEmployeesForKiosk() {
+    public List<UserSummaryResponse> listEmployeesForKiosk() {
         return userRepositoryPort.findAllActiveEmployees()
                 .stream()
-                .map(u -> new UserSummaryView(
+                .map(u -> new UserSummaryResponse(
                         u.getPublicId(),
                         u.getDisplayName(),
                         u.getDisplayNameArabic(),

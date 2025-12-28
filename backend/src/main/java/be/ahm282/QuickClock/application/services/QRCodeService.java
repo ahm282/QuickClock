@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.application.services;
 
-import be.ahm282.QuickClock.application.ports.in.dto.ClockQRCodeResponseDTO;
+import be.ahm282.QuickClock.application.dto.response.ClockQRCodeResponse;
 import be.ahm282.QuickClock.application.ports.out.QRTokenPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
 import be.ahm282.QuickClock.domain.exception.BusinessRuleException;
@@ -23,13 +23,13 @@ public class QRCodeService {
     /**
      * Generate a QR token URL for clocking IN
      */
-    public ClockQRCodeResponseDTO generateClockInQRCode(UUID publicId) {
+    public ClockQRCodeResponse generateClockInQRCode(UUID publicId) {
         User user = userRepositoryPort.findByPublicId(publicId)
                 .orElseThrow(() -> new BusinessRuleException("User not found"));
 
         String token = qrTokenPort.generateToken(user.getId(), "clock-in");
         String tokenId = qrTokenPort.extractTokenId(token);
-        return new ClockQRCodeResponseDTO(
+        return new ClockQRCodeResponse(
                 token,
                 "/clock/qr/in",
                 tokenId
@@ -39,14 +39,14 @@ public class QRCodeService {
     /**
      * Generate a QR token URL for clocking OUT
      */
-    public ClockQRCodeResponseDTO generateClockOutQRCode(UUID publicId) {
+    public ClockQRCodeResponse generateClockOutQRCode(UUID publicId) {
         User user = userRepositoryPort.findByPublicId(publicId)
                 .orElseThrow(() -> new BusinessRuleException("User not found"));
 
         String token = qrTokenPort.generateToken(user.getId(), "clock-out");
         String tokenId = qrTokenPort.extractTokenId(token);
 
-        return new ClockQRCodeResponseDTO(
+        return new ClockQRCodeResponse(
                 token,
                 "/clock/qr/out",
                 tokenId
