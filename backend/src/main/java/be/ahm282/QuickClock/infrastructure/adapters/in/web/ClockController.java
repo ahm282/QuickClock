@@ -11,7 +11,7 @@ import be.ahm282.QuickClock.application.services.WorkHoursService;
 import be.ahm282.QuickClock.domain.exception.RateLimitException;
 import be.ahm282.QuickClock.domain.model.ClockRecord;
 import be.ahm282.QuickClock.domain.model.ClockRecordType;
-import be.ahm282.QuickClock.infrastructure.adapters.in.web.mapper.ClockResponseDTOMapper;
+import be.ahm282.QuickClock.infrastructure.mapper.ClockResponseMapper;
 import be.ahm282.QuickClock.infrastructure.security.SecurityUtil;
 import be.ahm282.QuickClock.infrastructure.security.service.RateLimitService;
 import be.ahm282.QuickClock.infrastructure.sse.QrScanPushService;
@@ -33,7 +33,7 @@ public class ClockController {
 
     private final ClockService clockService;
     private final QRCodeService qrCodeService;
-    private final ClockResponseDTOMapper responseMapper;
+    private final ClockResponseMapper responseMapper;
     private final RateLimitService rateLimitService;
     private final SecurityUtil securityUtil;
     private final QrScanPushService qrScanPushService;
@@ -41,7 +41,7 @@ public class ClockController {
 
     public ClockController(ClockService clockService,
                            QRCodeService qrCodeService,
-                           ClockResponseDTOMapper responseMapper,
+                           ClockResponseMapper responseMapper,
                            RateLimitService rateLimitService,
                            SecurityUtil securityUtil,
                            QrScanPushService qrScanPushService,
