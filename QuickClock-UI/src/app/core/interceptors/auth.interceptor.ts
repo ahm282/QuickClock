@@ -17,6 +17,11 @@ import {
     Observable,
 } from 'rxjs';
 
+// --- Security Configuration ---
+const GUARD_HEADER_KEY = 'X-QuickClock-Guard';
+const GUARD_SALT = 'QuickClock_Salt_v1';
+const GUARD_PREFIX = 'TeaTime';
+
 let isRefreshing = false;
 const refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
@@ -30,23 +35,22 @@ export const authInterceptor: HttpInterceptorFn = (
     const authService = inject(AuthService);
     const token = authService.accessToken();
 
-    const shouldAttach = token && !isAuthEndpoint(req.url);
-    const authRequest = shouldAttach
-        ? req.clone({
-              setHeaders: {
-                  Authorization: `Bearer ${token}`,
-              },
-          })
-        : req;
+    let secureRequest = addSecurityHeaders(req);
 
-    return next(authRequest).pipe(
+    const shouldAttachToken = token && !isAuthEndpoint(req.url);
+
+    if (shouldAttachToken) {
+        secureRequest = addToken(secureRequest, token!);
+    }
+
+    return next(secureRequest).pipe(
         catchError((error: unknown) => {
             if (
                 error instanceof HttpErrorResponse &&
                 error.status === 401 &&
                 !isAuthEndpoint(req.url)
             ) {
-                return handle401Error(authRequest, next, authService);
+                return handle401Error(secureRequest, next, authService);
             }
             return throwError(() => error);
         }),
@@ -85,5 +89,19 @@ const handle401Error = (
 function addToken<T>(request: HttpRequest<T>, token: string): HttpRequest<T> {
     return request.clone({
         setHeaders: { Authorization: `Bearer ${token}` },
+    });
+}
+
+function generateTimeGuard(): string {
+    const now = Date.now().toString();
+    const rawString = `${GUARD_PREFIX}:${now}:${GUARD_SALT}`;
+    return btoa(rawString);
+}
+
+function addSecurityHeaders<T>(request: HttpRequest<T>): HttpRequest<T> {
+    return request.clone({
+        setHeaders: {
+            [GUARD_HEADER_KEY]: generateTimeGuard(),
+        },
     });
 }
