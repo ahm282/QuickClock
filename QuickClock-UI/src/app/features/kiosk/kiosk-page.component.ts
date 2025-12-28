@@ -21,6 +21,7 @@ import {
     Clock,
     LoaderCircle,
     UserSearch,
+    Check,
 } from 'lucide-angular';
 import { AppLogoComponent } from '../../shared/components/app-logo/app-logo.component';
 import { QrScanStatusDTO } from '../../core/models/qr-scan-status.model';
@@ -46,11 +47,12 @@ export class KioskPageComponent {
     private destroyRef = inject(DestroyRef);
     private ngZone = inject(NgZone);
 
-    readonly clock = Clock;
+    readonly Clock = Clock;
     readonly ArrowLeft = ArrowLeft;
     readonly QrCode = QrCode;
     readonly LoaderCircle = LoaderCircle;
-    readonly userSearch = UserSearch;
+    readonly UserSearch = UserSearch;
+    readonly Check = Check;
 
     employees = signal<UserSummaryDTO[]>([]);
     loading = signal(true);

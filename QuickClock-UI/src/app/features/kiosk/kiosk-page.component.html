@@ -1,8 +1,12 @@
 <!-- SUCCESS view -->
 @if (scanStatus(); as status) {
-<div class="kiosk-full center">
-    <div class="success-card">
-        <div class="success-dot">✓</div>
+<div class="kiosk-full flex items-center justify-center">
+    <div class="success-card text-center">
+        <!-- <div class="success-dot">✓</div> -->
+        <div class="success-dot">
+            <lucide-icon [name]="Check" [size]="50" />
+        </div>
+
         <h1
             class="text-4xl font-light"
             i18n="Status|Success message@@kioskSuccessTitle"
@@ -177,7 +181,7 @@
             <h2
                 class="text-lg font-light text-muted-foreground mb-8 flex items-center gap-3"
             >
-                <lucide-icon [name]="userSearch" />
+                <lucide-icon [name]="UserSearch" />
                 <span
                     i18n="
                         Instruction|Employee selection prompt@@kioskSelectPrompt"

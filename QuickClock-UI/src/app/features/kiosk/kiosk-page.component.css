@@ -13,6 +13,10 @@
     padding: 1.5rem;
 }
 
+.kiosk-full.flex {
+    display: flex;
+}
+
 .kiosk-header {
     display: flex;
     align-items: center;
@@ -25,7 +29,7 @@
 .kiosk-header-wide {
     width: 100%;
     max-width: 80rem;
-    margin: 0 auto;
+    margin: 2rem auto;
 }
 
 .center {
