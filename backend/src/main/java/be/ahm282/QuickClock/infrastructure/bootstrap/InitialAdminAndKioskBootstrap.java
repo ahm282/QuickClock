@@ -75,6 +75,7 @@ public class InitialAdminAndKioskBootstrap implements ApplicationRunner {
         User user = User.bootstrapServiceAccount(
                 superAdminUsername,
                 displayName,
+                "",
                 passwordEncoder.encode(superAdminPassword),
                 secret,
                 Set.of(Role.SUPER_ADMIN)
@@ -107,6 +108,7 @@ public class InitialAdminAndKioskBootstrap implements ApplicationRunner {
         User user = User.bootstrapServiceAccount(
                 kioskUsername,
                 "Kiosk",
+                "",
                 passwordEncoder.encode(kioskPassword),
                 secret,
                 Set.of(Role.KIOSK)

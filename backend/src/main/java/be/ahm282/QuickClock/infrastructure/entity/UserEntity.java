@@ -50,6 +50,8 @@ public class UserEntity extends AuditableEntity {
     private AccountType accountType = AccountType.EMPLOYEE;
     @Column(nullable = false, length = 64)
     private String displayName;
+    @Column(name = "display_name_arabic", length = 64)
+    private String displayNameArabic;
     @Column(nullable = false)
     private boolean active = true;
     @Column(name = "last_login")
@@ -65,7 +67,7 @@ public class UserEntity extends AuditableEntity {
     }
 
     public UserEntity(Long id, UUID publicId, String username, String passwordHash, String secret, Set<Role> roles,
-                      AccountType accountType, String displayName, boolean active, Instant lastLogin,
+                      AccountType accountType, String displayName, String displayNameArabic, boolean active, Instant lastLogin,
                       Instant lastPasswordChange, int failedLoginAttempts, Instant lockedUntil) {
         this.id = id;
         this.publicId = (publicId != null) ? publicId : UUID.randomUUID();
@@ -73,6 +75,7 @@ public class UserEntity extends AuditableEntity {
         this.passwordHash = passwordHash;
         this.secret = secret;
         this.displayName = displayName;
+        this.displayNameArabic = displayNameArabic;
         this.accountType = accountType;
         this.active = active;
         this.lastLogin = lastLogin;
@@ -146,6 +149,10 @@ public class UserEntity extends AuditableEntity {
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
+
+    public String getDisplayNameArabic() { return displayNameArabic; }
+
+    public void setDisplayNameArabic(String displayNameArabic) { this.displayNameArabic = displayNameArabic; }
 
     public boolean isActive() {
         return active;

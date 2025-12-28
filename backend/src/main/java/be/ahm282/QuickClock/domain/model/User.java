@@ -15,6 +15,7 @@ public class User {
 
     private final String username;
     private final String displayName;
+    private final String displayNameArabic;
 
     private final String passwordHash;
 
@@ -47,6 +48,7 @@ public class User {
             UUID publicId,
             String username,
             String displayName,
+            String displayNameArabic,
             String passwordHash,
             String secret,
             Set<Role> roles,
@@ -61,6 +63,7 @@ public class User {
         this.publicId = publicId;
         this.username = username;
         this.displayName = displayName;
+        this.displayNameArabic = displayNameArabic;
         this.passwordHash = passwordHash;
         this.secret = secret;
 
@@ -83,6 +86,7 @@ public class User {
     public static User bootstrapServiceAccount(
             String username,
             String displayName,
+            String displayNameArabic,
             String passwordHash,
             String secret,
             Set<Role> roles
@@ -92,6 +96,7 @@ public class User {
                 null,
                 username,
                 displayName,
+                displayNameArabic,
                 passwordHash,
                 secret,
                 roles,
@@ -107,6 +112,7 @@ public class User {
     public static User newEmployee(
             String username,
             String displayName,
+            String displayNameArabic,
             String passwordHash,
             String secret,
             Set<Role> roles
@@ -116,6 +122,7 @@ public class User {
                 null,
                 username,
                 displayName,
+                displayNameArabic,
                 passwordHash,
                 secret,
                 roles,
@@ -144,6 +151,10 @@ public class User {
 
     public String getDisplayName() {
         return displayName;
+    }
+
+    public String getDisplayNameArabic() {
+        return displayNameArabic;
     }
 
     public String getPasswordHash() {
