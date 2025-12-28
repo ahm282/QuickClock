@@ -3,38 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { catchError, Observable, of, tap, throwError, map } from 'rxjs';
-import { jwtDecode, JwtPayload } from 'jwt-decode';
-
-export interface LoginRequest {
-    username: string;
-    password: string;
-}
-
-export interface RegisterRequest {
-    username: string;
-    password: string;
-    displayName: string;
-    inviteCode: string;
-}
-
-export interface AccessTokenResponse {
-    accessToken: string;
-}
-
-export interface User {
-    id: string;
-    username: string;
-    displayName: string;
-    roles: string[];
-}
-
-interface QuickClockJwtPayload extends JwtPayload {
-    username?: string;
-    displayName?: string;
-    exp: number;
-    sub: string;
-    roles?: string[];
-}
+import { jwtDecode } from 'jwt-decode';
+import { User } from '../models/user.model';
+import { LoginRequest } from '../models/dto/login-request.model';
+import { RegisterRequest } from '../models/dto/register-request.model';
+import { AccessTokenResponse } from '../models/dto/access-token-response.model';
+import { QuickClockJwtPayload } from '../models/dto/quickclock-jwt-payload.model';
 
 @Injectable({
     providedIn: 'root',
@@ -244,6 +218,7 @@ export class AuthService {
                 id: decoded.sub,
                 username: decoded.username || '',
                 displayName: decoded.displayName || decoded.sub || '',
+                displayNameArabic: decoded.displayNameArabic,
                 roles: decoded.roles ?? [],
             };
 

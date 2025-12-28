@@ -1,10 +1,8 @@
 <div class="flex flex-col justify-center gap-y-4">
     <h1 class="text-3xl md:text-5xl font-light">
-        {{ timeBasedGreeting() }},&nbsp;{{
-            authService.userDisplayName()?.trim()
-        }}
+        {{ timeBasedGreeting() }},&nbsp;{{ currentUser() | localizedName }}
     </h1>
     <p class="text-sm text-muted-foreground">
-        {{ today() | date: 'fullDate' }}
+        {{ today() | date : 'fullDate' }}
     </p>
 </div>
