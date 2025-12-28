@@ -1,9 +1,9 @@
-package be.ahm282.QuickClock.application.dto;
+package be.ahm282.QuickClock.application.dto.response;
 
 import java.time.Instant;
 import java.util.UUID;
 
-public record UserSummaryView(
+public record UserSummaryResponse(
     UUID publicId,
     String displayName,
     String displayNameArabic,

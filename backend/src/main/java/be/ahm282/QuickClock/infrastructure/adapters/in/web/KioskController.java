@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.infrastructure.adapters.in.web;
 
-import be.ahm282.QuickClock.application.dto.UserSummaryView;
+import be.ahm282.QuickClock.application.dto.response.UserSummaryResponse;
 import be.ahm282.QuickClock.application.ports.in.UserDirectoryUseCase;
 import be.ahm282.QuickClock.application.ports.out.ClockRecordRepositoryPort;
 import be.ahm282.QuickClock.application.ports.out.UserRepositoryPort;
@@ -32,7 +32,7 @@ public class KioskController {
     }
 
     @GetMapping("/employees")
-    public List<UserSummaryView> listEmployees() {
+    public List<UserSummaryResponse> listEmployees() {
         securityUtil.requireKioskOrAdmin();
 
         return userDirectoryUseCase.listEmployeesForKiosk()
@@ -43,7 +43,7 @@ public class KioskController {
                     var lastClock = clockRecordRepository.findLatestByUserId(user.getId());
                     String lastClockType = lastClock.map(c -> c.getType().name()).orElse(null);
                     Instant lastClockTime = lastClock.map(ClockRecord::getRecordedAt).orElse(null);
-                    return new UserSummaryView(u.publicId(), u.displayName(), u.displayNameArabic(), lastClockType, lastClockTime);
+                    return new UserSummaryResponse(u.publicId(), u.displayName(), u.displayNameArabic(), lastClockType, lastClockTime);
                 })
                 .toList();
     }
