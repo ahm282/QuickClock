@@ -70,12 +70,12 @@ public class InviteController {
 
     private InviteCodeResponse toDto(InviteCode invite) {
         return new InviteCodeResponse(
-                invite.getCode(),
-                invite.getExpiresAt(),
-                invite.getCreatedByUserId(),
-                invite.isUsed(),
-                invite.isRevoked(),
-                invite.getCreatedAt()
+                invite.code(),
+                invite.expiresAt(),
+                invite.createdByUserId(),
+                invite.used(),
+                invite.revoked(),
+                invite.createdAt()
         );
     }
 }

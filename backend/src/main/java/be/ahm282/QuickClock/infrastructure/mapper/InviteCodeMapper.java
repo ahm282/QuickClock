@@ -32,15 +32,15 @@ public class InviteCodeMapper {
 
         InviteCodeEntity entity = new InviteCodeEntity();
 
-        entity.setId(domain.getId());
-        entity.setCode(domain.getCode());
-        entity.setExpiresAt(domain.getExpiresAt());
-        entity.setUsed(domain.isUsed());
-        entity.setRevoked(domain.isRevoked());
-        entity.setUsedByUserId(domain.getUsedByUserId());
-        entity.setCreatedByUserId(domain.getCreatedByUserId());
-        entity.setRevokedByUserId(domain.getRevokedByUserId());
-        entity.setRevokedAt(domain.getRevokedAt());
+        entity.setId(domain.id());
+        entity.setCode(domain.code());
+        entity.setExpiresAt(domain.expiresAt());
+        entity.setUsed(domain.used());
+        entity.setRevoked(domain.revoked());
+        entity.setUsedByUserId(domain.usedByUserId());
+        entity.setCreatedByUserId(domain.createdByUserId());
+        entity.setRevokedByUserId(domain.revokedByUserId());
+        entity.setRevokedAt(domain.revokedAt());
 
         return entity;
     }
