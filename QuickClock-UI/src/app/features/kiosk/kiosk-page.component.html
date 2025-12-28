@@ -30,12 +30,13 @@
 @else if (selectedEmployee()) {
 <div class="kiosk-full">
     <header class="kiosk-header-wide">
-        <div class="flex justify-between gap-4">
+        <div class="flex justify-between">
             <app-logo />
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
                 <p class="text-sm text-muted-foreground">
                     {{ today() | date : 'fullDate' }}
                 </p>
+                <app-language-switcher />
                 <app-theme-toggle />
                 <button
                     class="btn btn-secondary flex items-center gap-2 text-muted-foreground business:text-white"
@@ -148,12 +149,13 @@
 @else {
 <div class="kiosk-full">
     <header class="kiosk-header-wide">
-        <div class="flex justify-between gap-4">
+        <div class="flex justify-between">
             <app-logo />
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
                 <p class="text-sm text-muted-foreground">
                     {{ today() | date : 'fullDate' }}
                 </p>
+                <app-language-switcher />
                 <app-theme-toggle />
                 <app-logout-button />
             </div>

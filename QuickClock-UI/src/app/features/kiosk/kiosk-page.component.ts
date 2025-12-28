@@ -27,18 +27,20 @@ import { AppLogoComponent } from '../../shared/components/app-logo/app-logo.comp
 import { QrScanStatusDTO } from '../../core/models/qr-scan-status.model';
 import { Subscription } from 'rxjs';
 import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { LanguageSwitcherComponent } from "../../shared/components/language-switcher/language-switcher.component";
 
 @Component({
     selector: 'app-kiosk-page',
     standalone: true,
     imports: [
-        CommonModule,
-        QRCodeComponent,
-        LogoutButtonComponent,
-        LucideAngularModule,
-        AppLogoComponent,
-        ThemeToggleComponent,
-    ],
+    CommonModule,
+    QRCodeComponent,
+    LogoutButtonComponent,
+    LucideAngularModule,
+    AppLogoComponent,
+    ThemeToggleComponent,
+    LanguageSwitcherComponent
+],
     templateUrl: './kiosk-page.component.html',
     styleUrl: './kiosk-page.component.css',
 })
