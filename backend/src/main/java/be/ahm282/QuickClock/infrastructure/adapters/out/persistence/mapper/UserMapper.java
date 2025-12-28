@@ -8,26 +8,24 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
 
     public User toDomain(UserEntity entity) {
-        if (entity == null) {
-            return null;
-        }
+        if (entity == null) return null;
 
-        return new User(
-                entity.getId(),
-                entity.getPublicId(),
-                entity.getUsername(),
-                entity.getDisplayName(),
-                entity.getDisplayNameArabic(),
-                entity.getPasswordHash(),
-                entity.getSecret(),
-                entity.getRoles(),
-                entity.getAccountType(),
-                entity.isActive(),
-                entity.getLastLogin(),
-                entity.getLastPasswordChange(),
-                entity.getFailedLoginAttempts(),
-                entity.getLockedUntil()
-        );
+        return User.builder()
+                .id(entity.getId())
+                .publicId(entity.getPublicId())
+                .username(entity.getUsername())
+                .displayName(entity.getDisplayName())
+                .displayNameArabic(entity.getDisplayNameArabic())
+                .passwordHash(entity.getPasswordHash())
+                .secret(entity.getSecret())
+                .roles(entity.getRoles())
+                .accountType(entity.getAccountType())
+                .active(entity.isActive())
+                .lastLogin(entity.getLastLogin())
+                .lastPasswordChange(entity.getLastPasswordChange())
+                .failedLoginAttempts(entity.getFailedLoginAttempts())
+                .lockedUntil(entity.getLockedUntil())
+                .build();
     }
 
     public UserEntity toEntity(User user) {
