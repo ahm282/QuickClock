@@ -1,4 +1,4 @@
-package be.ahm282.QuickClock.infrastructure.Tasks;
+package be.ahm282.QuickClock.infrastructure.scheduled;
 
 import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.JpaRefreshTokenRepository;
 import org.slf4j.Logger;
