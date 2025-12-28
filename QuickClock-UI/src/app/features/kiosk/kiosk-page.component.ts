@@ -4,15 +4,13 @@ import {
     DestroyRef,
     effect,
     inject,
+    LOCALE_ID,
     NgZone,
     signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { QRCodeComponent } from 'angularx-qrcode';
-import {
-    KioskApiService,
-    UserSummaryDTO,
-} from '../../core/services/kiosk-api.service';
+import { KioskApiService } from '../../core/services/kiosk-api.service';
 import { LogoutButtonComponent } from '../../shared/components/logout-button/logout-button.component';
 import {
     LucideAngularModule,
@@ -27,20 +25,23 @@ import { AppLogoComponent } from '../../shared/components/app-logo/app-logo.comp
 import { QrScanStatusDTO } from '../../core/models/qr-scan-status.model';
 import { Subscription } from 'rxjs';
 import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
-import { LanguageSwitcherComponent } from "../../shared/components/language-switcher/language-switcher.component";
+import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
+import { UserSummaryDTO } from '../../core/models/dto/user-summary-dto.model';
+import { LocalizedNamePipe } from '../../core/pipes/localized-name.pipe';
 
 @Component({
     selector: 'app-kiosk-page',
     standalone: true,
     imports: [
-    CommonModule,
-    QRCodeComponent,
-    LogoutButtonComponent,
-    LucideAngularModule,
-    AppLogoComponent,
-    ThemeToggleComponent,
-    LanguageSwitcherComponent
-],
+        CommonModule,
+        QRCodeComponent,
+        LogoutButtonComponent,
+        LucideAngularModule,
+        AppLogoComponent,
+        ThemeToggleComponent,
+        LanguageSwitcherComponent,
+        LocalizedNamePipe,
+    ],
     templateUrl: './kiosk-page.component.html',
     styleUrl: './kiosk-page.component.css',
 })
@@ -48,6 +49,7 @@ export class KioskPageComponent {
     private api = inject(KioskApiService);
     private destroyRef = inject(DestroyRef);
     private ngZone = inject(NgZone);
+    private locale = inject(LOCALE_ID);
 
     readonly Clock = Clock;
     readonly ArrowLeft = ArrowLeft;
@@ -56,6 +58,7 @@ export class KioskPageComponent {
     readonly UserSearch = UserSearch;
     readonly Check = Check;
 
+    isArabic = this.locale.startsWith('ar');
     employees = signal<UserSummaryDTO[]>([]);
     loading = signal(true);
     error = signal<string | null>(null);

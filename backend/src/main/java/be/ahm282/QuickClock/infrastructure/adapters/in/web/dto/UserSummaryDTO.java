@@ -5,6 +5,7 @@ import java.util.UUID;
 public record UserSummaryDTO(
         UUID publicId,
         String displayName,
+        String displayNameArabic,
         String lastClockType,  // "IN", "OUT", or null if never clocked
         String lastClockTime   // ISO timestamp or null
 ) {}

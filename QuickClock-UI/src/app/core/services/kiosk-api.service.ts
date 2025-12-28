@@ -8,19 +8,8 @@ import {
     EventSourceMessage,
 } from '@microsoft/fetch-event-source';
 import { QrScanStatusDTO } from '../models/qr-scan-status.model';
-
-export interface UserSummaryDTO {
-    publicId: string;
-    displayName: string;
-    lastClockType: 'IN' | 'OUT' | 'BREAK_START' | 'BREAK_END' | null;
-    lastClockTime: string | null;
-}
-
-export interface ClockQRCodeResponseDTO {
-    token: string;
-    path: string;
-    tokenId: string;
-}
+import { UserSummaryDTO } from '../models/dto/user-summary-dto.model';
+import { ClockQRCodeResponseDTO } from '../models/dto/clock-qr-code-response-dto.model';
 
 class FatalError extends Error {}
 

@@ -41,7 +41,7 @@ public class KioskController {
                     var lastClock = clockRecordRepository.findLatestByUserId(user.getId());
                     String lastClockType = lastClock.map(c -> c.getType().name()).orElse(null);
                     String lastClockTime = lastClock.map(c -> c.getRecordedAt().toString()).orElse(null);
-                    return new UserSummaryDTO(u.publicId(), u.displayName(), lastClockType, lastClockTime);
+                    return new UserSummaryDTO(u.publicId(), u.displayName(), u.displayNameArabic(), lastClockType, lastClockTime);
                 })
                 .toList();
     }

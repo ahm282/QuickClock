@@ -62,7 +62,7 @@
     <main class="kiosk-center">
         <div class="text-center mb-4">
             <h1 class="text-3xl md:text-4xl font-light mb-2">
-                {{ selectedEmployee()?.displayName }}
+                {{ selectedEmployee() | localizedName }}
             </h1>
             <p
                 class="text-muted-foreground"
@@ -215,7 +215,7 @@
                         </span>
                     </div>
                     <h3 class="font-medium text mb-1">
-                        {{ u.displayName }}
+                        {{ u | localizedName }}
                     </h3>
                 </button>
                 }

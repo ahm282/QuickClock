@@ -6,6 +6,7 @@ import java.util.UUID;
 public record UserSummaryView(
     UUID publicId,
     String displayName,
+    String displayNameArabic,
     String lastClockType,  // "IN", "OUT", or null if never clocked
     Instant lastClockTime) {
 }
