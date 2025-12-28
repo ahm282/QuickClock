@@ -18,11 +18,14 @@ public class WorkHoursService {
 
     private final ClockRecordRepositoryPort clockRecordRepository;
     private final LocalizationConfig localizationConfig;
+    private final Clock clock;
 
     public WorkHoursService(ClockRecordRepositoryPort clockRecordRepository,
-                           LocalizationConfig localizationConfig) {
+                           LocalizationConfig localizationConfig,
+                            Clock clock) {
         this.clockRecordRepository = clockRecordRepository;
         this.localizationConfig = localizationConfig;
+        this.clock = clock;
     }
 
     /**
@@ -36,12 +39,12 @@ public class WorkHoursService {
         ZoneId zoneId = localizationConfig.getZoneId();
         DayOfWeek weekStartDay = localizationConfig.getWeekStartDay();
 
-        LocalDate today = LocalDate.now(zoneId);
+        LocalDate today = LocalDate.now(clock.withZone(zoneId));
         LocalDate startOfWeekDate = today.with(TemporalAdjusters.previousOrSame(weekStartDay));
 
         Instant startOfToday = today.atStartOfDay(zoneId).toInstant();
         Instant startOfWeek = startOfWeekDate.atStartOfDay(zoneId).toInstant();
-        Instant now = Instant.now();
+        Instant now = clock.instant();
 
         // Filter records
         List<ClockRecord> todayRecords = allRecords.stream()

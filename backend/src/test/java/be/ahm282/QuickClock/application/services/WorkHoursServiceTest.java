@@ -29,6 +29,7 @@ class WorkHoursServiceTest {
     private LocalizationConfig localizationConfig;
 
     private WorkHoursService workHoursService;
+    private Clock fixedClock;
 
     @BeforeEach
     void setUp() {
@@ -36,14 +37,19 @@ class WorkHoursServiceTest {
         when(localizationConfig.getZoneId()).thenReturn(ZoneId.of("Africa/Cairo"));
         when(localizationConfig.getWeekStartDay()).thenReturn(DayOfWeek.SATURDAY);
 
-        workHoursService = new WorkHoursService(clockRecordRepository, localizationConfig);
+        LocalDateTime tuesdayNoon = LocalDateTime.of(2025, 12, 23, 23, 0);
+        ZoneId cairo = ZoneId.of("Africa/Cairo");
+        Instant fixedInstant = tuesdayNoon.atZone(cairo).toInstant();
+
+        fixedClock = Clock.fixed(fixedInstant, cairo);
+        workHoursService = new WorkHoursService(clockRecordRepository, localizationConfig, fixedClock);
     }
 
     @Test
     void testCalculateHoursToday_singleSession() {
         // Given: User clocked in at 9 AM and out at 5 PM Cairo time today
         ZoneId cairo = ZoneId.of("Africa/Cairo");
-        LocalDate today = LocalDate.now(cairo);
+        LocalDate today = LocalDate.now(fixedClock);
 
         Instant clockIn = today.atTime(9, 0).atZone(cairo).toInstant();
         Instant clockOut = today.atTime(17, 0).atZone(cairo).toInstant();
@@ -66,7 +72,7 @@ class WorkHoursServiceTest {
     void testCalculateHoursToday_multipleSessions() {
         // Given: User worked two sessions today
         ZoneId cairo = ZoneId.of("Africa/Cairo");
-        LocalDate today = LocalDate.now(cairo);
+        LocalDate today = LocalDate.now(fixedClock);
 
         Instant session1In = today.atTime(8, 0).atZone(cairo).toInstant();
         Instant session1Out = today.atTime(12, 0).atZone(cairo).toInstant();
@@ -92,7 +98,7 @@ class WorkHoursServiceTest {
     @Test
     void testCalculateHoursToday_currentlyClockedIn() {
         // Given: User clocked in 2 hours ago and is still clocked in
-        Instant twoHoursAgo = Instant.now().minus(Duration.ofHours(2));
+        Instant twoHoursAgo = fixedClock.instant().minus(Duration.ofHours(2));
 
         List<ClockRecord> records = List.of(
                 ClockRecord.createAt(1L, ClockRecordType.IN, twoHoursAgo, null)
@@ -116,7 +122,7 @@ class WorkHoursServiceTest {
     void testCalculateHoursThisWeek_saturdayToFriday() {
         // Given: It's Tuesday in a week starting on Saturday
         ZoneId cairo = ZoneId.of("Africa/Cairo");
-        LocalDate today = LocalDate.now(cairo);
+        LocalDate today = LocalDate.now(fixedClock);
 
         // Find this week's Saturday (start of week)
         LocalDate thisSaturday = today.with(java.time.temporal.TemporalAdjusters.previousOrSame(DayOfWeek.SATURDAY));
@@ -170,7 +176,7 @@ class WorkHoursServiceTest {
     void testUnmatchedClockIn_ignored() {
         // Given: User has a clock IN without corresponding OUT from yesterday
         ZoneId cairo = ZoneId.of("Africa/Cairo");
-        LocalDate yesterday = LocalDate.now(cairo).minusDays(1);
+        LocalDate yesterday = LocalDate.now(fixedClock).minusDays(1);
 
         Instant yesterdayIn = yesterday.atTime(9, 0).atZone(cairo).toInstant();
 
