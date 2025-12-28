@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "QuickClock-UI": {
+        "QuickClock": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:class": {
@@ -34,14 +34,23 @@
             "root": "",
             "sourceRoot": "src",
             "prefix": "app",
+            "i18n": {
+                "sourceLocale": "en-US",
+                "locales": {
+                    "ar-EG": {
+                        "translation": "src/locale/messages.ar-EG.xlf",
+                        "baseHref": "/ar-EG/"
+                    }
+                }
+            },
             "architect": {
                 "build": {
                     "builder": "@angular/build:application",
                     "options": {
-                        "outputPath": "dist/quick-clock-ui",
+                        "outputPath": "dist/quick-clock",
                         "index": "src/index.html",
                         "browser": "src/main.ts",
-                        "polyfills": ["zone.js"],
+                        "polyfills": ["zone.js", "@angular/localize/init"],
                         "tsConfig": "tsconfig.app.json",
                         "assets": [
                             {
@@ -50,15 +59,25 @@
                             }
                         ],
                         "styles": ["src/styles.css"],
-                        "scripts": []
+                        "scripts": [],
+                        "loader": {
+                            ".svg": "text",
+                            ".woff": "file",
+                            ".woff2": "file"
+                        },
+                        "localize": true,
+                        "allowedCommonJsDependencies": [
+                            "qrcode",
+                            "angularx-qrcode"
+                        ]
                     },
                     "configurations": {
                         "production": {
                             "budgets": [
                                 {
                                     "type": "initial",
-                                    "maximumWarning": "500kB",
-                                    "maximumError": "1MB"
+                                    "maximumWarning": "2500kB",
+                                    "maximumError": "5MB"
                                 },
                                 {
                                     "type": "anyComponentStyle",
@@ -66,12 +85,29 @@
                                     "maximumError": "8kB"
                                 }
                             ],
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/app/environments/environment.ts",
+                                    "with": "src/app/environments/environment.prod.ts"
+                                }
+                            ],
                             "outputHashing": "all"
                         },
                         "development": {
                             "optimization": false,
                             "extractLicenses": false,
-                            "sourceMap": true
+                            "sourceMap": true,
+                            "i18nMissingTranslation": "error",
+                            "outputHashing": "media",
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/app/environments/environment.ts",
+                                    "with": "src/app/environments/environment.dev.ts"
+                                }
+                            ]
+                        },
+                        "ar-EG": {
+                            "localize": ["ar-EG"]
                         }
                     },
                     "defaultConfiguration": "production"
@@ -80,24 +116,44 @@
                     "builder": "@angular/build:dev-server",
                     "configurations": {
                         "production": {
-                            "buildTarget": "QuickClock-UI:build:production"
+                            "buildTarget": "QuickClock:build:production",
+                            "ssl": true,
+                            "host": "0.0.0.0",
+                            "port": 5173
                         },
                         "development": {
-                            "buildTarget": "QuickClock-UI:build:development",
+                            "buildTarget": "QuickClock:build:development",
+                            "ssl": true,
+                            "host": "0.0.0.0",
+                            "port": 5173
+                        },
+                        "ar-EG": {
+                            "buildTarget": "QuickClock:build:ar-EG",
                             "ssl": true,
                             "host": "0.0.0.0",
                             "port": 5173
                         }
                     },
-                    "defaultConfiguration": "development"
+                    "defaultConfiguration": "production"
                 },
                 "extract-i18n": {
-                    "builder": "@angular/build:extract-i18n"
+                    "builder": "ng-extract-i18n-merge:ng-extract-i18n-merge",
+                    "options": {
+                        "buildTarget": "QuickClock:build",
+                        "format": "xlf",
+                        "outputPath": "src/locale",
+                        "trim": true,
+                        "targetFiles": ["messages.ar-EG.xlf"]
+                    }
                 },
                 "test": {
                     "builder": "@angular/build:karma",
                     "options": {
-                        "polyfills": ["zone.js", "zone.js/testing"],
+                        "polyfills": [
+                            "zone.js",
+                            "zone.js/testing",
+                            "@angular/localize/init"
+                        ],
                         "tsConfig": "tsconfig.spec.json",
                         "assets": [
                             {

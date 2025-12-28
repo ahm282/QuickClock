@@ -4,15 +4,13 @@ import {
     DestroyRef,
     effect,
     inject,
+    LOCALE_ID,
     NgZone,
     signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { QRCodeComponent } from 'angularx-qrcode';
-import {
-    KioskApiService,
-    UserSummaryDTO,
-} from '../../core/services/kiosk-api.service';
+import { KioskApiService } from '../../core/services/kiosk-api.service';
 import { LogoutButtonComponent } from '../../shared/components/logout-button/logout-button.component';
 import {
     LucideAngularModule,
@@ -20,10 +18,16 @@ import {
     QrCode,
     Clock,
     LoaderCircle,
+    UserSearch,
+    Check,
 } from 'lucide-angular';
 import { AppLogoComponent } from '../../shared/components/app-logo/app-logo.component';
 import { QrScanStatusDTO } from '../../core/models/qr-scan-status.model';
 import { Subscription } from 'rxjs';
+import { ThemeToggleComponent } from '../../shared/components/theme-toggle/theme-toggle.component';
+import { LanguageSwitcherComponent } from '../../shared/components/language-switcher/language-switcher.component';
+import { UserSummaryDTO } from '../../core/models/dto/user-summary-dto.model';
+import { LocalizedNamePipe } from '../../core/pipes/localized-name.pipe';
 
 @Component({
     selector: 'app-kiosk-page',
@@ -34,6 +38,9 @@ import { Subscription } from 'rxjs';
         LogoutButtonComponent,
         LucideAngularModule,
         AppLogoComponent,
+        ThemeToggleComponent,
+        LanguageSwitcherComponent,
+        LocalizedNamePipe,
     ],
     templateUrl: './kiosk-page.component.html',
     styleUrl: './kiosk-page.component.css',
@@ -42,12 +49,16 @@ export class KioskPageComponent {
     private api = inject(KioskApiService);
     private destroyRef = inject(DestroyRef);
     private ngZone = inject(NgZone);
+    private locale = inject(LOCALE_ID);
 
-    readonly clock = Clock;
+    readonly Clock = Clock;
     readonly ArrowLeft = ArrowLeft;
     readonly QrCode = QrCode;
     readonly LoaderCircle = LoaderCircle;
+    readonly UserSearch = UserSearch;
+    readonly Check = Check;
 
+    isArabic = this.locale.startsWith('ar');
     employees = signal<UserSummaryDTO[]>([]);
     loading = signal(true);
     error = signal<string | null>(null);
@@ -83,6 +94,14 @@ export class KioskPageComponent {
         return JSON.stringify({ token, path });
     });
 
+    // Placeholder QR content shown while loading/connecting
+    // placeholderQrData(): string {
+    //     return JSON.stringify({
+    //         token: 'placeholder',
+    //         path: '/kiosk/placeholder',
+    //     });
+    // }
+
     // Only show QR when we have data AND the connection is established
     isQrVisible = computed(() => {
         return !!this.qrData() && this.sseConnected();
@@ -95,7 +114,9 @@ export class KioskPageComponent {
                 this.loading.set(false);
             },
             error: () => {
-                this.error.set('Failed to load employees.');
+                this.error.set(
+                    $localize`:Error|Failed to load employee list@@kioskLoadEmployeesError:Failed to load employees.`,
+                );
                 this.loading.set(false);
             },
         });
@@ -109,15 +130,14 @@ export class KioskPageComponent {
         effect(() => {
             const emp = this.selectedEmployee();
             const status = this.scanStatus();
+            const qrVisible = this.isQrVisible();
 
             this.stopTimer();
 
-            if (!emp || status) {
+            if (!emp || status || !qrVisible) {
                 this.timeRemaining.set(30);
                 return;
             }
-
-            this.timeRemaining.set(30);
 
             // Optimization: Run timer outside Angular zone
             this.ngZone.runOutsideAngular(() => {
@@ -182,7 +202,6 @@ export class KioskPageComponent {
         if (!publicId) return;
 
         this.qrLoading.set(true);
-        this.sseConnected.set(false); // Reset connection state
         this.scanSuccess.set(false);
         this.scanStatus.set(null);
 
@@ -202,7 +221,9 @@ export class KioskPageComponent {
                 }
             },
             error: () => {
-                this.error.set('Failed to generate QR.');
+                this.error.set(
+                    $localize`:Error|QR code generation failed@@kioskGenerateQrError:Failed to generate QR.`,
+                );
                 this.qrLoading.set(false);
             },
         });
@@ -233,7 +254,9 @@ export class KioskPageComponent {
                 }
             },
             error: (error) => {
-                this.error.set('Connection lost. Please try again.');
+                this.error.set(
+                    $localize`:Error|SSE connection lost@@kioskConnectionLostError:Connection lost. Please try again.`,
+                );
                 this.sseConnected.set(false);
                 this.resetQrState();
             },

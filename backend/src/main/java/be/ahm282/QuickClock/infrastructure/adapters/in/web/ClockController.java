@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -228,8 +229,13 @@ public class ClockController {
             value = "/qr/stream/{tokenId}",
             produces = MediaType.TEXT_EVENT_STREAM_VALUE
     )
-    public SseEmitter streamQr(@PathVariable String tokenId, HttpServletRequest request) {
+    public ResponseEntity<SseEmitter> streamQr(@PathVariable String tokenId, HttpServletRequest request) {
         securityUtil.requireKioskOrAdmin();
-        return qrScanPushService.subscribe(tokenId);
+        SseEmitter emitter = qrScanPushService.subscribe(tokenId);
+
+        return ResponseEntity.ok()
+                .header("X-Accel-Buffering", "no")
+                .header("Cache-Control", "no")
+                .body(emitter);
     }
 }

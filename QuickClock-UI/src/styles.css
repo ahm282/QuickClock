@@ -1,4 +1,7 @@
 @import 'tailwindcss';
+@custom-variant business ([data-theme="business"] &);
+
+@import '@fontsource/almarai';
 
 @plugin "daisyui" {
     themes: corporate --default, business --prefersdark;
@@ -18,8 +21,12 @@
     /* Semantic Colors */
     --color-info: oklch(0.65 0.12 235);
     --color-info-content: oklch(1 0 0);
-    --color-error: oklch(0.577 0.245 27.325);
+    --color-error: oklch(0.55 0.245 25);
     --color-error-content: oklch(1 0 0);
+    --color-success: oklch(0.59 0.22 142);
+    --color-success-content: oklch(1 0 0);
+    --color-warning: oklch(0.75 0.2 100);
+    --color-warning-content: oklch(0.2 0 0);
 
     /* Surfaces */
     --color-base-100: oklch(0.98 0 0); /* Pure White Card */
@@ -45,8 +52,12 @@
     --color-primary-content: oklch(0.15 0 0);
     --color-info: oklch(0.72 0.11 220);
     --color-info-content: oklch(0.15 0 0);
-    --color-error: oklch(0.58 0.22 25);
+    --color-error: oklch(0.5 0.245 27.325);
     --color-error-content: oklch(0.95 0 0);
+    --color-success: oklch(0.58 0.58 162);
+    --color-success-content: oklch(0.95 0 0);
+    --color-warning: oklch(0.65 0.15 100);
+    --color-warning-content: oklch(0.15 0 0);
 
     /* Surfaces */
     --color-base-100: oklch(0.19 0.02 253);
@@ -75,6 +86,17 @@
 @layer base {
     * {
         font-family: 'Geist Variable', sans-serif;
+    }
+
+    /* Arabic locale styles */
+    html.locale-ar,
+    html[lang^='ar'] {
+        direction: rtl;
+    }
+
+    html.locale-ar *,
+    html[lang^='ar'] * {
+        font-family: 'Almarai', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
     }
 
     body {
@@ -128,4 +150,30 @@ select:-webkit-autofill:focus {
 
 .animate-scan {
     animation: scan 2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root.theme-transition {
+        transition: none !important;
+    }
+}
+
+:root.theme-transition,
+:root.theme-transition *,
+:root.theme-transition *:before,
+:root.theme-transition *:after {
+    transition: all 0.3s ease-in !important;
+    transition-delay: 0s !important;
+}
+
+@layer utilities {
+    @supports (color: color-mix(in lab, red, red)) {
+        .badge-soft {
+            background-color: color-mix(
+                in oklab,
+                var(--badge-color, var(--color-base-content)) 12%,
+                var(--color-base-100)
+            );
+        }
+    }
 }

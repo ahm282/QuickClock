@@ -1,10 +1,11 @@
 <div class="min-h-screen bg-background flex flex-col">
-    <app-header></app-header>
+    <app-header />
     <main class="flex-1 flex items-center justify-center px-6 pb-20">
         <div class="w-full max-w-sm">
             <div class="mb-10">
                 <h1
                     class="flex items-center gap-x-4 text-4xl md:text-5xl font-light text-foreground mb-3 leading-tight"
+                    i18n="@@login.welcomeHeader"
                 >
                     Welcome Back
                     <lucide-icon
@@ -12,7 +13,9 @@
                         class="text-foreground size-6 rotate-12 mt-0.5"
                     ></lucide-icon>
                 </h1>
-                <p class="text-muted-foreground">Sign in to your account</p>
+                <p class="text-muted-foreground" i18n="@@login.subtitle">
+                    Sign in to your account
+                </p>
             </div>
             <div>
                 <form
@@ -21,26 +24,34 @@
                     class="space-y-6"
                 >
                     <div class="space-y-2">
-                        <label class="text-sm font-medium text-foreground"
-                            >Username</label
+                        <label
+                            class="text-sm font-medium text-foreground"
+                            i18n="@@login.label.username"
                         >
+                            Username
+                        </label>
                         <input
                             data-slot="input"
                             class="placeholder:text-muted-foreground dark:bg-input/30 w-full min-w-0 border px-3 py-1 text-base shadow-xs outline-none md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] h-12 rounded-xl border-border bg-muted/30 focus:bg-background transition-colors"
                             placeholder="Username"
+                            i18n-placeholder="@@login.placeholder.username"
                             type="text"
                             formControlName="username"
                         />
                     </div>
                     <div class="space-y-2">
                         <div class="flex justify-between items-center">
-                            <label class="text-sm font-medium text-foreground"
-                                >Password</label
+                            <label
+                                class="text-sm font-medium text-foreground"
+                                i18n="@@login.label.password"
                             >
+                                Password
+                            </label>
                             <button
                                 type="button"
                                 class="text-sm text-primary hover:text-primary/80 hover:underline transition-colors cursor-pointer"
                                 (click)="onForgotPassword()"
+                                i18n="@@login.action.forgotPassword"
                             >
                                 Forgot Password?
                             </button>
@@ -49,17 +60,18 @@
                             data-slot="input"
                             class="placeholder:text-muted-foreground dark:bg-input/30 w-full min-w-0 border px-3 py-1 text-base shadow-xs outline-none md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] h-12 rounded-xl border-border bg-muted/30 focus:bg-background transition-colors"
                             placeholder="Password"
+                            i18n-placeholder="@@login.placeholder.password"
                             type="password"
                             formControlName="password"
                         />
                     </div>
 
                     @if (errorMsg) {
-                        <div
-                            class="text-red-500 text-xs text-center bg-red-50 p-2.5 rounded-md mt-3"
-                        >
-                            {{ errorMsg }}
-                        </div>
+                    <div
+                        class="text-red-500 text-xs text-center bg-red-50 p-2.5 rounded-md mt-3"
+                    >
+                        {{ errorMsg }}
+                    </div>
                     }
 
                     <div class="pt-4">
@@ -68,7 +80,13 @@
                             [disabled]="loginForm.invalid || isLoading"
                             class="btn btn-primary inline-flex text-gray-300 focus-visible:text-primary items-center justify-center gap-2 whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring focus-visible:ring-2 border-border focus:bg-background bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2 w-full h-12 rounded-xl font-medium text-base shadow"
                         >
-                            {{ isLoading ? 'Logging in...' : 'Sign In' }}
+                            @if (isLoading) {
+                            <span i18n="@@login.button.loggingIn">
+                                Logging in...
+                            </span>
+                            } @else {
+                            <span i18n="@@login.button.signIn">Sign In</span>
+                            }
                         </button>
                     </div>
                 </form>
@@ -77,7 +95,12 @@
     </main>
     <footer class="p-6 md:p-10 md:pt-0">
         <div class="text-center text-sm text-muted-foreground/60">
-            <p>© {{ getYear() }} QuickClock. All rights reserved.</p>
+            <p>
+                © {{ getYear() }} QuickClock.&nbsp;<span
+                    i18n="@@footer.copyright"
+                    >All rights reserved.</span
+                >
+            </p>
         </div>
     </footer>
 </div>

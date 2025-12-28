@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+
 import { bootstrapApplication } from '@angular/platform-browser';
 import { registerLocaleData } from '@angular/common';
 
@@ -11,6 +13,7 @@ import localeArEg from '@angular/common/locales/ar-EG';
 
 import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
+import '@fontsource/almarai';
 
 import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';

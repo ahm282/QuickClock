@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -17,12 +18,12 @@ public class QrScanPushService {
     private static final Logger log = LoggerFactory.getLogger(QrScanPushService.class);
 
     // 30s + 5s skew
-    private static final long SSE_TIMEMOUT_MILLIS = Duration.ofSeconds(35).toMillis();
+    private static final long SSE_TIMEOUT_MILLIS = Duration.ofSeconds(35).toMillis();
 
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter subscribe(String tokenId) {
-        SseEmitter emitter = new SseEmitter(SSE_TIMEMOUT_MILLIS);
+        SseEmitter emitter = new SseEmitter(SSE_TIMEOUT_MILLIS);
         emitters.put(tokenId, emitter);
 
         emitter.onCompletion(() -> emitters.remove(tokenId));
@@ -32,18 +33,19 @@ public class QrScanPushService {
         });
         emitter.onError(ex -> {
             emitters.remove(tokenId);
-            log.debug("SSE error for tokenId {}: {}", tokenId, ex.toString());
+            log.debug("SSE connection error for tokenId {}: {}", tokenId, ex.getMessage());
         });
 
         // Initial event so the client can start polling immediately
-        try {
-            emitter.send(SseEmitter.event()
-                    .name("init")
-                    .data("connected"));
-        } catch (Exception ex) {
-            emitters.remove(tokenId);
-            emitter.completeWithError(ex);
-        }
+        CompletableFuture.runAsync(() -> {
+            try {
+                emitter.send(SseEmitter.event()
+                        .name("init")
+                        .data("connected"));
+            } catch (Exception ex) {
+                emitters.remove(tokenId);
+            }
+        });
 
         return emitter;
     }
@@ -62,7 +64,6 @@ public class QrScanPushService {
             emitter.complete();
         } catch (IOException ex) {
             log.debug("Failed to push scanned event for tokenId {}: {}", tokenId, ex.toString());
-            emitter.completeWithError(ex);
         }
     }
 
@@ -83,9 +84,8 @@ public class QrScanPushService {
                         .data("keep-alive"));
             } catch (IOException e) {
                 // If heartbeat fails, the connection is likely dead.
-                // onCompletion/onError will handle cleanup, but we can remove it here too.
                 emitters.remove(tokenId);
-                emitter.completeWithError(e);
+                log.debug("Heartbeat failed for {}, removing emitter.", tokenId);
             }
         });
     }

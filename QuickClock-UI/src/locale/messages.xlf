@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="en-US" datatype="plaintext" original="ng2.template">
+    <body>
+      <trans-unit id="kioskSuccessTitle" datatype="html">
+        <source>Success</source>
+        <note priority="1" from="description">Success message</note>
+        <note priority="1" from="meaning">Status</note>
+      </trans-unit>
+      <trans-unit id="kioskBackButton" datatype="html">
+        <source>Back</source>
+        <note priority="1" from="description">Go back button</note>
+        <note priority="1" from="meaning">Action</note>
+      </trans-unit>
+      <trans-unit id="kioskScanInstruction" datatype="html">
+        <source>Scan with your phone</source>
+        <note priority="1" from="description">Scan QR code hint</note>
+        <note priority="1" from="meaning">Instruction</note>
+      </trans-unit>
+      <trans-unit id="kioskRefreshingQrTitle" datatype="html">
+        <source>Refreshing QR</source>
+        <note priority="1" from="description">QR overlay title while refreshing</note>
+        <note priority="1" from="meaning">State</note>
+      </trans-unit>
+      <trans-unit id="kioskRefreshingQrSubtitle" datatype="html">
+        <source>Hold still for a moment</source>
+        <note priority="1" from="description">QR overlay subtitle while refreshing</note>
+        <note priority="1" from="meaning">Instruction</note>
+      </trans-unit>
+      <trans-unit id="kioskQrRefreshesIn" datatype="html">
+        <source>QR Code refreshes in</source>
+        <note priority="1" from="description">Countdown label for QR refresh</note>
+        <note priority="1" from="meaning">Label</note>
+      </trans-unit>
+      <trans-unit id="kioskSecondsUnit" datatype="html">
+        <source>s</source>
+        <note priority="1" from="description">Seconds unit label</note>
+        <note priority="1" from="meaning">Unit</note>
+      </trans-unit>
+      <trans-unit id="kioskMainTitle" datatype="html">
+        <source>Clock In/Out</source>
+        <note priority="1" from="description">Main kiosk heading</note>
+        <note priority="1" from="meaning">Heading</note>
+      </trans-unit>
+      <trans-unit id="kioskLoadingEmployees" datatype="html">
+        <source>Loading employees...</source>
+        <note priority="1" from="description">Loading message</note>
+        <note priority="1" from="meaning">State</note>
+      </trans-unit>
+      <trans-unit id="kioskSelectPrompt" datatype="html">
+        <source>Select your name</source>
+        <note priority="1" from="description">Employee selection prompt</note>
+        <note priority="1" from="meaning">Instruction</note>
+      </trans-unit>
+      <trans-unit id="kioskLoadEmployeesError" datatype="html">
+        <source>Failed to load employees.</source>
+        <note priority="1" from="description">Failed to load employee list</note>
+        <note priority="1" from="meaning">Error</note>
+      </trans-unit>
+      <trans-unit id="kioskGenerateQrError" datatype="html">
+        <source>Failed to generate QR.</source>
+        <note priority="1" from="description">QR code generation failed</note>
+        <note priority="1" from="meaning">Error</note>
+      </trans-unit>
+      <trans-unit id="kioskClockResultIn" datatype="html">
+        <source>Clocked in</source>
+        <note priority="1" from="description">Clock action result</note>
+        <note priority="1" from="meaning">Status</note>
+      </trans-unit>
+      <trans-unit id="kioskClockResultOut" datatype="html">
+        <source>Clocked out</source>
+        <note priority="1" from="description">Clock action result</note>
+        <note priority="1" from="meaning">Status</note>
+      </trans-unit>
+      <trans-unit id="kioskConnectionLostError" datatype="html">
+        <source>Connection lost. Please try again.</source>
+        <note priority="1" from="description">SSE connection lost</note>
+        <note priority="1" from="meaning">Error</note>
+      </trans-unit>
+      <trans-unit id="attendanceScannerStatusTitle" datatype="html">
+        <source>Current Status</source>
+        <note priority="1" from="description">Attendance scanner current status</note>
+        <note priority="1" from="meaning">Section Heading</note>
+      </trans-unit>
+      <trans-unit id="statusClockedIn" datatype="html">
+        <source>Clocked In</source>
+        <note priority="1" from="description">User is currently clocked in</note>
+        <note priority="1" from="meaning">Status</note>
+      </trans-unit>
+      <trans-unit id="statusClockedOut" datatype="html">
+        <source>Clocked Out</source>
+        <note priority="1" from="description">User is currently clocked out</note>
+        <note priority="1" from="meaning">Status</note>
+      </trans-unit>
+      <trans-unit id="sinceTimeLabel" datatype="html">
+        <source>Since <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium text-foreground&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ clockService.clockStatus()!.lastClockTime }}"/> <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <note priority="1" from="description">Time elapsed since last clock action</note>
+        <note priority="1" from="meaning">Label</note>
+      </trans-unit>
+      <trans-unit id="scanAlignHint" datatype="html">
+        <source>Align QR code within the frame...</source>
+        <note priority="1" from="description">Align QR code hint</note>
+        <note priority="1" from="meaning">Instruction</note>
+      </trans-unit>
+      <trans-unit id="cameraErrorTitle" datatype="html">
+        <source>Camera Access Failed</source>
+        <note priority="1" from="description">Camera access failed</note>
+        <note priority="1" from="meaning">Error Heading</note>
+      </trans-unit>
+      <trans-unit id="tryAgainButton" datatype="html">
+        <source>Try Again</source>
+        <note priority="1" from="description">Try camera again</note>
+        <note priority="1" from="meaning">Action</note>
+      </trans-unit>
+      <trans-unit id="readyToScanTitle" datatype="html">
+        <source>Ready to Scan</source>
+        <note priority="1" from="description">Ready to scan heading</note>
+        <note priority="1" from="meaning">State</note>
+      </trans-unit>
+      <trans-unit id="cameraUsageHint" datatype="html">
+        <source>Use your device camera to clock in or out</source>
+        <note priority="1" from="description">Camera usage instruction</note>
+        <note priority="1" from="meaning">Instruction</note>
+      </trans-unit>
+      <trans-unit id="processingAttendanceMsg" datatype="html">
+        <source>Processing attendance...</source>
+        <note priority="1" from="description">Processing request message</note>
+        <note priority="1" from="meaning">State</note>
+      </trans-unit>
+      <trans-unit id="stopScannerBtn" datatype="html">
+        <source>Stop Scanner</source>
+        <note priority="1" from="description">Stop scanner button</note>
+        <note priority="1" from="meaning">Action</note>
+      </trans-unit>
+      <trans-unit id="startScannerBtn" datatype="html">
+        <source>Start Scanner</source>
+        <note priority="1" from="description">Start scanner button</note>
+        <note priority="1" from="meaning">Action</note>
+      </trans-unit>
+      <trans-unit id="lastScanLabel" datatype="html">
+        <source>Last scan: <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;font-medium text-foreground&quot;&gt;"/> <x id="INTERPOLATION" equiv-text="{{ lastScanTime() }}"/> <x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <note priority="1" from="description">Last scan timestamp label</note>
+        <note priority="1" from="meaning">Label</note>
+      </trans-unit>
+      <trans-unit id="recentActivityTitle" datatype="html">
+        <source><x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;list&quot; class=&quot;w-4 h-4&quot;&gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;/lucide-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Today&apos;s Activity<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <note priority="1" from="description">Recent activity card title</note>
+        <note priority="1" from="meaning">Card Heading</note>
+      </trans-unit>
+      <trans-unit id="noActivityMessage" datatype="html">
+        <source>No activity yet.</source>
+        <note priority="1" from="description">No recent activity text</note>
+        <note priority="1" from="meaning">State message</note>
+      </trans-unit>
+      <trans-unit id="clockInLabel" datatype="html">
+        <source>Clock in</source>
+      </trans-unit>
+      <trans-unit id="breakStartLabel" datatype="html">
+        <source>Break start</source>
+      </trans-unit>
+      <trans-unit id="breakEndLabel" datatype="html">
+        <source>Break end</source>
+      </trans-unit>
+      <trans-unit id="clockOutLabel" datatype="html">
+        <source>Clock out</source>
+      </trans-unit>
+      <trans-unit id="greetingMorning" datatype="html">
+        <source>Good Morning</source>
+      </trans-unit>
+      <trans-unit id="greetingAfternoon" datatype="html">
+        <source>Good Afternoon</source>
+      </trans-unit>
+      <trans-unit id="greetingEvening" datatype="html">
+        <source>Good Evening</source>
+      </trans-unit>
+      <trans-unit id="workHoursTitle" datatype="html">
+        <source><x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;ClipboardClock&quot; class=&quot;w-4 h-4 text-muted-foreground&quot; /&gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;ClipboardClock&quot; class=&quot;w-4 h-4 text-muted-foreground&quot; /&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span&gt;"/>Work Hours<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <note priority="1" from="description">Work hours card title</note>
+        <note priority="1" from="meaning">Card Heading</note>
+      </trans-unit>
+      <trans-unit id="retryWorkHoursButton" datatype="html">
+        <source>Retry</source>
+        <note priority="1" from="description">Retry fetching work hours label</note>
+        <note priority="1" from="meaning">Action</note>
+      </trans-unit>
+      <trans-unit id="noWorkHoursDataMessage" datatype="html">
+        <source>No data available.</source>
+        <note priority="1" from="description">Text shown when no data is available</note>
+        <note priority="1" from="meaning">State message</note>
+      </trans-unit>
+      <trans-unit id="refreshWorkHoursButton" datatype="html">
+        <source>Refresh</source>
+        <note priority="1" from="description">Refresh work hours label</note>
+        <note priority="1" from="meaning">Action</note>
+      </trans-unit>
+      <trans-unit id="labelToday" datatype="html">
+        <source>Today</source>
+        <note priority="1" from="description">Label for today&apos;s hours</note>
+        <note priority="1" from="meaning">Time period</note>
+      </trans-unit>
+      <trans-unit id="labelThisWeek" datatype="html">
+        <source>This week</source>
+        <note priority="1" from="description">Label for weekly hours</note>
+        <note priority="1" from="meaning">Time period</note>
+      </trans-unit>
+      <trans-unit id="footer.copyright" datatype="html">
+        <source>All rights reserved.</source>
+      </trans-unit>
+      <trans-unit id="footerCopyright" datatype="html">
+        <source>© <x id="INTERPOLATION" equiv-text="{{ getYear() }}"/> QuickClock. All rights reserved.</source>
+        <note priority="1" from="description">Copyright statement</note>
+        <note priority="1" from="meaning">Footer</note>
+      </trans-unit>
+      <trans-unit id="changeLanguageAria" datatype="html">
+        <source>Change Language</source>
+      </trans-unit>
+      <trans-unit id="login.action.forgotPassword" datatype="html">
+        <source>Forgot Password?</source>
+      </trans-unit>
+      <trans-unit id="login.button.loggingIn" datatype="html">
+        <source>Logging in...</source>
+      </trans-unit>
+      <trans-unit id="login.button.signIn" datatype="html">
+        <source>Sign In</source>
+      </trans-unit>
+      <trans-unit id="login.error.generic" datatype="html">
+        <source>Login failed. Please try again.</source>
+      </trans-unit>
+      <trans-unit id="login.label.password" datatype="html">
+        <source>Password</source>
+      </trans-unit>
+      <trans-unit id="login.label.username" datatype="html">
+        <source>Username</source>
+      </trans-unit>
+      <trans-unit id="login.placeholder.password" datatype="html">
+        <source>Password</source>
+      </trans-unit>
+      <trans-unit id="login.placeholder.username" datatype="html">
+        <source>Username</source>
+      </trans-unit>
+      <trans-unit id="login.subtitle" datatype="html">
+        <source>Sign in to your account</source>
+      </trans-unit>
+      <trans-unit id="login.welcomeHeader" datatype="html">
+        <source>Welcome Back <x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;hand&quot; class=&quot;text-foreground size-6 rotate-12 mt-0.5&quot; &gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;/lucide-icon&gt;"/></source>
+      </trans-unit>
+      <trans-unit id="logoutButtonLabel" datatype="html">
+        <source><x id="START_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;lucide-icon [img]=&quot;LogOut&quot; [size]=&quot;18&quot;&gt;"/><x id="CLOSE_TAG_LUCIDE_ICON" ctype="x-lucide_icon" equiv-text="&lt;/lucide-icon&gt;"/><x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;hidden md:block&quot;&gt;"/>Logout<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <note priority="1" from="description">Logout button label</note>
+        <note priority="1" from="meaning">User action</note>
+      </trans-unit>
+      <trans-unit id="confirmLogoutTitle" datatype="html">
+        <source>Confirm Logout</source>
+        <note priority="1" from="description">Confirm logout dialog title</note>
+        <note priority="1" from="meaning">Dialog title</note>
+      </trans-unit>
+      <trans-unit id="confirmLogoutMessage" datatype="html">
+        <source>Are you sure you want to log out?</source>
+        <note priority="1" from="description">Confirm logout dialog message</note>
+        <note priority="1" from="meaning">Dialog message</note>
+      </trans-unit>
+      <trans-unit id="cancelLogoutButton" datatype="html">
+        <source>Cancel</source>
+        <note priority="1" from="description">Cancel logout button</note>
+        <note priority="1" from="meaning">Dialog button</note>
+      </trans-unit>
+      <trans-unit id="confirmLogoutButton" datatype="html">
+        <source>Logout</source>
+        <note priority="1" from="description">Confirm logout button</note>
+        <note priority="1" from="meaning">Dialog button</note>
+      </trans-unit>
+      <trans-unit id="closeDialogAria" datatype="html">
+        <source>close</source>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

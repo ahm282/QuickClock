@@ -1,143 +1,227 @@
 <!-- SUCCESS view -->
 @if (scanStatus(); as status) {
-    <div class="kiosk-full center">
-        <div class="success-card">
-            <div class="success-dot">✓</div>
-            <h1 class="text-4xl font-light">Success</h1>
-            <h2>{{
-                status.direction === 'IN' ? 'Clocked in' : 'Clocked out'
-            }}</h2>
-            <p class="text-muted-foreground">
-                {{ selectedEmployee()?.displayName }}
-            </p>
-            <p class="text-sm text-muted-foreground/60">
-                {{ status.clockedAt | date: 'shortTime' }}
-            </p>
+<div class="kiosk-full flex items-center justify-center">
+    <div class="success-card text-center">
+        <!-- <div class="success-dot">✓</div> -->
+        <div class="success-dot">
+            <lucide-icon [name]="Check" [size]="50" />
         </div>
+
+        <h1
+            class="text-4xl font-light"
+            i18n="Status|Success message@@kioskSuccessTitle"
+        >
+            Success
+        </h1>
+
+        @if (status.direction === 'IN') {
+        <h2 i18n="Status|Clock action result@@kioskClockResultIn">
+            Clocked in
+        </h2>
+        } @else {
+        <h2 i18n="Status|Clock action result@@kioskClockResultOut">
+            Clocked out
+        </h2>
+        }
+
+        <p class="text-muted-foreground">
+            {{ selectedEmployee()?.displayName }}
+        </p>
+        <p class="text-sm text-muted-foreground/60">
+            {{ status.clockedAt | date : 'shortTime' }}
+        </p>
     </div>
+</div>
 }
 
 <!-- QR view -->
 @else if (selectedEmployee()) {
-    <div class="kiosk-full">
-        <header class="kiosk-header">
+<div class="kiosk-full">
+    <header class="kiosk-header-wide">
+        <div class="flex justify-between">
             <app-logo />
-            <button
-                class="btn btn-secondary flex items-center gap-2 text-muted-foreground hover:text-muted-foreground transition-colors"
-                (click)="back()"
-            >
-                <lucide-icon [img]="ArrowLeft" [size]="18"></lucide-icon>
-                <span>Back</span>
-            </button>
-        </header>
+            <div class="flex items-center gap-2">
+                <p class="text-sm text-muted-foreground">
+                    {{ today() | date : 'fullDate' }}
+                </p>
+                <app-language-switcher />
+                <app-theme-toggle />
+                <button
+                    class="btn btn-secondary flex items-center gap-2 text-muted-foreground business:text-white"
+                    (click)="back()"
+                >
+                    <lucide-icon [img]="ArrowLeft" [size]="18"></lucide-icon>
+                    <span i18n="Action|Go back button@@kioskBackButton">
+                        Back
+                    </span>
+                </button>
+            </div>
+        </div>
+    </header>
 
-        <main class="kiosk-center">
+    <main class="kiosk-center">
+        <div class="text-center mb-4">
             <h1 class="text-3xl md:text-4xl font-light mb-2">
-                {{ selectedEmployee()?.displayName }}
+                {{ selectedEmployee() | localizedName }}
             </h1>
-            <p class="text-muted-foreground mb-4">Scan with your phone</p>
+            <p
+                class="text-muted-foreground"
+                i18n="Instruction|Scan QR code hint@@kioskScanInstruction"
+            >
+                Scan with your phone
+            </p>
+        </div>
 
-            <div class="qr-box">
-                @if (qrLoading() || !isQrVisible()) {
-                    <div
-                        class="flex flex-col items-center justify-center gap-2 text-muted-foreground/50 h-[250px] w-[250px]"
-                    >
-                        <lucide-icon
-                            [img]="LoaderCircle"
-                            class="animate-spin"
-                            [size]="32"
-                        ></lucide-icon>
-                        <span class="text-sm">Connecting...</span>
+        <div class="qr-box">
+            @if (isQrVisible()) {
+            <qrcode
+                class="qr-layer"
+                [qrdata]="qrData()"
+                [width]="260"
+                [errorCorrectionLevel]="'H'"
+                [colorDark]="'#004b9b'"
+                [colorLight]="'#F9F9F9'"
+                [margin]="2"
+            ></qrcode>
+            } @else {
+            <!-- <qrcode
+                class="qr-layer"
+                [qrdata]="placeholderQrData()"
+                [width]="260"
+                [errorCorrectionLevel]="'L'"
+                [colorDark]="'#F9F9F9'"
+                [colorLight]="'#004b9b'"
+                [margin]="2"
+            ></qrcode>
+            <div class="qr-glass-effect"></div> -->
+            <div class="qr-overlay">
+                <div class="qr-overlay-card">
+                    <div class="spinner" aria-hidden="true"></div>
+                    <div class="overlay-text">
+                        <div
+                            class="overlay-title"
+                            i18n="
+                                State|QR overlay title while
+                                refreshing@@kioskRefreshingQrTitle"
+                        >
+                            Refreshing QR
+                        </div>
+                        <div
+                            class="overlay-subtitle"
+                            i18n="
+                                Instruction|QR overlay subtitle while
+                                refreshing@@kioskRefreshingQrSubtitle"
+                        >
+                            Hold still for a moment
+                        </div>
                     </div>
-                } @else {
-                    <qrcode
-                        [qrdata]="qrData()"
-                        [width]="250"
-                        [errorCorrectionLevel]="'H'"
-                        [imageWidth]="50"
-                        [imageHeight]="50"
-                        [colorDark]="'#004b9b'"
-                        [colorLight]="'#ffffff'"
-                        [margin]="2"
-                    ></qrcode>
-                }
+                </div>
             </div>
-
-            <div>
-                <progress
-                    class="progress w-56"
-                    [value]="timeRemaining()"
-                    [max]="30"
-                ></progress>
-            </div>
-
-            <div class="timer-pill">
-                <lucide-angular [img]="QrCode" [size]="18"></lucide-angular>
-                <span class="text-sm text-muted-foreground-foreground"
-                    >QR Code refreshes in</span
-                >
-                <span class="font-mono text-lg font-semibold"
-                    >{{ timeRemaining() }}s</span
-                >
-            </div>
-
-            @if (error()) {
-                <p class="text-destructive text-sm mt-6">{{ error() }}</p>
             }
-        </main>
-    </div>
+        </div>
+
+        <div>
+            <progress
+                class="progress w-56"
+                [value]="timeRemaining()"
+                [max]="30"
+            ></progress>
+        </div>
+
+        <div class="timer-pill">
+            <lucide-angular [img]="QrCode" [size]="18"></lucide-angular>
+            <span
+                class="text-sm text-muted-foreground whitespace-nowrap"
+                i18n="Label|Countdown label for QR refresh@@kioskQrRefreshesIn"
+            >
+                QR Code refreshes in
+            </span>
+            <span
+                class="font-mono text-lg font-semibold tabular-nums inline-block w-[3ch] text-right"
+            >
+                <span class="countdown-number">{{ timeRemaining() }}</span>
+                <span i18n="Unit|Seconds unit label@@kioskSecondsUnit">s</span>
+            </span>
+        </div>
+
+        <div class="error-slot">
+            @if (error()) {
+            <p class="text-destructive text-sm">{{ error() }}</p>
+            }
+        </div>
+    </main>
+</div>
 }
 
 <!-- SELECTION view -->
 @else {
-    <div class="kiosk-full">
-        <header class="kiosk-header-wide">
-            <div class="flex justify-between gap-4">
-                <app-logo />
-                <div class="flex items-center gap-4">
-                    <p class="text-sm text-muted-foreground">
-                        {{ today() | date: 'fullDate' }}
-                    </p>
-                    <app-logout-button />
-                </div>
+<div class="kiosk-full">
+    <header class="kiosk-header-wide">
+        <div class="flex justify-between">
+            <app-logo />
+            <div class="flex items-center gap-2">
+                <p class="text-sm text-muted-foreground">
+                    {{ today() | date : 'fullDate' }}
+                </p>
+                <app-language-switcher />
+                <app-theme-toggle />
+                <app-logout-button />
             </div>
-            <h1 class="text-4xl md:text-5xl font-light">Clock In/Out</h1>
-        </header>
+        </div>
+    </header>
 
-        <main class="kiosk-grid">
-            @if (loading()) {
-                <div class="text-muted-foreground">Loading employees...</div>
-            } @else if (error()) {
-                <div class="text-destructive">{{ error() }}</div>
-            } @else {
-                <div>
-                    <h2 class="text-lg font-light text-muted-foreground mb-8">
-                        Select your name
-                    </h2>
+    <main class="kiosk-grid">
+        <h1
+            class="text-4xl md:text-5xl font-light my-5"
+            i18n="Heading|Main kiosk heading@@kioskMainTitle"
+        >
+            Clock In/Out
+        </h1>
+        @if (loading()) {
+        <div
+            class="text-muted-foreground"
+            i18n="State|Loading message@@kioskLoadingEmployees"
+        >
+            Loading employees...
+        </div>
+        } @else if (error()) {
+        <div class="text-destructive">{{ error() }}</div>
+        } @else {
+        <div>
+            <h2
+                class="text-lg font-light text-muted-foreground mb-8 flex items-center gap-3"
+            >
+                <lucide-icon [name]="UserSearch" />
+                <span
+                    i18n="
+                        Instruction|Employee selection prompt@@kioskSelectPrompt"
+                >
+                    Select your name
+                </span>
+            </h2>
+            <div
+                class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+            >
+                @for (u of employees(); track u.publicId) {
+                <button
+                    class="cursor-pointer group relative p-6 rounded-2xl border border-border bg-card hover:border-primary/50 hover:bg-accent/5 transition-all duration-200 text-left"
+                    (click)="select(u)"
+                >
                     <div
-                        class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+                        class="w-14 h-14 rounded-full bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-4 group-hover:from-primary/30 group-hover:to-primary/10 transition-colors"
                     >
-                        @for (u of employees(); track u.publicId) {
-                            <button
-                                class="cursor-pointer group relative p-6 rounded-2xl border border-border bg-card hover:border-primary/50 hover:bg-accent/5 transition-all duration-200 text-left"
-                                (click)="select(u)"
-                            >
-                                <div
-                                    class="w-14 h-14 rounded-full bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-4 group-hover:from-primary/30 group-hover:to-primary/10 transition-colors"
-                                >
-                                    <span
-                                        class="text-lg font-semibold text-primary"
-                                        >{{ u.displayName.charAt(0) }}</span
-                                    >
-                                </div>
-                                <h3 class="font-medium text mb-1">
-                                    {{ u.displayName }}
-                                </h3>
-                            </button>
-                        }
+                        <span class="text-lg font-semibold text-primary">
+                            {{ u.displayName.charAt(0) }}
+                        </span>
                     </div>
-                </div>
-            }
-        </main>
-    </div>
+                    <h3 class="font-medium text mb-1">
+                        {{ u | localizedName }}
+                    </h3>
+                </button>
+                }
+            </div>
+        </div>
+        }
+    </main>
+</div>
 }

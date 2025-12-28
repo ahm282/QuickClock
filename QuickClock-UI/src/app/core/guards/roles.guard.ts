@@ -7,14 +7,28 @@ export const rolesGuard: CanActivateFn = (route) => {
     const router = inject(Router);
 
     const requiredRoles: string[] = route.data['roles'] ?? [];
+    const excludedRoles: string[] = route.data['excludeRoles'] ?? [];
+
+    // Check if user has any excluded roles
+    if (
+        excludedRoles.length > 0 &&
+        excludedRoles.some((role) => authService.hasRole(role))
+    ) {
+        // Kiosk user trying to access employee routes - redirect to kiosk
+        if (authService.isKiosk()) {
+            return router.createUrlTree(['/kiosk']);
+        }
+        return router.createUrlTree(['/home']);
+    }
 
     if (requiredRoles.length === 0) {
-        return true; // No specific roles required
+        return true;
     }
 
     if (requiredRoles.some((role) => authService.hasRole(role))) {
-        return true; // User has at least one of the required roles
+        return true;
     }
 
-    return router.createUrlTree(['/dashboard']);
+    // User doesn't have required role - redirect to home
+    return router.createUrlTree(['/home']);
 };

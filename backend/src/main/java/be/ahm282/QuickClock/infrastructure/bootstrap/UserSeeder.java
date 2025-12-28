@@ -30,25 +30,25 @@ public class UserSeeder {
     @PostConstruct
     public void seed() {
         // Admin users
-        seedUser("alice", "Alice", Set.of(Role.EMPLOYEE));
-        seedUser("bob", "Bob", Set.of(Role.ADMIN));
-        seedUser("ahmed.hassan", "Ahmed Hassan", Set.of(Role.ADMIN, Role.EMPLOYEE));
-        seedUser("fatima.ali", "Fatima Ali", Set.of(Role.ADMIN));
+        seedUser("alice", "Alice", "اليس", Set.of(Role.EMPLOYEE));
+        seedUser("bob", "Bob", "بوب" ,Set.of(Role.ADMIN));
+        seedUser("ahmed.hassan", "Ahmed Hassan", "احمد حسن", Set.of(Role.ADMIN, Role.EMPLOYEE));
+        seedUser("fatima.ali", "Fatima Ali", "فاطمة علي", Set.of(Role.ADMIN)); // Added Arabic name
 
         // Regular employees
-        seedUser("mohamed.salah", "Mohamed Salah", Set.of(Role.EMPLOYEE));
-        seedUser("nour.ibrahim", "Nour Ibrahim", Set.of(Role.EMPLOYEE));
-        seedUser("omar.khaled", "Omar Khaled", Set.of(Role.EMPLOYEE));
-        seedUser("layla.mahmoud", "Layla Mahmoud", Set.of(Role.EMPLOYEE));
-        seedUser("youssef.ahmed", "Youssef Ahmed", Set.of(Role.EMPLOYEE));
-        seedUser("sarah.mostafa", "Sarah Mostafa", Set.of(Role.EMPLOYEE));
-        seedUser("karim.hassan", "Karim Hassan", Set.of(Role.EMPLOYEE));
-        seedUser("mariam.said", "Mariam Said", Set.of(Role.EMPLOYEE));
+        seedUser("mohamed.salah", "Mohamed Salah", "محمد صلاح", Set.of(Role.EMPLOYEE)); // Added Arabic name
+        seedUser("nour.ibrahim", "Nour Ibrahim", "نور ابراهيم", Set.of(Role.EMPLOYEE)); // Added Arabic name
+        seedUser("omar.khaled", "Omar Khaled", "عمر خالد", Set.of(Role.EMPLOYEE));     // Added Arabic name
+        seedUser("layla.mahmoud", "Layla Mahmoud", "ليلى محمود", Set.of(Role.EMPLOYEE)); // Added Arabic name
+        seedUser("youssef.ahmed", "Youssef Ahmed", "يوسف احمد", Set.of(Role.EMPLOYEE)); // Added Arabic name
+        seedUser("sarah.mostafa", "Sarah Mostafa", "سارة مصطفى", Set.of(Role.EMPLOYEE)); // Added Arabic name
+        seedUser("karim.hassan", "Karim Hassan", "كريم حسن", Set.of(Role.EMPLOYEE));   // Added Arabic name
+        seedUser("mariam.said", "Mariam Said", "مريم سعيد", Set.of(Role.EMPLOYEE));     // Added Arabic name
 
         System.out.println("✅ Seeded 10 users successfully");
     }
 
-    private void seedUser(String username, String displayName, Set<Role> roles) {
+    private void seedUser(String username, String displayName, String displayNameArabic, Set<Role> roles) {
         if (userRepositoryPort.findByUsername(username).isPresent()) {
             return;
         }
@@ -57,6 +57,7 @@ public class UserSeeder {
         User user = User.newEmployee(
                 username,
                 displayName,
+                displayNameArabic,
                 passwordEncoder.encode("password123"),
                 secret,
                 roles);

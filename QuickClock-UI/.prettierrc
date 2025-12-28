@@ -7,6 +7,5 @@
     "trailingComma": "all",
     "bracketSpacing": true,
     "arrowParens": "always",
-    "htmlWhitespaceSensitivity": "strict",
     "endOfLine": "auto"
 }

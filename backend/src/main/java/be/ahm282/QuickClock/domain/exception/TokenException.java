@@ -1,7 +1,5 @@
 package be.ahm282.QuickClock.domain.exception;
 
-import org.springframework.http.HttpStatus;
-
 public class TokenException extends DomainException {
     private final Long userId;
 
@@ -17,10 +15,5 @@ public class TokenException extends DomainException {
 
     public Long getUserId() {
         return userId;
-    }
-
-    @Override
-    public HttpStatus getHttpStatus() {
-        return HttpStatus.UNAUTHORIZED;
     }
 }

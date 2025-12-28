@@ -1,3 +1,9 @@
-<div data-theme="light-t" class="kiosk-root">
-    <router-outlet></router-outlet>
+<div class="kiosk-root">
+    <main class="kiosk-content">
+        <router-outlet></router-outlet>
+    </main>
+    <footer class="kiosk-footer">
+        <span class="footer-date">{{ currentTime | date : 'fullDate' }}</span>
+        <span class="footer-time">{{ currentTime | date : 'shortTime' }}</span>
+    </footer>
 </div>

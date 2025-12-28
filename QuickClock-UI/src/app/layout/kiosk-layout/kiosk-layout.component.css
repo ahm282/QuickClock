@@ -1,9 +1,10 @@
 /* kiosk-layout.component.css */
 .kiosk-root {
-    min-height: 100vh;
+    min-height: 100dvh;
     background: var(--color-base-100);
     color: var(--color-base-content);
-    font-family: "Geist Variable", sans-serif;
+    display: grid;
+    grid-template-rows: 1fr auto;
 }
 
 /* Kiosk-specific button style */
@@ -18,4 +19,47 @@
 .kiosk-root .input,
 .kiosk-root .card {
     border-radius: 1rem;
+}
+
+.kiosk-content {
+    display: grid;
+    min-height: 0;
+}
+
+.kiosk-content > router-outlet {
+    display: none;
+}
+
+.kiosk-content > :not(router-outlet) {
+    min-height: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Footer styling */
+.kiosk-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    color: var(--color-base-content);
+    max-width: 80rem;
+    width: 100%;
+    margin: 0 auto 1rem auto;
+    margin-top: auto;
+}
+
+.footer-date,
+.footer-time {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.footer-date {
+    text-align: left;
+}
+
+.footer-time {
+    text-align: right;
 }

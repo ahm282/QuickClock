@@ -1,0 +1,7 @@
+.font-arabic {
+    font-family: 'Almarai', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.active {
+    background-color: var(--color-base-300);
+}

@@ -1,5 +1,6 @@
 package be.ahm282.QuickClock.infrastructure.security;
 
+import jakarta.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -40,13 +41,14 @@ public class SecurityConfig {
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll() // Preflight requests
+                        .requestMatchers("/api/clock/qr/stream/**").permitAll()
 
                         // Kiosk-specific endpoints
                         .requestMatchers("/api/kiosk/**").hasAnyRole("KIOSK", "SUPER_ADMIN")
                         .requestMatchers("/api/clock/qr/generate/**").hasAnyRole("KIOSK", "SUPER_ADMIN")
-                        .requestMatchers("/api/clock/qr/stream/**").hasAnyRole("KIOSK", "SUPER_ADMIN")
                         .requestMatchers("/api/users/**").hasAnyRole("KIOSK", "SUPER_ADMIN")
                         .requestMatchers("/api/clock/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
 

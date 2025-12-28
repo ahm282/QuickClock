@@ -5,6 +5,7 @@ import {
     signal,
     ViewChild,
     inject,
+    LOCALE_ID,
 } from '@angular/core';
 import { BrowserMultiFormatReader, IScannerControls } from '@zxing/browser';
 import { Result } from '@zxing/library';
@@ -36,6 +37,7 @@ export class AttendanceScannerComponent {
     readonly History = History;
 
     clockService = inject(ClockService);
+    private locale = inject(LOCALE_ID);
 
     scannerActive = signal<boolean>(false);
     cameraError = signal<string | null>(null);
@@ -47,9 +49,10 @@ export class AttendanceScannerComponent {
     selectedDeviceId = signal<string | null>(null);
     loadingDevices = signal<boolean>(false);
 
-    hm = new Intl.DateTimeFormat(undefined, {
+    hm = new Intl.DateTimeFormat(this.locale, {
         hour: '2-digit',
         minute: '2-digit',
+        hour12: true,
     });
 
     // Refs
