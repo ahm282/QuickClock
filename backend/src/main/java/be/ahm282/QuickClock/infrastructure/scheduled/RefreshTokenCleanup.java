@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.infrastructure.scheduled;
 
-import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.JpaRefreshTokenRepository;
+import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.auth.JpaRefreshTokenRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;

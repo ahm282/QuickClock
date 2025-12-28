@@ -1,4 +1,4 @@
-package be.ahm282.QuickClock.infrastructure.adapters.out.persistence;
+package be.ahm282.QuickClock.infrastructure.adapters.out.persistence.user;
 
 import be.ahm282.QuickClock.domain.model.AccountType;
 import be.ahm282.QuickClock.infrastructure.entity.UserEntity;

@@ -1,6 +1,6 @@
 package be.ahm282.QuickClock.infrastructure.scheduled;
 
-import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.JpaInvalidatedTokenRepository;
+import be.ahm282.QuickClock.infrastructure.adapters.out.persistence.auth.JpaInvalidatedTokenRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

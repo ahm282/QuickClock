@@ -1,4 +1,4 @@
-package be.ahm282.QuickClock.infrastructure.adapters.out.persistence;
+package be.ahm282.QuickClock.infrastructure.adapters.out.persistence.auth;
 
 import be.ahm282.QuickClock.infrastructure.entity.InviteCodeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,4 +1,4 @@
-package be.ahm282.QuickClock.infrastructure.adapters.out.persistence;
+package be.ahm282.QuickClock.infrastructure.adapters.out.persistence.auth;
 
 import be.ahm282.QuickClock.application.ports.out.InvalidatedTokenRepositoryPort;
 import be.ahm282.QuickClock.domain.model.InvalidatedToken;
