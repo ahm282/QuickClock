@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -86,9 +85,24 @@ public class TimeWindowGuardFilter extends OncePerRequestFilter {
 
     private void blockRequest(HttpServletResponse response, String reason) throws IOException {
         log.warn("Bot/Scanner Blocked: {}", reason);
-        response.setStatus(HttpStatus.I_AM_A_TEAPOT.value()); // 418
-        response.setContentType("text/plain");
-        response.getWriter().write("I am a teapot. " + reason);
+
+        response.setStatus(418); // I'm a teapot
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+
+        String jsonBody = """
+        {
+            "status": 418,
+            "error": "I'm a teapot",
+            "message": "I cannot brew coffee.",
+            "kettle_status": {
+                "water_level": "low",
+                "temperature": "check_later"
+            }
+        }
+    """;
+
+        response.getWriter().write(jsonBody);
         response.getWriter().flush();
     }
 }
