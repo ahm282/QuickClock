@@ -17,7 +17,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(
-                // 1. ADD THESE (Production Nginx Origins)
+                // Localhost
                 "https://localhost",
                 "http://localhost",
                 "https://127.0.0.1",
@@ -31,6 +31,10 @@ public class CorsConfig {
                 "http://frontend:8081",
                 "http://192.168.0.62:8081",
                 "https://192.168.0.62:8081",
+
+                // Production
+                "http://quickclock.dev/",
+                "https://quickclock.dev/",
 
                 // LAN
                 "http://192.168.0.62",
