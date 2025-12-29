@@ -9,14 +9,18 @@ import { User } from '../models/user.model';
 export class LocalizedNamePipe implements PipeTransform {
     constructor(@Inject(LOCALE_ID) private locale: string) {}
 
-    transform(user: User | UserSummaryDTO | null | undefined): string {
+    transform(
+        user: User | UserSummaryDTO | null | undefined,
+        format: 'first' | 'full' = 'first'
+    ): string {
         if (!user) {
             return '';
         }
 
-        if (this.locale.startsWith('ar') && user.displayNameArabic) {
-            return user.displayNameArabic.split(' ')[0]; // Return first name in Arabic
-        }
-        return user.displayName.split(' ')[0];
+        const name = this.locale.startsWith('ar') && user.displayNameArabic
+            ? user.displayNameArabic
+            : user.displayName;
+
+        return format === 'full' ? name : name.split(' ')[0];
     }
 }

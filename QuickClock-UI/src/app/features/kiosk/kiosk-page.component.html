@@ -211,11 +211,11 @@
                         class="w-14 h-14 rounded-full bg-linear-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-4 group-hover:from-primary/30 group-hover:to-primary/10 transition-colors"
                     >
                         <span class="text-lg font-semibold text-primary">
-                            {{ u.displayName.charAt(0) }}
+                            {{ (u | localizedName).charAt(0) }}
                         </span>
                     </div>
                     <h3 class="font-medium text mb-1">
-                        {{ u | localizedName }}
+                        {{ u | localizedName : 'full' }}
                     </h3>
                 </button>
                 }
