@@ -24,7 +24,8 @@ services:
       - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
     networks:
       - quickclock-internal
-    # No external port binding for security
+    ports:
+      - "127.0.0.1:5432:5432"
     healthcheck:
       test:
         [
