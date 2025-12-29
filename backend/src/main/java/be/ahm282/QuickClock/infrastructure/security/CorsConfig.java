@@ -33,8 +33,8 @@ public class CorsConfig {
                 "https://192.168.0.62:8081",
 
                 // Production
-                "http://quickclock.dev/",
-                "https://quickclock.dev/",
+                "http://quickclock.dev",
+                "https://quickclock.dev",
 
                 // LAN
                 "http://192.168.0.62",
