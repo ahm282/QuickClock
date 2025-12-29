@@ -19,10 +19,20 @@ import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
 
 function resolveLocale(): string {
+    const path = window.location.pathname;
+
+    if (path.indexOf('/ar-EG') === 0) {
+        return 'ar-EG';
+    }
+    if (path.indexOf('/en-US') === 0) {
+        return 'en-US';
+    }
+
+    // 2. Fallback to storage/browser only if path is ambiguous (e.g. root '/')
     return (
         localStorage.getItem('locale') ||
         navigator.language ||
-        'en'
+        'en-US'
     ).trim();
 }
 
@@ -32,14 +42,7 @@ function isRtl(locale: string): boolean {
 
 const locale = resolveLocale();
 
-registerLocaleData(localeEn, 'en');
-
-registerLocaleData(localeNl, 'nl');
-registerLocaleData(localeNlBe, 'nl-BE');
-
-registerLocaleData(localeFr, 'fr');
-registerLocaleData(localeFrBe, 'fr-BE');
-
+registerLocaleData(localeEn, 'en-US');
 registerLocaleData(localeAr, 'ar');
 registerLocaleData(localeArEg, 'ar-EG');
 
