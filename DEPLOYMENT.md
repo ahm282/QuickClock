@@ -155,6 +155,61 @@ docker compose -f docker-compose.prod.yml exec database pg_dump -U postgres quic
 cat backup.sql | docker compose -f docker-compose.prod.yml exec -T database psql -U postgres -d quickclock
 ```
 
+### Adding Employees to Production
+
+#### Option 1: Single Employee (Interactive)
+
+```bash
+# Generate credentials for one employee
+./scripts/generate-user-credentials.sh
+
+# This will prompt for:
+# - Username
+# - Display Name (English)
+# - Display Name (Arabic)
+# - Password
+# - Role selection
+
+# The script generates SQL that you can execute in psql
+```
+
+#### Option 2: Bulk Import from CSV
+
+```bash
+# 1. Create CSV file (see scripts/employees.csv.example)
+cp scripts/employees.csv.example employees.csv
+nano employees.csv  # Edit with your employees
+
+# 2. Generate SQL from CSV
+./scripts/bulk-import-employees.sh employees.csv
+
+# 3. Execute the generated SQL
+docker compose -f docker-compose.prod.yml exec -T database \
+  psql -U postgres -d quickclock < scripts/bulk_import_*.sql
+
+# 4. Verify employees were created
+docker compose -f docker-compose.prod.yml exec database \
+  psql -U postgres -d quickclock -c \
+  "SELECT username, display_name, account_type FROM users WHERE account_type='EMPLOYEE';"
+```
+
+#### Option 3: Direct SQL Execution
+
+```bash
+# Connect to database
+docker compose -f docker-compose.prod.yml exec database psql -U postgres -d quickclock
+
+# Use the insert_employee function
+SELECT insert_employee(
+    'john.doe',
+    'John Doe',
+    'جون دو',
+    '$2a$10$...bcrypt_hash...',  -- Generate with generate-user-credentials.sh
+    'base64_secret...',           -- Generate with generate-user-credentials.sh
+    ARRAY['EMPLOYEE']
+);
+```
+
 ### Certificate Management
 
 ```bash

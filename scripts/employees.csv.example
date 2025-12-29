@@ -1,0 +1,19 @@
+# Employee Import Template
+# =============================================================================
+# CSV format for bulk employee import
+# Use with: ./scripts/bulk-import-employees.sh employees.csv
+# =============================================================================
+
+# Column Definitions:
+# - username: Login username (lowercase, no spaces, unique)
+# - display_name: Full name in English
+# - display_name_arabic: Full name in Arabic (optional)
+# - password: Initial password (must be strong - min 8 chars)
+# - roles: EMPLOYEE, ADMIN, or EMPLOYEE|ADMIN (pipe-separated for multiple)
+
+username,display_name,display_name_arabic,password,roles
+ahmed.hassan,Ahmed Hassan,احمد حسن,TempPass123!,EMPLOYEE|ADMIN
+fatima.ali,Fatima Ali,فاطمة علي,TempPass123!,EMPLOYEE
+mohamed.salah,Mohamed Salah,محمد صلاح,TempPass123!,EMPLOYEE
+sarah.mostafa,Sarah Mostafa,سارة مصطفى,TempPass123!,EMPLOYEE
+omar.khaled,Omar Khaled,عمر خالد,TempPass123!,EMPLOYEE
