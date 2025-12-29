@@ -13,6 +13,17 @@ import { ClockQRCodeResponseDTO } from '../models/dto/clock-qr-code-response-dto
 
 class FatalError extends Error {}
 
+// Security guard header generation
+const GUARD_HEADER_KEY = 'X-QuickClock-Guard';
+const GUARD_SALT = 'QuickClock_Salt_v1';
+const GUARD_PREFIX = 'TeaTime';
+
+function generateTimeGuard(): string {
+    const now = Date.now().toString();
+    const rawString = `${GUARD_PREFIX}:${now}:${GUARD_SALT}`;
+    return btoa(rawString);
+}
+
 @Injectable({ providedIn: 'root' })
 export class KioskApiService {
     private http = inject(HttpClient);
@@ -58,6 +69,7 @@ export class KioskApiService {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                     Accept: 'text/event-stream',
+                    [GUARD_HEADER_KEY]: generateTimeGuard(),
                 },
                 signal: controller.signal,
 
