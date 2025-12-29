@@ -189,7 +189,7 @@ services:
 volumes:
   db_data:
     external: true
-    name: quickclock-db_data18
+    name: quickclock_db_data18
 
   backend_logs:
     driver: local
