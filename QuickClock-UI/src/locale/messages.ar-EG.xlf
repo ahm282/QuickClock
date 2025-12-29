@@ -2,6 +2,18 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="en-US" target-language="ar-EG" datatype="plaintext" original="ng2.template">
     <body>
+      <trans-unit id="languageCode" datatype="html">
+        <source>en</source>
+        <target>ar</target>
+      </trans-unit>
+      <trans-unit id="textDirection" datatype="html">
+        <source>ltr</source>
+        <target>rtl</target>
+      </trans-unit>
+      <trans-unit id="appTitle" datatype="html">
+        <source>QuickClock</source>
+        <target>QuickClock</target>
+      </trans-unit>
       <trans-unit id="attendanceScannerStatusTitle" datatype="html">
         <source>Current Status</source>
         <target>الحالة الحالية</target>
