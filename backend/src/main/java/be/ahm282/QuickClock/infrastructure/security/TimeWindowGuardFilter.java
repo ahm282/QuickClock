@@ -30,7 +30,15 @@ public class TimeWindowGuardFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        // 1. Skip check for CORS Pre-flight requests
+        String path = request.getRequestURI();                                        
+
+        // 1. ALLOW: Health Checks (Vital for Docker/Kubernetes)
+        if (path.equals("/api/health") || path.startsWith("/actuator/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 2. Skip check for CORS Pre-flight requests
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
@@ -39,7 +47,7 @@ public class TimeWindowGuardFilter extends OncePerRequestFilter {
         String headerValue = request.getHeader(HEADER_NAME);
 
         if (headerValue == null) {
-            blockRequest(response, "Missing guard header");
+            blockRequest(request, response, "Missing guard header");
             return;
         }
 
@@ -52,7 +60,7 @@ public class TimeWindowGuardFilter extends OncePerRequestFilter {
             String[] parts = decodedString.split(":");
 
             if (parts.length != 3) {
-                blockRequest(response, "Invalid header format");
+                blockRequest(request, response, "Invalid header format");
                 return;
             }
 
@@ -62,7 +70,7 @@ public class TimeWindowGuardFilter extends OncePerRequestFilter {
 
             // 4. Verify Content
             if (!PREFIX.equals(prefix) || !SECRET_SALT.equals(salt)) {
-                blockRequest(response, "Invalid prefix or salt");
+                blockRequest(request, response, "Invalid prefix or salt");
                 return;
             }
 
@@ -72,12 +80,12 @@ public class TimeWindowGuardFilter extends OncePerRequestFilter {
 
             // Allow if generated within last 60s, or up to 5s in the future (clock drift)
             if (diffSeconds > MAX_AGE_SECONDS || diffSeconds < -5) {
-                blockRequest(response, "Request expired (Timestamp: " + timestamp + ")");
+                blockRequest(request, response, "Request expired (Timestamp: " + timestamp + ")");
                 return;
             }
 
         } catch (IllegalArgumentException e) {
-            blockRequest(response, "Base64 decoding error");
+            blockRequest(request, response, "Base64 decoding error");
             return;
         }
 
@@ -85,9 +93,26 @@ public class TimeWindowGuardFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void blockRequest(HttpServletResponse response, String reason) throws IOException {
-        log.warn("Bot/Scanner Blocked: {}", reason);
+    private void blockRequest(HttpServletRequest request, HttpServletResponse response, String reason) throws IOException {
+        
+        // Extract Real IP (essential behind Nginx)
+        String clientIp = request.getHeader("X-Forwarded-For");
+        if (clientIp == null || clientIp.isEmpty()) {
+            clientIp = request.getRemoteAddr();
+        } else {
+            // X-Forwarded-For can be a list "client, proxy1, proxy2"; we want the first one
+            clientIp = clientIp.split(",")[0].trim();
+        }
 
+        String userAgent = request.getHeader("User-Agent");
+        String method = request.getMethod();
+        String uri = request.getRequestURI();
+
+        // Log comprehensive details
+        log.warn("Bot Blocked | IP: {} | Reason: {} | Path: {} {} | UA: {}", 
+                clientIp, reason, method, uri, userAgent);
+
+        // Send the Teapot response
         response.setStatus(418); // I'm a teapot
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
@@ -102,7 +127,7 @@ public class TimeWindowGuardFilter extends OncePerRequestFilter {
                 "temperature": "check_later"
             }
         }
-    """;
+        """;
 
         response.getWriter().write(jsonBody);
         response.getWriter().flush();

@@ -60,6 +60,7 @@ services:
       - DB_URL=jdbc:postgresql://database:5432/${POSTGRES_DB:-quickclock}
       - DB_USERNAME=${POSTGRES_USER:-postgres}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
 
       # Server (Internal HTTP - Nginx handles SSL)
       - SERVER_PORT=8081
@@ -187,7 +188,9 @@ services:
 # ===========================================
 volumes:
   db_data:
-    driver: local
+    external: true
+    name: quickclock-db_data18
+
   backend_logs:
     driver: local
 
