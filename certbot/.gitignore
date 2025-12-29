@@ -1,0 +1,6 @@
+# Certbot directories - managed automatically
+conf/
+www/
+logs/
+*.pem
+*.key

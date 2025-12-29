@@ -1,0 +1,199 @@
+# QuickClock Production Docker Compose
+# For Azure VM (Ubuntu 24.04) with Let's Encrypt SSL
+#
+# Usage:
+#   1. Copy .env.template to .env and fill in your values
+#   2. Run: ./init-letsencrypt.sh
+#   3. Run: docker compose -f docker-compose.prod.yml up -d
+#
+# Domain: Set DOMAIN_NAME in .env (e.g., quickclock.app)
+
+services:
+  # ===========================================
+  # Database: PostgreSQL
+  # ===========================================
+  database:
+    image: postgres:18.1-alpine3.23
+    container_name: quickclock-db
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-quickclock}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    networks:
+      - quickclock-internal
+    # No external port binding for security
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-quickclock}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  # ===========================================
+  # Backend: Spring Boot API
+  # ===========================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: quickclock-backend
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - backend_logs:/var/log/quickclock
+    environment:
+      # Database
+      - DB_URL=jdbc:postgresql://database:5432/${POSTGRES_DB:-quickclock}
+      - DB_USERNAME=${POSTGRES_USER:-postgres}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+
+      # Server (Internal HTTP - Nginx handles SSL)
+      - SERVER_PORT=8081
+      - SERVER_SSL_ENABLED=false
+      - SPRING_PROFILES_ACTIVE=prod
+
+      # JWT Configuration
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_ISSUER=${JWT_ISSUER:-QuickClock-API}
+      - JWT_AUDIENCE=${JWT_AUDIENCE:-QuickClock-App}
+
+      # Application Settings
+      - FRONTEND_BASE_URL=https://${DOMAIN_NAME}
+      - COOKIE_SECURE=true
+      - COOKIE_DOMAIN=${DOMAIN_NAME}
+      - CLOCKING_TOKEN_EXPIRY=${CLOCKING_TOKEN_EXPIRY:-30}
+      - PASSWORD_MIN_ENTROPY=${PASSWORD_MIN_ENTROPY:-42}
+
+      # Bootstrap & Seeding (Set to true for first run only)
+      - APP_BOOTSTRAP_ENABLED=${APP_BOOTSTRAP_ENABLED:-false}
+      - SEED_ENABLED=${SEED_ENABLED:-false}
+
+      # Super Admin Credentials (First run only)
+      - SUPER_ADMIN_USERNAME=${SUPER_ADMIN_USERNAME:-superadmin}
+      - SUPER_ADMIN_PASSWORD=${SUPER_ADMIN_PASSWORD}
+      - SUPER_ADMIN_DISPLAYNAME=${SUPER_ADMIN_DISPLAYNAME:-System Administrator}
+
+      # Kiosk Credentials (First run only)
+      - KIOSK_USERNAME=${KIOSK_USERNAME:-kiosk}
+      - KIOSK_PASSWORD=${KIOSK_PASSWORD}
+
+      # Localization
+      - APP_TIMEZONE=${APP_TIMEZONE:-Africa/Cairo}
+      - APP_WEEK_START_DAY=${APP_WEEK_START_DAY:-SATURDAY}
+    networks:
+      - quickclock-internal
+    healthcheck:
+      test:
+        ["CMD", "wget", "-q", "--spider", "http://localhost:8081/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  # ===========================================
+  # Frontend: Angular (served by Nginx)
+  # ===========================================
+  frontend:
+    build:
+      context: ./QuickClock-UI
+      dockerfile: Dockerfile
+      args:
+        - CONFIGURATION=production
+    container_name: quickclock-frontend
+    networks:
+      - quickclock-internal
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  # ===========================================
+  # Nginx: Reverse Proxy & SSL Termination
+  # ===========================================
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: quickclock-nginx
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d/prod.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    networks:
+      - quickclock-internal
+    # Reload nginx every 6 hours to pick up certificate renewals
+    command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  # ===========================================
+  # Certbot: Let's Encrypt SSL Certificates
+  # ===========================================
+  certbot:
+    image: certbot/certbot:latest
+    container_name: quickclock-certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/logs:/var/log/letsencrypt
+    # Renew certificates every 12 hours
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+
+# ===========================================
+# Volumes
+# ===========================================
+volumes:
+  db_data:
+    driver: local
+  backend_logs:
+    driver: local
+
+# ===========================================
+# Networks
+# ===========================================
+networks:
+  quickclock-internal:
+    driver: bridge
+    internal: false
