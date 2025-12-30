@@ -10,6 +10,38 @@
 
 services:
   # ===========================================
+  # Security: CrowdSec (Containerized)
+  # ===========================================
+  crowdsec:
+    image: crowdsecurity/crowdsec
+    container_name: quickclock-crowdsec
+    environment:
+      - COLLECTIONS=crowdsecurity/nginx crowdsecurity/http-cve
+    volumes:
+      - crowdsec-db:/var/lib/crowdsec/data
+      - crowdsec-config:/etc/crowdsec
+      # Give it read-access to other containers' logs
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+    networks:
+      - quickclock-internal
+    restart: unless-stopped
+
+  crowdsec-bouncer:
+    image: crowdsecurity/firewall-bouncer-iptables
+    container_name: crowdsec-bouncer
+    privileged: true
+    environment:
+      - DISABLE_IPV6=true
+      - API_KEY=${CROWDSEC_BOUNCER_API_KEY}
+      - API_URL=http://crowdsec:8080
+    volumes:
+      - crowdsec-config:/etc/crowdsec:ro
+    depends_on:
+      - crowdsec
+    network_mode: host
+    restart: unless-stopped
+
+  # ===========================================
   # Database: PostgreSQL
   # ===========================================
   database:
@@ -186,6 +218,9 @@ services:
 # Volumes
 # ===========================================
 volumes:
+  crowdsec-db:
+  crowdsec-config:
+
   db_data:
     external: true
     name: quickclock_db_data18
