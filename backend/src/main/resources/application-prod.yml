@@ -1,82 +1,82 @@
 spring:
-  config:
-    activate:
-      on-profile: prod
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 20
-      minimum-idle: 10
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
-      leak-detection-threshold: 60000
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: false
-        jdbc:
-          batch_size: 20
-        order_inserts: true
-        order_updates: true
+    config:
+        activate:
+            on-profile: prod
+    datasource:
+        url: ${DB_URL}
+        username: ${DB_USERNAME}
+        password: ${DB_PASSWORD}
+        driver-class-name: org.postgresql.Driver
+        hikari:
+            maximum-pool-size: 20
+            minimum-idle: 10
+            connection-timeout: 30000
+            idle-timeout: 600000
+            max-lifetime: 1800000
+            leak-detection-threshold: 60000
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        show-sql: false
+        properties:
+            hibernate:
+                format_sql: false
+                jdbc:
+                    batch_size: 20
+                order_inserts: true
+                order_updates: true
 
 server:
-  port: 8081
-  compression:
-    enabled: true
-  http2:
-    enabled: true
+    port: 8081
+    compression:
+        enabled: false
+    http2:
+        enabled: true
 
 h2:
-  console:
-    enabled: false
+    console:
+        enabled: false
 
 # Minimal logging for production
 logging:
-  level:
-    be.ahm282.QuickClock: WARN
-    org.springframework: WARN
-    org.hibernate: WARN
-  file:
-    name: /var/log/quickclock/application.log
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    level:
+        root: INFO
+        be.ahm282.QuickClock: INFO
+        org.springframework: INFO
+        org.hibernate: INFO
+    file:
+        name: /var/log/quickclock/application.log
+    pattern:
+        console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+        file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n%exception"
 
 # Production-specific settings
 app:
-  frontend:
-    base-url: ${FRONTEND_BASE_URL:https://quickclock.com}
-  cookie:
-    secure: true
-  localization:
-    timezone: ${APP_TIMEZONE:Africa/Cairo}
-    week-start-day: ${APP_WEEK_START_DAY:SATURDAY}
-  bootstrap:
-    enabled: true
-    super-admin:
-      username: ${SUPER_ADMIN_USERNAME:}
-      password: ${SUPER_ADMIN_PASSWORD:}
-      displayName: ${SUPER_ADMIN_DISPLAYNAME:Super Admin}
-    kiosk:
-      username: ${KIOSK_USERNAME:}
-      password: ${KIOSK_PASSWORD:}
-  seed:
-    enabled: ${SEED_ENABLED:true}
+    frontend:
+        base-url: ${FRONTEND_BASE_URL:https://quickclock.com}
+    cookie:
+        secure: true
+    localization:
+        timezone: ${APP_TIMEZONE:Africa/Cairo}
+        week-start-day: ${APP_WEEK_START_DAY:SATURDAY}
+    bootstrap:
+        enabled: true
+        super-admin:
+            username: ${SUPER_ADMIN_USERNAME:}
+            password: ${SUPER_ADMIN_PASSWORD:}
+            displayName: ${SUPER_ADMIN_DISPLAYNAME:Super Admin}
+        kiosk:
+            username: ${KIOSK_USERNAME:}
+            password: ${KIOSK_PASSWORD:}
+    seed:
+        enabled: ${SEED_ENABLED:false}
 
 # Production security settings
 management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-  endpoint:
-    health:
-      show-details: when-authorized
+    endpoints:
+        web:
+            exposure:
+                include: health,info
+    endpoint:
+        health:
+            show-details: when-authorized
