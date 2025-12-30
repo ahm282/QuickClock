@@ -28,6 +28,8 @@ services:
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml
+      - ./crowdsec/scenarios/instant-ban.yaml:/etc/crowdsec/scenarios/instant-ban.yaml
+      - ./crowdsec/scenarios/aggressive-404.yaml:/etc/crowdsec/scenarios/aggressive-404.yaml
     networks:
       - quickclock-internal
     restart: unless-stopped

@@ -1,0 +1,11 @@
+type: leaky
+name: custom/instant-444-ban
+description: "Instantly ban anyone triggering Nginx 444 (Blocked Scanners)"
+filter: "evt.Meta.service == 'http' && evt.Parsed.status == '444'"
+# capacity 1 = Ban on the very first attempt
+capacity: 1
+leakspeed: 10s
+blackhole: 1m
+labels:
+    type: scan
+    remediation: true

@@ -1,0 +1,14 @@
+type: leaky
+name: custom/aggressive-404-ban
+description: "Ban IPs generating excessive 404s (Aggressive)"
+# Filter: Look for HTTP 404s
+filter: "evt.Meta.service == 'http' && evt.Parsed.status == '404'"
+# Triggers after 8 failed attempts
+capacity: 8
+# The 'strikes' stay in the bucket for 30 seconds before expiring
+leakspeed: 30s
+# If they get banned, silence them for 1 minute (blackhole)
+blackhole: 1m
+labels:
+  type: scan
+  remediation: true
