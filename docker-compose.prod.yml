@@ -1,4 +1,3 @@
-# QuickClock Production Docker Compose
 # For Azure VM (Ubuntu 24.04) with Let's Encrypt SSL
 #
 # Usage:
@@ -15,11 +14,14 @@ services:
   crowdsec:
     image: crowdsecurity/crowdsec
     container_name: quickclock-crowdsec
+    user: root
     environment:
       - COLLECTIONS=crowdsecurity/nginx crowdsecurity/http-cve
       - GID="${CROWDSEC_GID:-1000}"
+      - METRICS_PORT=6060
     ports:
       - "127.0.0.1:8080:8080"
+      - "6060:6060"
     volumes:
       - crowdsec-db:/var/lib/crowdsec/data
       - crowdsec-config:/etc/crowdsec
