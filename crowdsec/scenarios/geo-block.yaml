@@ -1,0 +1,12 @@
+type: leaky
+name: custom/geo-block
+description: "Block access from outside allowed countries"
+# Logic: If it's HTTP traffic AND the Country Code is NOT in the list -> Ban
+# Replace 'EG', 'SA', 'AE' with your 3 target ISO codes (e.g., Egypt, Saudi, UAE)
+filter: "evt.Meta.service == 'http' && ! (evt.Enriched.IsoCode in ['EG', 'BE', 'NL'])"
+capacity: 1
+leakspeed: 1m
+blackhole: 24h # Ban them for 24 hours
+labels:
+    type: geoblock
+    remediation: true

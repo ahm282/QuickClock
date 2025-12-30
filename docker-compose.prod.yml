@@ -30,9 +30,15 @@ services:
       - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml
       - ./crowdsec/scenarios/instant-ban.yaml:/etc/crowdsec/scenarios/instant-ban.yaml
       - ./crowdsec/scenarios/aggressive-404.yaml:/etc/crowdsec/scenarios/aggressive-404.yaml
+      - ./crowdsec/scenarios/geo-block.yaml:/etc/crowdsec/scenarios/geo-block.yaml
     networks:
       - quickclock-internal
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "30m"
+        max-file: "3"
 
   # ===========================================
   # Database: PostgreSQL
@@ -62,6 +68,11 @@ services:
       retries: 5
       start_period: 30s
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "30m"
+        max-file: "3"
     deploy:
       resources:
         limits:
@@ -129,6 +140,11 @@ services:
       retries: 3
       start_period: 60s
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "30m"
+        max-file: "3"
     deploy:
       resources:
         limits:
@@ -152,6 +168,11 @@ services:
       timeout: 10s
       retries: 3
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "30m"
+        max-file: "3"
     deploy:
       resources:
         limits:
@@ -181,6 +202,11 @@ services:
       - quickclock-internal
     # Reload nginx every 6 hours to pick up certificate renewals
     command: '/bin/sh -c ''while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g "daemon off;"'''
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "30m"
+        max-file: "3"
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/health"]
       interval: 30s
@@ -205,6 +231,11 @@ services:
     # Renew certificates every 12 hours
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "30m"
+        max-file: "3"
     deploy:
       resources:
         limits:
