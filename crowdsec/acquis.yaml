@@ -1,0 +1,11 @@
+filenames:
+  - /var/lib/docker/containers/*/*.log
+docker_channel: true
+labels:
+  type: nginx
+---
+source: docker
+container_name:
+  - quickclock-nginx
+labels:
+  type: nginx

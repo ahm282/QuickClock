@@ -18,11 +18,14 @@ services:
     environment:
       - COLLECTIONS=crowdsecurity/nginx crowdsecurity/http-cve
       - GID="${CROWDSEC_GID:-1000}"
+    ports:
+      - "127.0.0.1:8080:8080"
     volumes:
       - crowdsec-db:/var/lib/crowdsec/data
       - crowdsec-config:/etc/crowdsec
-      # Give it read-access to other containers' logs
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml
     networks:
       - quickclock-internal
     restart: unless-stopped
